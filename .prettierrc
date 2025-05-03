@@ -5,6 +5,5 @@
   "printWidth": 100,
   "tabWidth": 2,
   "bracketSpacing": true,
-  "arrowParens": "always",
-  "endOfLine": "crlf"
+  "arrowParens": "always"
 }
