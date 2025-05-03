@@ -9,7 +9,6 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "prepare": "husky",
     "commitlint": "commitlint --edit",
     "test": "vitest"
   },
