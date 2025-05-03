@@ -1,30 +1,70 @@
-import { ReactElement, useState } from 'react';
+import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 
-function App(): ReactElement {
-  const [count, setCount] = useState(0);
+const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
+const CLIENT_SECRET = import.meta.env['VITE_CLIENT_SECRET'];
+const CLIENT_ID = import.meta.env['VITE_CLIENT_ID'];
+const SCOPES = import.meta.env['VITE_SCOPES'];
 
+type AuthResponse = {
+  access_token: string;
+  expires_in: number;
+  scope: string;
+  token_type: string;
+};
+
+function App(): ReactElement {
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+  const [authKey, setAuthKey] = useState('');
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    console.log(login, password);
+  };
+  useEffect(() => {
+    async function getToken(): Promise<void> {
+      const credentials = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
+      const params = new URLSearchParams({
+        grant_type: 'client_credentials',
+        scope: SCOPES,
+      });
+      const response = await fetch(`${AUTH_URL}/oauth/token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Basic ${credentials}`,
+        },
+        body: params.toString(),
+      });
+      const data: AuthResponse = await response.json();
+      setAuthKey(data.access_token);
+    }
+    getToken();
+  }, []);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    <div className="wrapper">
+      <form onSubmit={onSubmit}>
+        <label htmlFor="login">Login</label>
+        <input
+          type="text"
+          name=""
+          id="login"
+          value={login}
+          onChange={(e) => setLogin(e.target.value)}
+        />
+        <label htmlFor="password">Password</label>
+        <input
+          type="text"
+          name=""
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">submit</button>
+      </form>
+    </div>
   );
 }
 
