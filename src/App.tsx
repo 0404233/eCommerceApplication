@@ -1,6 +1,4 @@
 import { FormEvent, ReactElement, useEffect, useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
 
 const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
@@ -20,6 +18,7 @@ function App(): ReactElement {
   const [password, setPassword] = useState('');
   const [authKey, setAuthKey] = useState('');
   const onSubmit = (e: FormEvent) => {
+    console.log(authKey);
     e.preventDefault();
     console.log(login, password);
   };
