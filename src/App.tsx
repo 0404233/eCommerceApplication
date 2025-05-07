@@ -1,18 +1,19 @@
-import { FormEvent, ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 import './App.css';
-import Registration from './pages/Registration/Registration';
+// import LoginPage from './pages/Login/Login';
+import Login from './pages/Login/Login';
 
-const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
-const CLIENT_SECRET = import.meta.env['VITE_CLIENT_SECRET'];
-const CLIENT_ID = import.meta.env['VITE_CLIENT_ID'];
-const SCOPES = import.meta.env['VITE_SCOPES'];
+// const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
+// const CLIENT_SECRET = import.meta.env['VITE_CLIENT_SECRET'];
+// const CLIENT_ID = import.meta.env['VITE_CLIENT_ID'];
+// const SCOPES = import.meta.env['VITE_SCOPES'];
 
-type AuthResponse = {
-  access_token: string;
-  expires_in: number;
-  scope: string;
-  token_type: string;
-};
+// type AuthResponse = {
+//   access_token: string;
+//   expires_in: number;
+//   scope: string;
+//   token_type: string;
+// };
 
 function App(): ReactElement {
   // const [login, setLogin] = useState('');
@@ -44,29 +45,30 @@ function App(): ReactElement {
   //   getToken();
   // }, []);
   return (
-  //   <div className="wrapper">
-  //     <form onSubmit={onSubmit}>
-  //       <label htmlFor="login">Login</label>
-  //       <input
-  //         type="text"
-  //         name=""
-  //         id="login"
-  //         value={login}
-  //         onChange={(e) => setLogin(e.target.value)}
-  //       />
-  //       <label htmlFor="password">Password</label>
-  //       <input
-  //         type="text"
-  //         name=""
-  //         id="password"
-  //         value={password}
-  //         onChange={(e) => setPassword(e.target.value)}
-  //       />
-  //       <button type="submit">submit</button>
-  //     </form>
+    // <div className="wrapper">
+    //   <form onSubmit={onSubmit}>
+    //     <label htmlFor="login">Login</label>
+    //     <input
+    //       type="text"
+    //       name=""
+    //       id="login"
+    //       value={login}
+    //       onChange={(e) => setLogin(e.target.value)}
+    //     />
+    //     <label htmlFor="password">Password</label>
+    //     <input
+    //       type="text"
+    //       name=""
+    //       id="password"
+    //       value={password}
+    //       onChange={(e) => setPassword(e.target.value)}
+    //     />
+    //     <button type="submit">submit</button>
+    //   </form>
     // </div>
-
-    <Registration />
+    <>
+      <Login />
+    </>
   );
 }
 
