@@ -1,6 +1,10 @@
+import { useNavigate } from 'react-router';
 import classes from './Registration.module.css';
 
 export default function Registration() {
+
+  const navigate = useNavigate();
+
   return (
     <form action="" className={classes["form-register"]}>
       <h1>Sign up</h1>
@@ -29,7 +33,7 @@ export default function Registration() {
         className={classes["form-register__input"]} />
 
       <button className={classes["form-register__btn"]} type="submit">Sign up</button>
-      <p>Already have an account? <a href="">Sign in</a></p>
+      <p>Already have an account? <a onClick={() => navigate('/login')}>Sign in</a></p>
     </form>
   )
 }
