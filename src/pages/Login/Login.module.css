@@ -1,59 +1,68 @@
-.form {
-  text-align: start;
+.form-login {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  width: 40svw;
-  margin: 0 auto;
+  gap: 10px;
+  width: 20rem;
   padding: 20px;
+  border: 1px solid #808080;
   border-radius: 10px;
-  box-shadow: 0 10px 30px #00000026;
-}
-
-.title {
-  font-size: 28px;
-  color: #ffffff;
-  margin-bottom: 20px;
-  text-align: center;
-  font-weight: 700;
-}
-
-.label {
-  font-size: 16px;
-  color: #ffffff;
-  margin-bottom: 8px;
-  display: block;
-  font-weight: 500;
-}
-
-.input {
-  border: none;
-  padding: 12px 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  font-size: 16px;
-  outline: none;
-}
-
-.input:focus {
+  text-align: start;
   box-shadow: 0 0 15px #808080;
-  transition: box-shadow 0.3s linear;
 }
 
-.submitButton {
+.form-login__input {
   width: 100%;
-  padding: 12px 0;
-  background-color: #808080;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #1a1a1a;
+  border-radius: 5px;
 }
 
-.submitButton:hover {
-  background-color: #808080;
+.form-login__input:focus {
+  box-shadow: 0 0 15px #808080;
+  border: 1px solid #808080;
+  outline: none;
+  transition: box-shadow 0.25s;
+}
+
+.form-login__input[data-error="true"] {
+  box-shadow: 0 0 10px #f52020;
+}
+
+.form-login__btn {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  margin-top: 1rem;
+}
+
+.form-login__btn:hover {
+  box-shadow: 0 0 15px #646cff;
+}
+
+.form-login__error {
+  color: #f52020;
+  font-size: 0.875em;
+}
+
+.password-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 5px;
+  top: calc(50% - 12px);
+  cursor: pointer;
+}
+
+@media (max-width: 430px) {
+  .form-login {
+    width: 15rem;
+  }
 }
