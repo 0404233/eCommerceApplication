@@ -1,9 +1,11 @@
 .error-page__wrapper {
+  margin: 50% 0 0;
   width: 30rem;
   padding: 20px;
   border: 1px solid #808080;
   border-radius: 10px;
   box-shadow: 0 0 15px #808080;
+  transform: translate(0, -50%);
 }
 
 .error-page__title {

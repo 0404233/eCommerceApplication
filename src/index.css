@@ -38,6 +38,10 @@ body {
   min-height: 100vh;
 }
 
+button {
+  cursor: pointer;
+}
+
 button:hover {
   border-color: #646cff;
 }

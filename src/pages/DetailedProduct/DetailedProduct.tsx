@@ -1,5 +1,3 @@
 export default function DetailedProduct() {
-  return (
-    <h1>Detailed Product page</h1>
-  )
+  return <h1>Detailed Product page</h1>;
 }
