@@ -1,12 +1,37 @@
 .header-layout {
   min-width: 100%;
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
   padding: 10px 20px;
-  background-color: #999999;
+  background-color: #565656;
 }
 
 .button-group {
   display: flex;
   gap: 10px;
+}
+
+.button-header-route,
+.header__to-main {
+  padding: 8px 15px;
+  border-radius: 5px;
+}
+
+.button-header-route {
+  background-color: #00c700;
+}
+
+.header__to-main {
+  color: white;
+  background-color: transparent;
+  transition: all 0.2s;
+}
+
+.header__to-main:hover {
+  background-color: #929292;
+}
+
+.links-to-pages {
+  display: flex;
+  gap: 15px;
 }

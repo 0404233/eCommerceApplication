@@ -67,7 +67,6 @@ function App(): ReactElement {
     // </div>
 
     <AppRoutes />
-
   );
 }
 
