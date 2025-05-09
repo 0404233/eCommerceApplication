@@ -1,5 +1,7 @@
 import { FormEvent, useState } from 'react';
 import classes from './Login.module.css' assert { type: 'css' };
+import { useNavigate } from 'react-router';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -74,6 +76,8 @@ export default function Login() {
     setShowPassword(!showPassword);
   }
 
+  const navigate = useNavigate();
+
   return (
     <form className={classes['form-login']} onSubmit={handleSubmit}>
       <h1>Sign in</h1>
@@ -114,7 +118,7 @@ export default function Login() {
       <button type="submit" className={classes['form-login__btn']}>
         Sign in
       </button>
-      <p>Don't have an account? <a href="">Sign up</a></p>
+      <p>Don't have an account? <a onClick={() => navigate('/register')}>Sign up</a></p>
     </form>
   );
 }

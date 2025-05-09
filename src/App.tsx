@@ -65,9 +65,9 @@ function App(): ReactElement {
     //     <button type="submit">submit</button>
     //   </form>
     // </div>
-    <>
-      <AppRoutes />
-    </>
+
+    <AppRoutes />
+
   );
 }
 
