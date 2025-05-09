@@ -1,0 +1,12 @@
+.header-layout {
+  min-width: 100%;
+  display: flex;
+  justify-content: end;
+  padding: 10px 20px;
+  background-color: #999999;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
