@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import './App.css';
 import AppRoutes from './routes/Routes';
 
-
 // const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
 // const CLIENT_SECRET = import.meta.env['VITE_CLIENT_SECRET'];
 // const CLIENT_ID = import.meta.env['VITE_CLIENT_ID'];
@@ -66,7 +65,9 @@ function App(): ReactElement {
     //     <button type="submit">submit</button>
     //   </form>
     // </div>
+
     <AppRoutes />
+
   );
 }
 
