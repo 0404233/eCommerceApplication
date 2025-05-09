@@ -84,4 +84,8 @@ select:focus {
     text-align: center;
   }
 
+  .form-register__error {
+    font-size: 0.7em;
+  }
+
 }

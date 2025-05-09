@@ -65,4 +65,8 @@
   .form-login {
     width: 15rem;
   }
+
+  .form-login__error {
+    font-size: 0.7em;
+  }
 }
