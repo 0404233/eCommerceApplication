@@ -1,13 +1,15 @@
 import { Route, Routes } from "react-router";
-import Login from "../pages/Login/Login";
-import Registration from "../pages/Registration/Registration";
-import MainPage from "../pages/Main/Main";
-import CatalogProduct from "../pages/CatalogProduct/CatalogProduct";
-import Basket from "../pages/Basket/Basket";
-import AboutUs from "../pages/AboutUs/AboutUs";
-import UserProfile from "../pages/UserProfile/UserProfile";
-import DetailedProduct from "../pages/DetailedProduct/DetailedProduct";
-import ErrorPage from "../pages/ErrorPage/ErrorPage";
+import { lazy } from "react";
+
+const Login = lazy(() => import("../pages/Login/Login"));
+const Registration = lazy(() => import("../pages/Registration/Registration"));
+const MainPage = lazy(() => import("../pages/Main/Main"));
+const CatalogProduct = lazy(() => import("../pages/CatalogProduct/CatalogProduct"));
+const Basket = lazy(() => import("../pages/Basket/Basket"));
+const AboutUs = lazy(() => import("../pages/AboutUs/AboutUs"));
+const UserProfile = lazy(() => import("../pages/UserProfile/UserProfile"));
+const DetailedProduct = lazy(() => import("../pages/DetailedProduct/DetailedProduct"));
+const ErrorPage = lazy(() => import("../pages/ErrorPage/ErrorPage"));
 
 export default function AppRoutes() {
   const navigationRoutes = [
