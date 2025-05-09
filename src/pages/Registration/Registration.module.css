@@ -14,8 +14,9 @@
 select {
   padding: 10px;
   border: 1px solid #1a1a1a;
-  ;
   border-radius: 5px;
+  background-color: #3e3d3d;
+  color: #fff;
 }
 
 .form-register__input:focus,
@@ -37,6 +38,7 @@ select:focus {
   cursor: pointer;
   transition: border-color 0.25s;
   margin-top: 1rem;
+  color: #fff;
 }
 
 .form-register__btn:hover {

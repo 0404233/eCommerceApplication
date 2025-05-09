@@ -22,6 +22,7 @@
   cursor: pointer;
   transition: border-color 0.25s;
   margin-top: 1rem;
+  color: #fff;
 }
 
 .error__btn:hover {
