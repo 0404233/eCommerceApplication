@@ -1,0 +1,7 @@
+
+VITE_PROJECT_KEY=e-commerce-javascriptizery
+VITE_CLIENT_SECRET=OIwaoGnIf3hRQeUaNlN4qFh9UT530ijv
+VITE_CLIENT_ID=rrJoSvYMatdn37t0iP48zGlY
+VITE_AUTH_URL=https://auth.us-central1.gcp.commercetools.com
+VITE_API_URL=https://api.us-central1.gcp.commercetools.com
+VITE_SCOPES=view_published_products:e-commerce-javascriptizery manage_my_orders:e-commerce-javascriptizery manage_my_payments:e-commerce-javascriptizery manage_my_profile:e-commerce-javascriptizery manage_my_business_units:e-commerce-javascriptizery manage_my_quote_requests:e-commerce-javascriptizery view_categories:e-commerce-javascriptizery manage_my_shopping_lists:e-commerce-javascriptizery manage_my_quotes:e-commerce-javascriptizery create_anonymous_token:e-commerce-javascriptizery

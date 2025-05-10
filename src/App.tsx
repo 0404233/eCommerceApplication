@@ -1,7 +1,4 @@
-import {
-  ReactElement,
-  useEffect,
-} from 'react';
+import { ReactElement, useEffect } from 'react';
 import './App.css';
 import AppRoutes from './routes/Routes';
 
@@ -27,8 +24,7 @@ function App(): ReactElement {
   //   getToken();
   // }, []);
   useEffect(() => {
-    const controller =
-      new AbortController();
+    const controller = new AbortController();
 
     return () => controller.abort();
   }, []);

@@ -26,7 +26,7 @@
   transition: box-shadow 0.25s;
 }
 
-.form-login__input[data-error="true"] {
+.form-login__input[data-error='true'] {
   box-shadow: 0 0 10px #f52020;
 }
 

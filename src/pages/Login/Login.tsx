@@ -2,12 +2,14 @@ import { FormEvent, useState } from 'react';
 import classes from './Login.module.css' assert { type: 'css' };
 import { useNavigate } from 'react-router';
 
-
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
   const [attrLogin, setAttrLogin] = useState('false');
   const [attrPassword, setAttrPassword] = useState('false');
 
@@ -18,28 +20,36 @@ export default function Login() {
     const regexLowerLettersPassword = /[a-z]/;
     const regexUpperLettersPassword = /[A-Z]/;
     const regexDigitPassword = /[0-9]/;
-    const regexTrimSpacesPassword = /^\S.*\S$|^\S$|^$/
+    const regexTrimSpacesPassword = /^\S.*\S$|^\S$|^$/;
 
-    const newErrors = { email: '', password: '' };
+    const newErrors = {
+      email: '',
+      password: '',
+    };
 
     if (!email) {
       newErrors.email = 'Fill in the email address.';
     } else if (!regexSymbolDog.test(email)) {
-      newErrors.email = 'Symbol "@" must be present in the email address and should not be at the end.';
+      newErrors.email =
+        'Symbol "@" must be present in the email address and should not be at the end.';
     } else if (!regexSymbolPoint.test(email)) {
-      newErrors.email = 'Symbol "." must be present in the email address and should not be at the end.';
+      newErrors.email =
+        'Symbol "." must be present in the email address and should not be at the end.';
     }
 
     if (password.length < 8) {
       newErrors.password = 'Password must contain at least 8 characters.';
     } else if (!regexLowerLettersPassword.test(password)) {
-      newErrors.password = 'Password must contain at least one LOWERcase English letter.';
+      newErrors.password =
+        'Password must contain at least one LOWERcase English letter.';
     } else if (!regexUpperLettersPassword.test(password)) {
-      newErrors.password = 'Password must contain at least one UPPERcase English letter.';
+      newErrors.password =
+        'Password must contain at least one UPPERcase English letter.';
     } else if (!regexDigitPassword.test(password)) {
       newErrors.password = 'Password must contain at least one digit.';
     } else if (!regexTrimSpacesPassword.test(password)) {
-      newErrors.password = 'The password must not contain leading or trailing spaces.';
+      newErrors.password =
+        'The password must not contain leading or trailing spaces.';
     }
 
     return newErrors;
@@ -74,7 +84,7 @@ export default function Login() {
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
-  }
+  };
 
   const navigate = useNavigate();
 
@@ -92,7 +102,9 @@ export default function Login() {
         onChange={(e) => setEmail(e.target.value)}
         data-error={attrLogin}
       />
-      {errors.email && <span className={classes["form-login__error"]}>{errors.email}</span>}
+      {errors.email && (
+        <span className={classes['form-login__error']}>{errors.email}</span>
+      )}
 
       <label htmlFor="password">Password</label>
       <div className={classes['password-container']}>
@@ -106,19 +118,23 @@ export default function Login() {
           data-error={attrPassword}
         />
         <span
-          className={classes["toggle-password"]}
+          className={classes['toggle-password']}
           onClick={togglePasswordVisibility}
         >
           {showPassword ? '🔓' : '🔒'}
         </span>
       </div>
-      {errors.password && <span className={classes["form-login__error"]}>{errors.password}</span>}
-
+      {errors.password && (
+        <span className={classes['form-login__error']}>{errors.password}</span>
+      )}
 
       <button type="submit" className={classes['form-login__btn']}>
         Sign in
       </button>
-      <p>Don't have an account? <a onClick={() => navigate('/register')}>Sign up</a></p>
+      <p>
+        Don't have an account?{' '}
+        <a onClick={() => navigate('/register')}>Sign up</a>
+      </p>
     </form>
   );
 }
