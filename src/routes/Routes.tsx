@@ -15,7 +15,8 @@ const ErrorPage = lazy(() => import('../pages/ErrorPage/ErrorPage'));
 
 export default function AppRoutes() {
   const location = useLocation();
-  const hideHeaderPaths = ['/login', '/register', '*', 'main'];
+
+  const hideHeaderPaths = ['/login', '/register', '*'];
 
   const navigationRoutes = [
     { path: '/', element: <MainPage /> },
@@ -32,13 +33,13 @@ export default function AppRoutes() {
 
   return (
     <>
-      {!hideHeaderPaths.some((path) => location.pathname.startsWith(path)) ? <Header /> : null}
+      {!hideHeaderPaths.includes(location.pathname) && <Header />}
       <Routes>
         {navigationRoutes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
       </Routes>
-      {!hideHeaderPaths.some((path) => location.pathname.startsWith(path)) ? <Footer /> : null}
+      {!hideHeaderPaths.includes(location.pathname) && <Footer />}
     </>
   );
 }
