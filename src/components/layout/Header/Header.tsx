@@ -1,10 +1,15 @@
 import { ReactElement, useEffect } from 'react';
+import HomeIcon from '../../../assets/home.svg?react';
 import styles from './Header.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { userData } from '../../../userData';
 
-export default function Header(): ReactElement {
+type Props = {
+  location: string;
+};
+
+export default function Header({ location }: Props): ReactElement {
   const [isUserAuthorized, setIsUserAuthorized] = useState(false);
   useEffect(() => {
     setIsUserAuthorized(userData.getUserData());
@@ -12,7 +17,6 @@ export default function Header(): ReactElement {
   const navigate = useNavigate();
 
   const navigationRoutes = [
-    { path: '/main' },
     { path: '/user' },
     { path: '/catalog' },
     { path: '/product' },
@@ -27,16 +31,26 @@ export default function Header(): ReactElement {
 
   return (
     <header className={styles['header-layout']}>
-      <button className={styles['header__to-main']} onClick={() => navigate('/')}>
-        Main
+      <button className={styles['header__to-main']} onClick={() => navigate('/main')}>
+        <HomeIcon
+          width={30}
+          height={30}
+          fill={location === '/main' || location === '/' ? '#00c700' : '#FFFFFF'}
+        />
       </button>
-      <div className={styles['links-to-pages']}>
-        {navigationRoutes.map(({ path }) => (
-          <button key={path} className={styles['page-link-btn']} onClick={() => navigate(path)}>
-            {path.slice(1)}
-          </button>
-        ))}
-      </div>
+      <nav className={styles['links-to-pages']}>
+        <ul className={styles['links-list']}>
+          {navigationRoutes.map(({ path }) => (
+            <li
+              key={path}
+              className={`${styles['page-link']} ${path === location ? styles['selected-page'] : ''}`}
+              onClick={() => navigate(path)}
+            >
+              {path.slice(1)}
+            </li>
+          ))}
+        </ul>
+      </nav>
       <div className={styles['button-group']}>
         {!isUserAuthorized && (
           <>

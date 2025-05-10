@@ -33,7 +33,7 @@ export default function AppRoutes() {
 
   return (
     <>
-      {!hideHeaderPaths.includes(location.pathname) && <Header />}
+      {!hideHeaderPaths.includes(location.pathname) && <Header location={location.pathname} />}
       <Routes>
         {navigationRoutes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
