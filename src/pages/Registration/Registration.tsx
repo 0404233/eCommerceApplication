@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router';
 import classes from './Registration.module.css';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
+// import { createCustomer } from '../../services/SDK/createClient';
+import { sdk } from '../../services/SDK/createClient';
 
 // import SDKInterface from '../../Client';
-import getToken from '../../services/getToken';
-// import getData from '../../services/createCustomer';
-import getAccessToken from '../../services/createCustomer';
-import createCustomer from '../../services/createCustomer';
+// import getToken from '../../services/getAppToken';
+// import signupCustomer from '../../services/signUpCustomer';
 
 export default function Registration() {
   const [email, setEmail] = useState('');
@@ -19,6 +19,19 @@ export default function Registration() {
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('');
   const [newErrors, setNewErrors] = useState(new Map());
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    if (isSuccessDialogOpen) {
+      timer = setTimeout(() => {
+        closeSuccessDialog();
+      }, 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [isSuccessDialogOpen]);
 
   const navigate = useNavigate();
 
@@ -98,28 +111,54 @@ export default function Registration() {
       //     console.log(body.customer.id);
       //   })
       //   .catch(console.error);
-      const token = await getToken();
-      console.log(token);
+
+      // const token = await getToken();
+      // console.log(token);
+
+      const addresses = [country, city, street, postalCode]
 
       const userData =
       {
         email,
-        password,
         firstName,
         lastName,
-        dateOfBirth: dob
+        password,
+        addresses
       }
 
       // await getAccessToken(password, email)
 
-      createCustomer(
-        token,
-        userData
-      )
+      try {
+
+        // await signupCustomer(token, userData);
+        // createCustomer(userData)
+        //   .then(({ body }) => {
+        //     console.log(body.customer.id);
+        //   })
+        //   .catch(console.error);
+
+        sdk.createCustomer(userData, navigate)
+
+        // setIsSuccessDialogOpen(true);
+
+      } catch (error) {
+        setErrorMessage((error as Error).message || 'Произошла неизвестная ошибка');
+        // setIsErrorDialogOpen(true);
+      }
 
 
       // resetForm();
     }
+  };
+
+
+  const closeErrorDialog = () => {
+    setIsErrorDialogOpen(false);
+    setErrorMessage('');
+  };
+
+  const closeSuccessDialog = () => {
+    setIsSuccessDialogOpen(false);
   };
 
   // const resetForm = () => {
@@ -284,6 +323,21 @@ export default function Registration() {
         Already have an account?{' '}
         <a onClick={() => navigate('/login')}>Sign in</a>
       </p>
+
+      {/* Диалоговое окно для отображения ошибок */}
+      {isErrorDialogOpen && (
+        <dialog open className={classes['error_dialog']}>
+          <p>{errorMessage}</p>
+          <button className={classes['dialog-btn']} onClick={closeErrorDialog}>Close</button>
+        </dialog>
+      )}
+
+      {/* Диалоговое окно для успешного создания аккаунта */}
+      {isSuccessDialogOpen && (
+        <dialog open className={classes['success-dialog']}>
+          <p>Account created successfully</p>
+        </dialog>
+      )}
     </form>
   );
 }

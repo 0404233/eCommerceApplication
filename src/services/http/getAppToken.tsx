@@ -3,7 +3,7 @@ const CLIENT_SECRET = import.meta.env['VITE_CLIENT_SECRET'];
 const CLIENT_ID = import.meta.env['VITE_CLIENT_ID'];
 const SCOPES = import.meta.env['VITE_SCOPES'];
 
-export default async function getToken(): Promise<string> {
+export default async function getAppToken(): Promise<string> {
 
   const credentials = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
 

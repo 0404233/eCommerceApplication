@@ -1,6 +1,10 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import classes from './Login.module.css' assert { type: 'css' };
 import { useNavigate } from 'react-router';
+import { sdk } from '../../services/SDK/createClient';
+import getCustomerToken from '../../services/http/getCustomerToken';
+
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -12,6 +16,14 @@ export default function Login() {
   });
   const [attrLogin, setAttrLogin] = useState('false');
   const [attrPassword, setAttrPassword] = useState('false');
+
+  // useEffect(() => {
+  //   SDKInterface.getInstance().createCustomer({email, password})
+
+  // }, )
+
+
+
 
   const validateEmailAndPassword = (email: string, password: string) => {
     const regexSymbolDog = /^[^\s@]+@[^\s@]+$/;
@@ -79,6 +91,9 @@ export default function Login() {
 
     if (valid) {
       // Здесь можно отправить данные на сервер
+      // getAppToken
+      // getCustomerToken(email, password)
+      sdk.loginCustomer({ email, password }, navigate)
     }
   };
 
