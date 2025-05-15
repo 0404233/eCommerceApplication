@@ -1,13 +1,9 @@
 import { useNavigate } from 'react-router';
 import classes from './Registration.module.css';
 import { FormEvent, useEffect, useState } from 'react';
-// import { createCustomer } from '../../services/SDK/createClient';
 import { sdk } from '../../services/SDK/createClient';
 import { userData } from '../../types/types';
 import { BaseAddress } from '@commercetools/platform-sdk';
-// import SDKInterface from '../../Client';
-// import getToken from '../../services/getAppToken';
-// import signupCustomer from '../../services/signUpCustomer';
 
 export default function Registration() {
   const [email, setEmail] = useState('');
@@ -104,17 +100,6 @@ export default function Registration() {
     e.preventDefault();
 
     if (validateForm()) {
-      // Здесь можно добавить код для отправки формы на сервер
-      // Сбросить поля формы после успешной отправки
-      // SDKInterface.getInstance()
-      //   .createCustomer(email, password)
-      //   .then(({ body }) => {
-      //     console.log(body.customer.id);
-      //   })
-      //   .catch(console.error);
-
-      // const token = await getToken();
-      // console.log(token);
 
       const addresses: BaseAddress[] =
         [
@@ -135,26 +120,14 @@ export default function Registration() {
         addresses
       }
 
-      // await getAccessToken(password, email)
-
       try {
 
-        // await signupCustomer(token, userData);
-        // createCustomer(userData)
-        //   .then(({ body }) => {
-        //     console.log(body.customer.id);
-        //   })
-        //   .catch(console.error);
-
         sdk.createCustomer(userData, navigate)
-
         // setIsSuccessDialogOpen(true);
-
       } catch (error) {
         setErrorMessage((error as Error).message || 'Произошла неизвестная ошибка');
         // setIsErrorDialogOpen(true);
       }
-
 
       // resetForm();
     }

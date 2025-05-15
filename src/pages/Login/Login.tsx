@@ -17,14 +17,6 @@ export default function Login() {
   const [attrLogin, setAttrLogin] = useState('false');
   const [attrPassword, setAttrPassword] = useState('false');
 
-  // useEffect(() => {
-  //   SDKInterface.getInstance().createCustomer({email, password})
-
-  // }, )
-
-
-
-
   const validateEmailAndPassword = (email: string, password: string) => {
     const regexSymbolDog = /^[^\s@]+@[^\s@]+$/;
     const regexSymbolPoint = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -90,9 +82,6 @@ export default function Login() {
     setErrors(findErrors);
 
     if (valid) {
-      // Здесь можно отправить данные на сервер
-      // getAppToken
-      // getCustomerToken(email, password)
       sdk.loginCustomer({ email, password }, navigate)
     }
   };
