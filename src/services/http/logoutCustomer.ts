@@ -1,10 +1,12 @@
+
+
 export async function logoutCustomer(
   token: string,
   tokenTypeHint: 'access_token' | 'refresh_token'
 ) {
   const clientId = import.meta.env['VITE_CLIENT_ID'];
   const clientSecret = import.meta.env['VITE_CLIENT_SECRET'];
-  const authUrl = import.meta.env['VITE_AUTH_URL']; 
+  const authUrl = import.meta.env['VITE_AUTH_URL'];
 
   const credentials = btoa(`${clientId}:${clientSecret}`);
 
@@ -26,6 +28,8 @@ export async function logoutCustomer(
     const errorText = await response.text();
     throw new Error(`Failed to revoke token: ${response.status} - ${errorText}`);
   }
+  
 
   console.log(`✅ Token revoked successfully`);
+
 }

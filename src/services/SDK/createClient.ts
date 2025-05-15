@@ -2,22 +2,22 @@ import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ctpClient } from './ClientBuilder';
 import getCustomerToken from '../http/getCustomerToken';
 import { NavigateFunction } from 'react-router';
+import { userData } from '../../types/types'
 
+// interface userAddresses {
+//   country: string;
+//   city?: string;
+//   street?: string;
+//   postalCode?: string;
+// }
 
-interface userAddresses {
-  country: string;
-  city?: string;
-  street?: string;
-  postalCode?: string;
-}
-
-interface userData {
-  firstname?: string;
-  lastname?: string;
-  email: string;
-  password: string;
-  addresses?: userAddresses[]
-}
+// interface userData {
+//   firstname?: string;
+//   lastname?: string;
+//   email: string;
+//   password: string;
+//   addresses?: userAddresses[]
+// }
 
 export default class SDKInterface {
   // static instance: SDKInterface;

@@ -3,7 +3,8 @@ import classes from './Registration.module.css';
 import { FormEvent, useEffect, useState } from 'react';
 // import { createCustomer } from '../../services/SDK/createClient';
 import { sdk } from '../../services/SDK/createClient';
-
+import { userData } from '../../types/types';
+import { BaseAddress } from '@commercetools/platform-sdk';
 // import SDKInterface from '../../Client';
 // import getToken from '../../services/getAppToken';
 // import signupCustomer from '../../services/signUpCustomer';
@@ -14,7 +15,7 @@ export default function Registration() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [dob, setDob] = useState(new Date());
-  const [street, setStreet] = useState('');
+  const [streetName, setstreetName] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('');
@@ -75,7 +76,7 @@ export default function Registration() {
       newMap.set('dob', 'You must be at least 13 years old.');
     }
 
-    if (street.length === 0) {
+    if (streetName.length === 0) {
       newMap.set('street', 'Street must contain at least one character.');
     }
 
@@ -115,9 +116,17 @@ export default function Registration() {
       // const token = await getToken();
       // console.log(token);
 
-      const addresses = [country, city, street, postalCode]
+      const addresses: BaseAddress[] =
+        [
+          {
+            country,
+            city,
+            streetName,
+            postalCode
+          }
+        ]
 
-      const userData =
+      const userData: userData =
       {
         email,
         firstName,
@@ -261,7 +270,7 @@ export default function Registration() {
             type="text"
             placeholder="Arbatskaya"
             className={`${classes['form-register__input']} ${newErrors.has('street') ? classes['input-error'] : ''}`}
-            onChange={(e) => setStreet(e.target.value)}
+            onChange={(e) => setstreetName(e.target.value)}
           />
           {newErrors.has('street') && (
             <p className={classes['form-register__error']}>
