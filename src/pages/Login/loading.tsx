@@ -38,7 +38,9 @@ export default function DelayingAppearance() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Box
+      sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+    >
       <Box sx={{ height: 40 }}>
         <Fade
           in={loading}

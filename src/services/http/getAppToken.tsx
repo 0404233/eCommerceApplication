@@ -4,7 +4,6 @@ const CLIENT_ID = import.meta.env['VITE_CLIENT_ID'];
 const SCOPES = import.meta.env['VITE_SCOPES'];
 
 export default async function getAppToken(): Promise<string> {
-
   const credentials = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
 
   const params = new URLSearchParams({

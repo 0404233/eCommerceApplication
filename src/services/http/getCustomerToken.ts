@@ -3,16 +3,18 @@ const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
 const CLIENT_SECRET = import.meta.env['VITE_CLIENT_SECRET'];
 const CLIENT_ID = import.meta.env['VITE_CLIENT_ID'];
 
-export default async function getCustomerToken(username: string, password: string) {
-
+export default async function getCustomerToken(
+  username: string,
+  password: string,
+) {
   const credentials = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
 
   const params = new URLSearchParams({
     grant_type: 'password',
     username: username,
     password: password,
-    scope: `view_published_products:${PROJECT_KEY} manage_my_orders:${PROJECT_KEY} manage_my_profile:${PROJECT_KEY}`
-  })
+    scope: `view_published_products:${PROJECT_KEY} manage_my_orders:${PROJECT_KEY} manage_my_profile:${PROJECT_KEY}`,
+  });
 
   return await fetch(`${AUTH_URL}/oauth/${PROJECT_KEY}/customers/token`, {
     method: 'POST',
@@ -22,20 +24,20 @@ export default async function getCustomerToken(username: string, password: strin
     },
     body: params.toString(),
   })
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return response.json();
     })
-    .then(data => {
+    .then((data) => {
       console.log('Success:', data.access_token);
       console.log('Success:', data);
       // return data.access_token;
       document.cookie = `customer_token=${data.access_token}; path=/; secure; SameSite=Strict`;
       document.cookie = `customer_refresh_token=${data.refresh_token}; path=/; secure; SameSite=Strict`;
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('Error:', error);
     });
 }

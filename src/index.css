@@ -34,9 +34,12 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+button {
+  cursor: pointer;
 }
 
 button:hover {
@@ -46,4 +49,16 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+h1 {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

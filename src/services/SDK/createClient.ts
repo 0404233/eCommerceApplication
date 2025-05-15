@@ -2,7 +2,7 @@ import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ctpClient } from './ClientBuilder';
 import getCustomerToken from '../http/getCustomerToken';
 import { NavigateFunction } from 'react-router';
-import { userData } from '../../types/types'
+import { userData } from '../../types/types';
 
 // interface userAddresses {
 //   country: string;
@@ -23,10 +23,9 @@ export default class SDKInterface {
   // static instance: SDKInterface;
   private projectKey = import.meta.env['VITE_PROJECT_KEY'];
 
-  private apiRoot =
-    createApiBuilderFromCtpClient(ctpClient)
-      .withProjectKey({ projectKey: this.projectKey });
-
+  private apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+    projectKey: this.projectKey,
+  });
 
   // public static getInstance(): SDKInterface {
   //   if (!SDKInterface.instance) {
@@ -44,13 +43,13 @@ export default class SDKInterface {
         .customers()
         .post({
           body: {
-            ...userData
+            ...userData,
           },
         })
-        .execute()
+        .execute();
 
       if (res.statusCode === 201) {
-        navigate('/login')
+        navigate('/login');
       }
 
       // navigate('/login')
@@ -72,19 +71,18 @@ export default class SDKInterface {
         .login()
         .post({
           body: {
-            ...userData
+            ...userData,
           },
         })
         .execute();
 
       console.log('Customer signed in:', response.body.customer);
-      getCustomerToken(email, password)
-      navigate('/main')
+      getCustomerToken(email, password);
+      navigate('/main');
     } catch (error) {
       console.error('Login failed:', error);
     }
   }
-
 }
 
 export const sdk = new SDKInterface();

@@ -1,11 +1,9 @@
-
-
 export interface userData {
   firstName?: string;
   lastName?: string;
   email: string;
   password: string;
-  addresses?: BaseAddress[]
+  addresses?: BaseAddress[];
 }
 
 interface BaseAddress {
@@ -13,5 +11,4 @@ interface BaseAddress {
   city?: string;
   streetName?: string;
   postalCode?: string;
-
 }

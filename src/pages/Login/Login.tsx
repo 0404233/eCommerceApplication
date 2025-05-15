@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { sdk } from '../../services/SDK/createClient';
 import getCustomerToken from '../../services/http/getCustomerToken';
 
-
+import { userData } from '../../userData';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -82,7 +82,7 @@ export default function Login() {
     setErrors(findErrors);
 
     if (valid) {
-      sdk.loginCustomer({ email, password }, navigate)
+      sdk.loginCustomer({ email, password }, navigate);
     }
   };
 
@@ -106,6 +106,7 @@ export default function Login() {
         onChange={(e) => setEmail(e.target.value)}
         data-error={attrLogin}
       />
+
       {errors.email && (
         <span className={classes['form-login__error']}>{errors.email}</span>
       )}

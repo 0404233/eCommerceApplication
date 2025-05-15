@@ -100,39 +100,36 @@ export default function Registration() {
     e.preventDefault();
 
     if (validateForm()) {
+      const addresses: BaseAddress[] = [
+        {
+          country,
+          city,
+          streetName,
+          postalCode,
+        },
+      ];
 
-      const addresses: BaseAddress[] =
-        [
-          {
-            country,
-            city,
-            streetName,
-            postalCode
-          }
-        ]
-
-      const userData: userData =
-      {
+      const userData: userData = {
         email,
         firstName,
         lastName,
         password,
-        addresses
-      }
+        addresses,
+      };
 
       try {
-
-        sdk.createCustomer(userData, navigate)
+        sdk.createCustomer(userData, navigate);
         // setIsSuccessDialogOpen(true);
       } catch (error) {
-        setErrorMessage((error as Error).message || 'Произошла неизвестная ошибка');
+        setErrorMessage(
+          (error as Error).message || 'Произошла неизвестная ошибка',
+        );
         // setIsErrorDialogOpen(true);
       }
 
       // resetForm();
     }
   };
-
 
   const closeErrorDialog = () => {
     setIsErrorDialogOpen(false);
@@ -310,7 +307,9 @@ export default function Registration() {
       {isErrorDialogOpen && (
         <dialog open className={classes['error_dialog']}>
           <p>{errorMessage}</p>
-          <button className={classes['dialog-btn']} onClick={closeErrorDialog}>Close</button>
+          <button className={classes['dialog-btn']} onClick={closeErrorDialog}>
+            Close
+          </button>
         </dialog>
       )}
 
@@ -323,4 +322,3 @@ export default function Registration() {
     </form>
   );
 }
-

@@ -1,4 +1,3 @@
-
 export function getTokenFromCookie(): string | null {
   const match = document.cookie.match(/(?:^|; )customer_token=([^;]*)/);
 

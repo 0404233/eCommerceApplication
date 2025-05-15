@@ -1,8 +1,6 @@
-
-
 export async function logoutCustomer(
   token: string,
-  tokenTypeHint: 'access_token' | 'refresh_token'
+  tokenTypeHint: 'access_token' | 'refresh_token',
 ) {
   const clientId = import.meta.env['VITE_CLIENT_ID'];
   const clientSecret = import.meta.env['VITE_CLIENT_SECRET'];
@@ -18,7 +16,7 @@ export async function logoutCustomer(
   const response = await fetch(`${authUrl}/oauth/token/revoke`, {
     method: 'POST',
     headers: {
-      'Authorization': `Basic ${credentials}`,
+      Authorization: `Basic ${credentials}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: body.toString(),
@@ -26,10 +24,10 @@ export async function logoutCustomer(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Failed to revoke token: ${response.status} - ${errorText}`);
+    throw new Error(
+      `Failed to revoke token: ${response.status} - ${errorText}`,
+    );
   }
-  
 
   console.log(`✅ Token revoked successfully`);
-
 }
