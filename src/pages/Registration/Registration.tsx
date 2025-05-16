@@ -102,12 +102,13 @@ export default function Registration() {
     if (validateForm()) {
       const addresses: BaseAddress[] = [
         {
-          country,
+          country: country !== 'Belarus' ? country.slice(0, 2).toUpperCase() : 'BY',
           city,
           streetName,
           postalCode,
-        },
+        }
       ];
+
 
       const userData: userData = {
         email,

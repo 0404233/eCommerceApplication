@@ -1,3 +1,5 @@
+import { BaseAddress } from "@commercetools/platform-sdk";
+
 export interface userData {
   firstName?: string;
   lastName?: string;
@@ -6,9 +8,9 @@ export interface userData {
   addresses?: BaseAddress[];
 }
 
-interface BaseAddress {
-  country: string;
-  city?: string;
-  streetName?: string;
-  postalCode?: string;
-}
+// interface BaseAddress {
+//   country: string;
+//   city?: string;
+//   streetName?: string;
+//   postalCode?: string;
+// }

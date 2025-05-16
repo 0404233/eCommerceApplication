@@ -1,9 +1,7 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import classes from './Login.module.css' assert { type: 'css' };
 import { useNavigate } from 'react-router';
 import { sdk } from '../../services/SDK/createClient';
-import getCustomerToken from '../../services/http/getCustomerToken';
-
 import { userData } from '../../userData';
 
 export default function Login() {
@@ -82,6 +80,7 @@ export default function Login() {
     setErrors(findErrors);
 
     if (valid) {
+      userData.setUserLogin(true);
       sdk.loginCustomer({ email, password }, navigate);
     }
   };

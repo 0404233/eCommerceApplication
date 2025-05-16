@@ -4,16 +4,16 @@ import styles from './Header.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { userData } from '../../../userData';
+import { getTokenFromCookie } from '../../../services/http/getTokenFromCookie';
+import { logoutCustomer } from '../../../services/http/logoutCustomer';
 
-type Props = {
-  location: string;
-};
-
-export default function Header({ location }: Props): ReactElement {
+export default function Header(location: string): ReactElement {
   const [isUserAuthorized, setIsUserAuthorized] = useState(false);
+
   useEffect(() => {
     setIsUserAuthorized(userData.getUserData());
   }, []);
+
   const navigate = useNavigate();
 
   const navigationRoutes = [
@@ -24,10 +24,17 @@ export default function Header({ location }: Props): ReactElement {
     { path: '/about' },
   ];
 
-  function onLogout() {
-    userData.setUserLogin(false);
-    setIsUserAuthorized(userData.getUserData());
-  }
+  const handleLogout = () => {
+    const token = getTokenFromCookie();
+
+    if (token) {
+      logoutCustomer(token, 'access_token');
+      userData.setUserLogin(false);
+      userData.clearCookie();
+      setIsUserAuthorized(false);
+      navigate('/main')
+    }
+  };
 
   return (
     <header className={styles['header-layout']}>
@@ -51,7 +58,7 @@ export default function Header({ location }: Props): ReactElement {
               className={`${styles['page-link']} ${path === location ? styles['selected-page'] : ''}`}
               onClick={() => navigate(path)}
             >
-              {path.slice(1)}
+              {path.slice(1, 2).toLocaleUpperCase() + path.substring(2)}
             </li>
           ))}
         </ul>
@@ -74,7 +81,7 @@ export default function Header({ location }: Props): ReactElement {
           </>
         )}
         {isUserAuthorized && (
-          <button className={styles['button-header-route']} onClick={onLogout}>
+          <button className={styles['button-header-route']} onClick={handleLogout}>
             Logout
           </button>
         )}
