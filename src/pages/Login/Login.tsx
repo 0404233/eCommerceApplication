@@ -135,9 +135,11 @@ export default function Login() {
       <button type="submit" className={classes['form-login__btn']}>
         Sign in
       </button>
-      <p>
+      <p style={{ textAlign: "center" }}>
         Don't have an account?{' '}
         <a onClick={() => navigate('/register')}>Sign up</a>
+        <br />
+        <a style={{ fontSize: "20px" }} onClick={() => navigate('/main')}>Go to Store</a>
       </p>
     </form>
   );

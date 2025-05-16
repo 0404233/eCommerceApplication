@@ -299,9 +299,11 @@ export default function Registration() {
       <button className={classes['form-register__btn']} type="submit">
         Sign up
       </button>
-      <p>
+      <p style={{ textAlign: "center" }}>
         Already have an account?{' '}
-        <a onClick={() => navigate('/login')}>Sign in</a>
+        <a onClick={() => navigate('/login')}>Sign up</a>
+        <br />
+        <a style={{ fontSize: "20px" }} onClick={() => navigate('/main')}>Go to Store</a>
       </p>
 
       {/* Диалоговое окно для отображения ошибок */}

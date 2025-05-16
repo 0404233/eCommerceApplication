@@ -14,6 +14,7 @@ class UserData {
     document.cookie = 'customer_token=; Max-Age=0; path=/';
     document.cookie = 'customer_refresh_token=; Max-Age=0; path=/';
   }
+
 }
 
 export const userData = new UserData();

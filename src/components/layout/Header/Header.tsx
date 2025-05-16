@@ -7,7 +7,11 @@ import { userData } from '../../../userData';
 import { getTokenFromCookie } from '../../../services/http/getTokenFromCookie';
 import { logoutCustomer } from '../../../services/http/logoutCustomer';
 
-export default function Header(location: string): ReactElement {
+type HeaderProps = {
+  location: string;
+};
+
+export default function Header({ location }: HeaderProps): ReactElement {
   const [isUserAuthorized, setIsUserAuthorized] = useState(false);
 
   useEffect(() => {
