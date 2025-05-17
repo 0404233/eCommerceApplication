@@ -5,7 +5,11 @@ import { sdk } from '../../services/sdk/create-client';
 import { UserData } from '../../types/types';
 import { BaseAddress } from '@commercetools/platform-sdk';
 
-export default function Registration() {
+type Props = {
+  changeLoginStatus: (status: boolean) => void;
+};
+
+export default function Registration({ changeLoginStatus }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -102,13 +106,13 @@ export default function Registration() {
     if (validateForm()) {
       const addresses: BaseAddress[] = [
         {
-          country: country !== 'Belarus' ? country.slice(0, 2).toUpperCase() : 'BY',
+          country:
+            country !== 'Belarus' ? country.slice(0, 2).toUpperCase() : 'BY',
           city,
           streetName,
           postalCode,
-        }
+        },
       ];
-
 
       const userData: UserData = {
         email,
@@ -119,7 +123,9 @@ export default function Registration() {
       };
 
       try {
-        sdk.createCustomer(userData, navigate);
+        await sdk.createCustomer(userData, navigate).then((res) => {
+          if (res) changeLoginStatus(res);
+        });
         setIsSuccessDialogOpen(true);
       } catch (error) {
         setErrorMessage(
@@ -127,7 +133,6 @@ export default function Registration() {
         );
         setIsErrorDialogOpen(true);
       }
-
     }
   };
 
@@ -139,7 +144,6 @@ export default function Registration() {
   const closeSuccessDialog = () => {
     setIsSuccessDialogOpen(false);
   };
-
 
   return (
     <form className={classes['form-register']} onSubmit={handleSubmit}>
@@ -286,11 +290,13 @@ export default function Registration() {
       <button className={classes['form-register__btn']} type="submit">
         Sign up
       </button>
-      <p style={{ textAlign: "center" }}>
+      <p style={{ textAlign: 'center' }}>
         Already have an account?{' '}
         <a onClick={() => navigate('/login')}>Sign up</a>
         <br />
-        <a style={{ fontSize: "20px" }} onClick={() => navigate('/main')}>Go to Store</a>
+        <a style={{ fontSize: '20px' }} onClick={() => navigate('/main')}>
+          Go to Store
+        </a>
       </p>
 
       {isErrorDialogOpen && (

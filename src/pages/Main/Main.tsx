@@ -1,6 +1,5 @@
+import { ReactElement } from 'react';
 
-export default function MainPage() {
-  return (
-    <h1>Main page</h1>
-  );
+export default function MainPage(): ReactElement {
+  return <h1>Main page</h1>;
 }

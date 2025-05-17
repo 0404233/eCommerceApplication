@@ -1,19 +1,28 @@
 import { Route, Routes, useLocation } from 'react-router';
 import { lazy } from 'react';
-import Header from '../components/layout/header/Header';
-import Footer from '../components/layout/footer/Footer';
+import Header from '../components/layout/Header/Header';
+import Footer from '../components/layout/Footer/Footer';
 
-const Login = lazy(() => import('../pages/login/Login'));
-const Registration = lazy(() => import('../pages/registration/Registration'));
-const MainPage = lazy(() => import('../pages/main/Main'));
-const CatalogProduct = lazy(() => import('../pages/catalog-product/CatalogProduct'));
-const Basket = lazy(() => import('../pages/basket/Basket'));
+const Login = lazy(() => import('../pages/Login/Login'));
+const Registration = lazy(() => import('../pages/Registration/Registration'));
+const MainPage = lazy(() => import('../pages/Main/Main'));
+const CatalogProduct = lazy(
+  () => import('../pages/catalog-product/CatalogProduct'),
+);
+const Basket = lazy(() => import('../pages/Basket/Basket'));
 const AboutUs = lazy(() => import('../pages/about-us/AboutUs'));
 const UserProfile = lazy(() => import('../pages/user-profile/UserProfile'));
-const DetailedProduct = lazy(() => import('../pages/detailed-product/DetailedProduct'));
+const DetailedProduct = lazy(
+  () => import('../pages/detailed-product/DetailedProduct'),
+);
 const ErrorPage = lazy(() => import('../pages/error-page/ErrorPage'));
 
-export default function AppRoutes() {
+type Props = {
+  loginStatus: boolean;
+  changeLoginStatus: (status: boolean) => void;
+};
+
+export default function AppRoutes({ loginStatus, changeLoginStatus }: Props) {
   const location = useLocation();
 
   const hideHeaderPaths = ['/login', '/register', '*'];
@@ -21,8 +30,14 @@ export default function AppRoutes() {
   const navigationRoutes = [
     { path: '/', element: <MainPage /> },
     { path: '/main', element: <MainPage /> },
-    { path: '/login', element: <Login /> },
-    { path: '/register', element: <Registration /> },
+    {
+      path: '/login',
+      element: <Login changeLoginStatus={changeLoginStatus} />,
+    },
+    {
+      path: '/register',
+      element: <Registration changeLoginStatus={changeLoginStatus} />,
+    },
     { path: '/user', element: <UserProfile /> },
     { path: '/catalog', element: <CatalogProduct /> },
     { path: '/product', element: <DetailedProduct /> },
@@ -34,7 +49,11 @@ export default function AppRoutes() {
   return (
     <>
       {!hideHeaderPaths.includes(location.pathname) && (
-        <Header location={location.pathname} />
+        <Header
+          location={location.pathname}
+          loginStatus={loginStatus}
+          changeLoginStatus={changeLoginStatus}
+        />
       )}
       <Routes>
         {navigationRoutes.map((route) => (

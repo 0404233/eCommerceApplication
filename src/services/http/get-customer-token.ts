@@ -1,3 +1,5 @@
+import { createTokenCookie } from './get-token-from-cookie';
+
 const PROJECT_KEY = import.meta.env['VITE_PROJECT_KEY'];
 const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
 const CLIENT_SECRET = import.meta.env['VITE_CLIENT_SECRET'];
@@ -31,8 +33,7 @@ export default async function getCustomerToken(
       return response.json();
     })
     .then((data) => {
-      document.cookie = `customer_token=${data.access_token}; path=/; secure; SameSite=Strict`;
-      document.cookie = `customer_refresh_token=${data.refresh_token}; path=/; secure; SameSite=Strict`;
+      createTokenCookie(data.access_token, data.refresh_token);
     })
     .catch((error) => {
       console.error('Error:', error);

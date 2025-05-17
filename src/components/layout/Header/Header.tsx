@@ -3,21 +3,24 @@ import HomeIcon from '../../../assets/svg/home.svg?react';
 import styles from './header.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { userData } from '../../../utils/user-data';
-import { getTokenFromCookie } from '../../../services/http/get-token-from-cookie';
+import { userLoginStatus } from '../../../utils/user-data';
+import {
+  deleteTokenCookie,
+  getTokenFromCookie,
+} from '../../../services/http/get-token-from-cookie';
 import { logoutCustomer } from '../../../services/http/logout-customer';
 
 type HeaderProps = {
   location: string;
+  loginStatus: boolean;
+  changeLoginStatus: (status: boolean) => void;
 };
 
-export default function Header({ location }: HeaderProps): ReactElement {
-  const [isUserAuthorized, setIsUserAuthorized] = useState(false);
-
-  useEffect(() => {
-    setIsUserAuthorized(userData.getUserData());
-  }, []);
-
+export default function Header({
+  location,
+  loginStatus,
+  changeLoginStatus,
+}: HeaderProps): ReactElement {
   const navigate = useNavigate();
 
   const navigationRoutes = [
@@ -30,13 +33,10 @@ export default function Header({ location }: HeaderProps): ReactElement {
 
   const handleLogout = () => {
     const token = getTokenFromCookie();
-
     if (token) {
-      logoutCustomer(token, 'access_token');
-      userData.setUserLogin(false);
-      userData.clearCookie();
-      setIsUserAuthorized(false);
-      navigate('/main')
+      deleteTokenCookie();
+      changeLoginStatus(false);
+      navigate('/main');
     }
   };
 
@@ -68,7 +68,7 @@ export default function Header({ location }: HeaderProps): ReactElement {
         </ul>
       </nav>
       <div className={styles['button-group']}>
-        {!isUserAuthorized && (
+        {!loginStatus && (
           <>
             <button
               className={styles['button-header-route']}
@@ -84,8 +84,11 @@ export default function Header({ location }: HeaderProps): ReactElement {
             </button>
           </>
         )}
-        {isUserAuthorized && (
-          <button className={styles['button-header-route']} onClick={handleLogout}>
+        {loginStatus && (
+          <button
+            className={styles['button-header-route']}
+            onClick={handleLogout}
+          >
             Logout
           </button>
         )}

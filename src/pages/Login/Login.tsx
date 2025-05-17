@@ -1,10 +1,14 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import classes from './login.module.css';
 import { useNavigate } from 'react-router';
 import { sdk } from '../../services/sdk/create-client';
-import { userData } from '../../utils/user-data';
+import { userLoginStatus } from '../../utils/user-data';
 
-export default function Login() {
+type Props = {
+  changeLoginStatus: (status: boolean) => void;
+};
+
+export default function Login({ changeLoginStatus }: Props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +18,16 @@ export default function Login() {
   });
   const [attrLogin, setAttrLogin] = useState('false');
   const [attrPassword, setAttrPassword] = useState('false');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setTimeout(() => {
+      const loginStatus = userLoginStatus.getUserData();
+      if (loginStatus === true) {
+        navigate('/');
+      }
+    }, 500);
+  }, []);
 
   const validateEmailAndPassword = (email: string, password: string) => {
     const regexSymbolDog = /^[^\s@]+@[^\s@]+$/;
@@ -82,24 +96,21 @@ export default function Login() {
     if (valid) {
       const result = await sdk.loginCustomer({ email, password }, navigate);
 
-      if (result !== true) {
+      if (result && result !== true) {
         setErrors((prev) => ({
           ...prev,
           password: result,
         }));
         setAttrPassword('true');
       } else {
-        userData.setUserLogin(true);
+        changeLoginStatus(true);
       }
     }
   };
 
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  const navigate = useNavigate();
 
   return (
     <form className={classes['form-login']} onSubmit={handleSubmit}>
@@ -146,11 +157,13 @@ export default function Login() {
       <button type="submit" className={classes['form-login__btn']}>
         Sign in
       </button>
-      <p style={{ textAlign: "center" }}>
+      <p style={{ textAlign: 'center' }}>
         Don't have an account?{' '}
         <a onClick={() => navigate('/register')}>Sign up</a>
         <br />
-        <a style={{ fontSize: "20px" }} onClick={() => navigate('/main')}>Go to Store</a>
+        <a style={{ fontSize: '20px' }} onClick={() => navigate('/main')}>
+          Go to Store
+        </a>
       </p>
     </form>
   );

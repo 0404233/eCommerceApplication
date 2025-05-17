@@ -1,9 +1,42 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import './App.css';
 import AppRoutes from './routes/Routes';
+import { sdk } from './services/sdk/create-client';
+import { userLoginStatus } from './utils/user-data';
+import LoadingSpinner from './components/common/loading-spinner/LoadingSpinner';
 
 function App(): ReactElement {
-  return <AppRoutes />;
+  const [isLoading, setIsLoading] = useState(true);
+  const [loginStatus, setLoginStatus] = useState(userLoginStatus.getUserData());
+  const changeLoginStatus = (status: boolean) => {
+    userLoginStatus.setUserLogin(status);
+    setLoginStatus(status);
+  };
+  useEffect(() => {
+    sdk.apiRoot
+      .me()
+      .get()
+      .execute()
+      .then((res) => {
+        if (res.statusCode === 200) {
+          changeLoginStatus(true);
+        } else {
+          changeLoginStatus(false);
+        }
+      });
+    setIsLoading(false);
+  }, []);
+  return (
+    <>
+      {isLoading && <LoadingSpinner />}
+      {!isLoading && (
+        <AppRoutes
+          loginStatus={loginStatus}
+          changeLoginStatus={changeLoginStatus}
+        />
+      )}
+    </>
+  );
 }
 
 export default App;
