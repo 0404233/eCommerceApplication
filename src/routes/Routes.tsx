@@ -6,15 +6,11 @@ import Footer from '../components/layout/Footer/Footer';
 const Login = lazy(() => import('../pages/Login/Login'));
 const Registration = lazy(() => import('../pages/Registration/Registration'));
 const MainPage = lazy(() => import('../pages/Main/Main'));
-const CatalogProduct = lazy(
-  () => import('../pages/CatalogProduct/CatalogProduct'),
-);
+const CatalogProduct = lazy(() => import('../pages/CatalogProduct/CatalogProduct'));
 const Basket = lazy(() => import('../pages/Basket/Basket'));
 const AboutUs = lazy(() => import('../pages/AboutUs/AboutUs'));
 const UserProfile = lazy(() => import('../pages/UserProfile/UserProfile'));
-const DetailedProduct = lazy(
-  () => import('../pages/DetailedProduct/DetailedProduct'),
-);
+const DetailedProduct = lazy(() => import('../pages/DetailedProduct/DetailedProduct'));
 const ErrorPage = lazy(() => import('../pages/ErrorPage/ErrorPage'));
 
 export default function AppRoutes() {

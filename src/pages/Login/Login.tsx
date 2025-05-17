@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react';
-import classes from './Login.module.css' assert { type: 'css' };
+import classes from './login.module.css';
 import { useNavigate } from 'react-router';
-import { sdk } from '../../services/SDK/createClient';
-import { userData } from '../../userData';
+import { sdk } from '../../services/sdk/create-client';
+import { userData } from '../../utils/user-data';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -57,7 +57,7 @@ export default function Login() {
     return newErrors;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let valid = true;
 
@@ -80,10 +80,20 @@ export default function Login() {
     setErrors(findErrors);
 
     if (valid) {
-      userData.setUserLogin(true);
-      sdk.loginCustomer({ email, password }, navigate);
+      const result = await sdk.loginCustomer({ email, password }, navigate);
+
+      if (result !== true) {
+        setErrors((prev) => ({
+          ...prev,
+          password: result,
+        }));
+        setAttrPassword('true');
+      } else {
+        userData.setUserLogin(true);
+      }
     }
   };
+
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -128,6 +138,7 @@ export default function Login() {
           {showPassword ? '🔓' : '🔒'}
         </span>
       </div>
+
       {errors.password && (
         <span className={classes['form-login__error']}>{errors.password}</span>
       )}

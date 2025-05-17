@@ -28,6 +28,4 @@ export async function logoutCustomer(
       `Failed to revoke token: ${response.status} - ${errorText}`,
     );
   }
-
-  console.log(`✅ Token revoked successfully`);
 }

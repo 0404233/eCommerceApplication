@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router';
-import classes from './Registration.module.css';
+import classes from './registration.module.css';
 import { FormEvent, useEffect, useState } from 'react';
-import { sdk } from '../../services/SDK/createClient';
-import { userData } from '../../types/types';
+import { sdk } from '../../services/sdk/create-client';
+import { UserData } from '../../types/types';
 import { BaseAddress } from '@commercetools/platform-sdk';
 
 export default function Registration() {
@@ -110,7 +110,7 @@ export default function Registration() {
       ];
 
 
-      const userData: userData = {
+      const userData: UserData = {
         email,
         firstName,
         lastName,
@@ -120,15 +120,14 @@ export default function Registration() {
 
       try {
         sdk.createCustomer(userData, navigate);
-        // setIsSuccessDialogOpen(true);
+        setIsSuccessDialogOpen(true);
       } catch (error) {
         setErrorMessage(
           (error as Error).message || 'Произошла неизвестная ошибка',
         );
-        // setIsErrorDialogOpen(true);
+        setIsErrorDialogOpen(true);
       }
 
-      // resetForm();
     }
   };
 
@@ -141,18 +140,6 @@ export default function Registration() {
     setIsSuccessDialogOpen(false);
   };
 
-  // const resetForm = () => {
-  //   setEmail('');
-  //   setPassword('');
-  //   setFirstName('');
-  //   setLastName('');
-  //   setDob(new Date());
-  //   setStreet('');
-  //   setCity('');
-  //   setPostalCode('');
-  //   setCountry('');
-  //   setNewErrors(new Map());
-  // };
 
   return (
     <form className={classes['form-register']} onSubmit={handleSubmit}>
@@ -306,7 +293,6 @@ export default function Registration() {
         <a style={{ fontSize: "20px" }} onClick={() => navigate('/main')}>Go to Store</a>
       </p>
 
-      {/* Диалоговое окно для отображения ошибок */}
       {isErrorDialogOpen && (
         <dialog open className={classes['error_dialog']}>
           <p>{errorMessage}</p>
@@ -316,7 +302,6 @@ export default function Registration() {
         </dialog>
       )}
 
-      {/* Диалоговое окно для успешного создания аккаунта */}
       {isSuccessDialogOpen && (
         <dialog open className={classes['success-dialog']}>
           <p>Account created successfully</p>

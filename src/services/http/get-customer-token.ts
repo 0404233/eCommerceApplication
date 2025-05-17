@@ -31,9 +31,6 @@ export default async function getCustomerToken(
       return response.json();
     })
     .then((data) => {
-      console.log('Success:', data.access_token);
-      console.log('Success:', data);
-      // return data.access_token;
       document.cookie = `customer_token=${data.access_token}; path=/; secure; SameSite=Strict`;
       document.cookie = `customer_refresh_token=${data.refresh_token}; path=/; secure; SameSite=Strict`;
     })

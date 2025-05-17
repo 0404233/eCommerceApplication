@@ -1,4 +1,4 @@
-import classes from './ErrorPage.module.css';
+import classes from './error-page.module.css';
 import { useNavigate } from 'react-router';
 
 export default function ErrorPage() {

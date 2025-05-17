@@ -1,11 +1,11 @@
 import { ReactElement, useEffect } from 'react';
-import HomeIcon from '../../../assets/home.svg?react';
-import styles from './Header.module.css';
+import HomeIcon from '../../../assets/svg/home.svg?react';
+import styles from './header.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { userData } from '../../../userData';
-import { getTokenFromCookie } from '../../../services/http/getTokenFromCookie';
-import { logoutCustomer } from '../../../services/http/logoutCustomer';
+import { userData } from '../../../utils/user-data';
+import { getTokenFromCookie } from '../../../services/http/get-token-from-cookie';
+import { logoutCustomer } from '../../../services/http/logout-customer';
 
 type HeaderProps = {
   location: string;
@@ -50,7 +50,7 @@ export default function Header({ location }: HeaderProps): ReactElement {
           width={30}
           height={30}
           fill={
-            location === '/main' || location === '/' ? '#00c700' : '#FFFFFF'
+            location === '/main' || location === '/' ? '#737aff' : '#FFFFFF'
           }
         />
       </button>

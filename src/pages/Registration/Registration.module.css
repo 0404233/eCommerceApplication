@@ -70,7 +70,7 @@ select:focus {
 }
 
 .error_dialog,
-.succses-dialog {
+.success-dialog {
   top: 40%;
   width: 30rem;
   padding: 2rem;
@@ -80,7 +80,7 @@ select:focus {
   text-align: center;
 }
 
-.succses-dialog {
+.success-dialog {
   box-shadow: 0 0 30px #31ed57;
 }
 
