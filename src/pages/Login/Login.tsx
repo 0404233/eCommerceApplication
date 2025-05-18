@@ -3,6 +3,8 @@ import classes from './login.module.css';
 import { useNavigate } from 'react-router';
 import { sdk } from '../../services/sdk/create-client';
 import { userLoginStatus } from '../../utils/user-data';
+import { LoginResponse } from '../../types/loginResponse';
+import AuthAlert from '../../components/common/auth-alert/AuthAlert';
 
 type Props = {
   changeLoginStatus: (status: boolean) => void;
@@ -18,6 +20,11 @@ export default function Login({ changeLoginStatus }: Props) {
   });
   const [attrLogin, setAttrLogin] = useState('false');
   const [attrPassword, setAttrPassword] = useState('false');
+  const [isOpenAlert, setIsOpenAlert] = useState<boolean>(false);
+  const [loginResponse, setLoginResponse] = useState<LoginResponse>({
+    success: false,
+    message: '',
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +33,7 @@ export default function Login({ changeLoginStatus }: Props) {
       if (loginStatus === true) {
         navigate('/');
       }
-    }, 500);
+    }, 300);
   }, []);
 
   const validateEmailAndPassword = (email: string, password: string) => {
@@ -96,14 +103,17 @@ export default function Login({ changeLoginStatus }: Props) {
     if (valid) {
       const result = await sdk.loginCustomer({ email, password }, navigate);
 
-      if (result && result !== true) {
-        setErrors((prev) => ({
-          ...prev,
-          password: result,
-        }));
+      if (result && result.success !== true) {
+        setErrors({
+          email: '',
+          password: '',
+        });
         setAttrPassword('true');
+        setIsOpenAlert(true);
+        setLoginResponse(result);
       } else {
         changeLoginStatus(true);
+        navigate('/');
       }
     }
   };
@@ -112,8 +122,15 @@ export default function Login({ changeLoginStatus }: Props) {
     setShowPassword(!showPassword);
   };
 
+  const onCloseAlert = () => {
+    setIsOpenAlert(false);
+  };
+
   return (
     <form className={classes['form-login']} onSubmit={handleSubmit}>
+      {isOpenAlert && (
+        <AuthAlert response={loginResponse} onCloseAlert={onCloseAlert} />
+      )}
       <h1>Sign in</h1>
 
       <label htmlFor="email">Email</label>

@@ -7,6 +7,7 @@ import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
 import { NavigateFunction } from 'react-router';
 import { UserData } from '../../types/types';
+import { LoginResponse } from '../../types/loginResponse';
 
 export default class SDKInterface {
   private projectKey = import.meta.env['VITE_PROJECT_KEY'];
@@ -17,9 +18,9 @@ export default class SDKInterface {
   async createCustomer(
     userData: UserData,
     navigate: NavigateFunction,
-  ): Promise<void | boolean> {
+  ): Promise<LoginResponse> {
     try {
-      const res: ClientResponse<CustomerSignInResult> = await this.apiRoot
+      await this.apiRoot
         .customers()
         .post({
           body: {
@@ -27,17 +28,25 @@ export default class SDKInterface {
           },
         })
         .execute();
-      const loginStatus = await this.loginCustomer(userData, navigate);
-      return loginStatus;
+      await this.loginCustomer(userData, navigate);
+      return {
+        success: true,
+        message: 'The account was created successfully!',
+      };
     } catch (error) {
-      console.error(error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      return {
+        success: false,
+        message: errorMessage,
+      };
     }
   }
 
   async loginCustomer(
     userData: UserData,
     navigate: NavigateFunction,
-  ): Promise<void | boolean> {
+  ): Promise<LoginResponse> {
     const { email, password } = userData;
 
     try {
@@ -46,16 +55,23 @@ export default class SDKInterface {
         .login()
         .post({
           body: {
-            ...userData,
+            email,
+            password,
           },
         })
         .execute();
-
       getCustomerToken(email, password);
-      navigate('/main');
-      return true;
+      return {
+        success: true,
+        message: 'Login completed successfully!',
+      };
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      return {
+        success: false,
+        message: errorMessage,
+      };
     }
   }
 }
