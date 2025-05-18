@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useState } from 'react';
 import { sdk } from '../../services/sdk/create-client';
 import { UserData } from '../../types/types';
 import { BaseAddress } from '@commercetools/platform-sdk';
+import AuthAlert from '../../components/common/auth-alert/AuthAlert';
+import { LoginResponse } from '../../types/loginResponse';
 
 type Props = {
   changeLoginStatus: (status: boolean) => void;
@@ -23,7 +25,12 @@ export default function Registration({ changeLoginStatus }: Props) {
   const [errorMessage, setErrorMessage] = useState('');
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
-
+  const [createCustomerResponse, setCreateCustomerResponse] =
+    useState<LoginResponse>({
+      success: false,
+      message: '',
+    });
+  const [isOpenAlert, setIsOpenAlert] = useState<boolean>(false);
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     if (isSuccessDialogOpen) {
@@ -100,6 +107,10 @@ export default function Registration({ changeLoginStatus }: Props) {
     return newMap.size === 0;
   }
 
+  const onCloseAlert = () => {
+    setIsOpenAlert(false);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -122,16 +133,14 @@ export default function Registration({ changeLoginStatus }: Props) {
         addresses,
       };
 
-      try {
-        await sdk.createCustomer(userData, navigate).then((res) => {
-          if (res) changeLoginStatus(res);
-        });
-        setIsSuccessDialogOpen(true);
-      } catch (error) {
-        setErrorMessage(
-          (error as Error).message || 'Произошла неизвестная ошибка',
-        );
-        setIsErrorDialogOpen(true);
+      const response = await sdk.createCustomer(userData, navigate);
+      setCreateCustomerResponse(response);
+      setIsOpenAlert(true);
+      if (response.success) {
+        setTimeout(() => {
+          navigate('/');
+          window.location.reload();
+        }, 1500);
       }
     }
   };
@@ -148,7 +157,12 @@ export default function Registration({ changeLoginStatus }: Props) {
   return (
     <form className={classes['form-register']} onSubmit={handleSubmit}>
       <h1>Sign up</h1>
-
+      {isOpenAlert && (
+        <AuthAlert
+          response={createCustomerResponse}
+          onCloseAlert={onCloseAlert}
+        />
+      )}
       <div className={classes['form-register__inputs-wrapper']}>
         <div className={classes['form-register__input-container']}>
           <label htmlFor="email">Email</label>
