@@ -1,4 +1,4 @@
-import { BaseAddress } from "@commercetools/platform-sdk";
+import { BaseAddress } from '@commercetools/platform-sdk';
 
 export interface UserData {
   firstName?: string;
@@ -6,4 +6,20 @@ export interface UserData {
   email: string;
   password: string;
   addresses?: BaseAddress[];
+  defaultShippingAddress?: number;
+  defaultBillingAddress?: number;
+}
+
+export type LoginResponse = {
+  success: boolean;
+  message: string;
+};
+
+export interface LoginStatus {
+  changeLoginStatus: (status: boolean) => void;
+}
+
+export interface SwitchButtonProps {
+  checked: boolean;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }

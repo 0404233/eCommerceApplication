@@ -1,25 +1,20 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import classes from './login.module.css';
 import { useNavigate } from 'react-router';
 import { sdk } from '../../services/sdk/create-client';
 import { userLoginStatus } from '../../utils/user-data';
-import { LoginResponse } from '../../types/loginResponse';
+import { LoginResponse, LoginStatus } from '../../types/types';
 import AuthAlert from '../../components/common/auth-alert/AuthAlert';
 
-type Props = {
-  changeLoginStatus: (status: boolean) => void;
-};
-
-export default function Login({ changeLoginStatus }: Props) {
+export default function Login({
+  changeLoginStatus,
+}: LoginStatus): ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-  });
-  const [attrLogin, setAttrLogin] = useState('false');
-  const [attrPassword, setAttrPassword] = useState('false');
+  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [attrLogin, setAttrLogin] = useState(false);
+  const [attrPassword, setAttrPassword] = useState(false);
   const [isOpenAlert, setIsOpenAlert] = useState<boolean>(false);
   const [loginResponse, setLoginResponse] = useState<LoginResponse>({
     success: false,
@@ -53,26 +48,21 @@ export default function Login({ changeLoginStatus }: Props) {
     if (!email) {
       newErrors.email = 'Fill in the email address.';
     } else if (!regexSymbolDog.test(email)) {
-      newErrors.email =
-        'Symbol "@" must be present in the email address and should not be at the end.';
+      newErrors.email = 'Email needs @ (not last character)';
     } else if (!regexSymbolPoint.test(email)) {
-      newErrors.email =
-        'Symbol "." must be present in the email address and should not be at the end.';
+      newErrors.email = '"." required in email, not last character.';
     }
 
     if (password.length < 8) {
-      newErrors.password = 'Password must contain at least 8 characters.';
+      newErrors.password = 'Min 8 characters for password.';
     } else if (!regexLowerLettersPassword.test(password)) {
-      newErrors.password =
-        'Password must contain at least one LOWERcase English letter.';
+      newErrors.password = 'Needs 1+ lowercase letter.';
     } else if (!regexUpperLettersPassword.test(password)) {
-      newErrors.password =
-        'Password must contain at least one UPPERcase English letter.';
+      newErrors.password = 'Include an uppercase letter.';
     } else if (!regexDigitPassword.test(password)) {
-      newErrors.password = 'Password must contain at least one digit.';
+      newErrors.password = 'At least one number required.';
     } else if (!regexTrimSpacesPassword.test(password)) {
-      newErrors.password =
-        'The password must not contain leading or trailing spaces.';
+      newErrors.password = 'Password cannot start or end with spaces.';
     }
 
     return newErrors;
@@ -86,16 +76,16 @@ export default function Login({ changeLoginStatus }: Props) {
 
     if (findErrors.email) {
       valid = false;
-      setAttrLogin('true');
+      setAttrLogin(true);
     } else {
-      setAttrLogin('false');
+      setAttrLogin(false);
     }
 
     if (findErrors.password) {
       valid = false;
-      setAttrPassword('true');
+      setAttrPassword(true);
     } else {
-      setAttrPassword('false');
+      setAttrPassword(false);
     }
 
     setErrors(findErrors);
@@ -108,7 +98,8 @@ export default function Login({ changeLoginStatus }: Props) {
           email: '',
           password: '',
         });
-        setAttrPassword('true');
+        setAttrLogin(true);
+        setAttrPassword(true);
         setIsOpenAlert(true);
         setLoginResponse(result);
       } else {

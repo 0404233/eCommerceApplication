@@ -1,9 +1,10 @@
 import {
+  Client,
   ClientBuilder,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { deleteTokenCookie, getToken } from '../http/get-token-from-cookie';
+import { getToken } from '../http/get-token-from-cookie';
 
 const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
 const API_URL = import.meta.env['VITE_API_URL'];
@@ -31,8 +32,9 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
   fetch,
 };
 
-export const ctpClient = () => {
+export const ctpClient = (): Client => {
   const [accessToken, refreshToken] = getToken();
+
   if (!accessToken) {
     return new ClientBuilder()
       .withAnonymousSessionFlow({

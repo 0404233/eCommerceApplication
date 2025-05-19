@@ -1,13 +1,9 @@
-import {
-  ClientResponse,
-  createApiBuilderFromCtpClient,
-  CustomerSignInResult,
-} from '@commercetools/platform-sdk';
+import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
 import { NavigateFunction } from 'react-router';
 import { UserData } from '../../types/types';
-import { LoginResponse } from '../../types/loginResponse';
+import { LoginResponse } from '../../types/types';
 
 export default class SDKInterface {
   private projectKey = import.meta.env['VITE_PROJECT_KEY'];

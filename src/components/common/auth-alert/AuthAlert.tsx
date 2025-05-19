@@ -1,7 +1,7 @@
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { LoginResponse } from '../../../types/loginResponse';
+import { LoginResponse } from '../../../types/types';
 
 type Props = {
   response: LoginResponse;
