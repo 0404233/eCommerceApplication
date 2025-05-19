@@ -1,0 +1,15 @@
+name: Auto-close issues moved to "Done"
+
+on:
+  project_card:
+    types: [moved]
+
+jobs:
+  close_issue:
+    if: github.event.project_card.column_name == 'Done'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close issue
+        uses: peter-evans/close-issue@v3
+        with:
+          issue-number: ${{ github.event.project_card.content_url }}
