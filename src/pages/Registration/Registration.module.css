@@ -28,7 +28,8 @@ select:focus {
   transition: box-shadow 0.25s;
 }
 
-.form-register__btn {
+.form-register__btn,
+.dialog-btn {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -68,6 +69,34 @@ select:focus {
   box-shadow: 0 0 10px #f52020;
 }
 
+.error_dialog,
+.success-dialog {
+  top: 40%;
+  width: 30rem;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 30px #f52020;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+.success-dialog {
+  box-shadow: 0 0 30px #31ed57;
+}
+
+.dialog-wrapper {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #4b4b4bad;
+}
+
+.dialog-btn {
+  font-size: 0.7em;
+}
+
 @media (max-width: 550px) {
   .form-register {
     width: 15rem;
@@ -89,5 +118,10 @@ select:focus {
 
   .form-register__error {
     font-size: 0.7em;
+  }
+
+  .error_dialog,
+  .succses-dialog {
+    width: 20rem;
   }
 }

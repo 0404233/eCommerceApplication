@@ -19,10 +19,11 @@
 
 .button-header-route {
   padding: 8px 15px;
+  background-color: #808080;
 }
 
-.button-header-route {
-  background-color: #00c700;
+.button-header-route:hover {
+  background-color: #737aff;
 }
 
 .header__to-main {
@@ -37,6 +38,7 @@
 .header__to-main:hover,
 .page-link:hover {
   background-color: #6b6b6b;
+  color: #737aff;
 }
 
 .links-to-pages {
@@ -63,5 +65,5 @@
 }
 
 .selected-page {
-  color: #00c700;
+  color: #737aff;
 }

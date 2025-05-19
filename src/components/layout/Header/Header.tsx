@@ -1,19 +1,23 @@
-import { ReactElement, useEffect } from 'react';
-import HomeIcon from '../../../assets/home.svg?react';
-import styles from './Header.module.css';
-import { useState } from 'react';
+import { ReactElement } from 'react';
+import HomeIcon from '../../../assets/svg/home.svg?react';
+import styles from './header.module.css';
 import { useNavigate } from 'react-router';
-import { userData } from '../../../userData';
+import {
+  deleteTokenCookie,
+  getTokenFromCookie,
+} from '../../../services/http/get-token-from-cookie';
 
-type Props = {
+type HeaderProps = {
   location: string;
+  loginStatus: boolean;
+  changeLoginStatus: (status: boolean) => void;
 };
 
-export default function Header({ location }: Props): ReactElement {
-  const [isUserAuthorized, setIsUserAuthorized] = useState(false);
-  useEffect(() => {
-    setIsUserAuthorized(userData.getUserData());
-  }, []);
+export default function Header({
+  location,
+  loginStatus,
+  changeLoginStatus,
+}: HeaderProps): ReactElement {
   const navigate = useNavigate();
 
   const navigationRoutes = [
@@ -24,18 +28,27 @@ export default function Header({ location }: Props): ReactElement {
     { path: '/about' },
   ];
 
-  function onLogout() {
-    userData.setUserLogin(false);
-    setIsUserAuthorized(userData.getUserData());
-  }
+  const handleLogout = () => {
+    const token = getTokenFromCookie();
+    if (token) {
+      deleteTokenCookie();
+      changeLoginStatus(false);
+      navigate('/main');
+    }
+  };
 
   return (
     <header className={styles['header-layout']}>
-      <button className={styles['header__to-main']} onClick={() => navigate('/main')}>
+      <button
+        className={styles['header__to-main']}
+        onClick={() => navigate('/main')}
+      >
         <HomeIcon
           width={30}
           height={30}
-          fill={location === '/main' || location === '/' ? '#00c700' : '#FFFFFF'}
+          fill={
+            location === '/main' || location === '/' ? '#737aff' : '#FFFFFF'
+          }
         />
       </button>
       <nav className={styles['links-to-pages']}>
@@ -46,24 +59,33 @@ export default function Header({ location }: Props): ReactElement {
               className={`${styles['page-link']} ${path === location ? styles['selected-page'] : ''}`}
               onClick={() => navigate(path)}
             >
-              {path.slice(1)}
+              {path.slice(1, 2).toLocaleUpperCase() + path.substring(2)}
             </li>
           ))}
         </ul>
       </nav>
       <div className={styles['button-group']}>
-        {!isUserAuthorized && (
+        {!loginStatus && (
           <>
-            <button className={styles['button-header-route']} onClick={() => navigate('/register')}>
+            <button
+              className={styles['button-header-route']}
+              onClick={() => navigate('/register')}
+            >
               Registration
             </button>
-            <button className={styles['button-header-route']} onClick={() => navigate('/login')}>
+            <button
+              className={styles['button-header-route']}
+              onClick={() => navigate('/login')}
+            >
               Login
             </button>
           </>
         )}
-        {isUserAuthorized && (
-          <button className={styles['button-header-route']} onClick={onLogout}>
+        {loginStatus && (
+          <button
+            className={styles['button-header-route']}
+            onClick={handleLogout}
+          >
             Logout
           </button>
         )}
