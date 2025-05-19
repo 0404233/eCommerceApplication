@@ -1,23 +1,24 @@
 import { useNavigate } from 'react-router';
 import classes from './registration.module.css';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import { sdk } from '../../services/sdk/create-client';
-import { UserData } from '../../types/types';
+import { LoginStatus, UserData } from '../../types/types';
 import { BaseAddress } from '@commercetools/platform-sdk';
 import AuthAlert from '../../components/common/auth-alert/AuthAlert';
-import { LoginResponse } from '../../types/loginResponse';
+import { LoginResponse } from '../../types/types';
+import SwitchButton from '../../components/common/switch-button/SwitchButton';
+import { Tooltip } from '@mui/material';
+import PopupForm from '../../components/common/popup-form/PopupForm';
 
-type Props = {
-  changeLoginStatus: (status: boolean) => void;
-};
-
-export default function Registration({ changeLoginStatus }: Props) {
+export default function Registration({
+  changeLoginStatus,
+}: LoginStatus): ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [dob, setDob] = useState(new Date());
-  const [streetName, setstreetName] = useState('');
+  const [streetName, setStreetName] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('');
@@ -31,12 +32,18 @@ export default function Registration({ changeLoginStatus }: Props) {
       message: '',
     });
   const [isOpenAlert, setIsOpenAlert] = useState<boolean>(false);
+  const [isDefaultAddress, setIsDefaultAddress] = useState(false);
+
+  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsDefaultAddress(event.target.checked);
+  };
+
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     if (isSuccessDialogOpen) {
       timer = setTimeout(() => {
         closeSuccessDialog();
-      }, 2000);
+      }, 3000);
     }
     return () => clearTimeout(timer);
   }, [isSuccessDialogOpen]);
@@ -53,21 +60,21 @@ export default function Registration({ changeLoginStatus }: Props) {
     if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}/.test(password)) {
       newMap.set(
         'password',
-        'Password must be at least 8 characters long and include uppercase letters, lowercase letters, and digits.',
+        'Use at least 8 characters, incl. upper/lowercase & digits.',
       );
     }
 
     if (!/^[a-zA-Z]+$/.test(firstName) || firstName.length === 0) {
       newMap.set(
         'firstName',
-        'First name must contain at least one character and cannot contain special characters or digits.',
+        'First name must have at least one letter, no digits or symbols.',
       );
     }
 
     if (!/^[a-zA-Z]+$/.test(lastName) || lastName.length === 0) {
       newMap.set(
         'lastName',
-        'Last name must contain at least one character and cannot contain special characters or digits.',
+        'Last name must have at least one letter, no digits or symbols.',
       );
     }
 
@@ -90,7 +97,7 @@ export default function Registration({ changeLoginStatus }: Props) {
     if (!/^[a-zA-Z]+$/.test(city) || city.length === 0) {
       newMap.set(
         'city',
-        'City must contain at least one character and cannot contain special characters or digits.',
+        'City must have at least one letter, no digits or symbols.',
       );
     }
 
@@ -115,23 +122,39 @@ export default function Registration({ changeLoginStatus }: Props) {
     e.preventDefault();
 
     if (validateForm()) {
-      const addresses: BaseAddress[] = [
-        {
-          country:
-            country !== 'Belarus' ? country.slice(0, 2).toUpperCase() : 'BY',
-          city,
-          streetName,
-          postalCode,
-        },
-      ];
+      const addresses: BaseAddress[] = isDefaultAddress
+        ? [
+            {
+              country:
+                country !== 'Belarus'
+                  ? country.slice(0, 2).toUpperCase()
+                  : 'BY',
+              city,
+              streetName,
+              postalCode,
+            },
+          ]
+        : [];
 
-      const userData: UserData = {
-        email,
-        firstName,
-        lastName,
-        password,
-        addresses,
-      };
+      const userData: UserData = addresses.length
+        ? {
+            email,
+            firstName,
+            lastName,
+            password,
+            addresses,
+            defaultShippingAddress: 0,
+            defaultBillingAddress: 0,
+          }
+        : {
+            email,
+            firstName,
+            lastName,
+            password,
+            // addresses: [],
+            // defaultShippingAddress: 0,
+            // defaultBillingAddress: 0,
+          };
 
       const response = await sdk.createCustomer(userData, navigate);
       setCreateCustomerResponse(response);
@@ -246,7 +269,7 @@ export default function Registration({ changeLoginStatus }: Props) {
             type="text"
             placeholder="Arbatskaya"
             className={`${classes['form-register__input']} ${newErrors.has('street') ? classes['input-error'] : ''}`}
-            onChange={(e) => setstreetName(e.target.value)}
+            onChange={(e) => setStreetName(e.target.value)}
           />
           {newErrors.has('street') && (
             <p className={classes['form-register__error']}>
@@ -299,12 +322,41 @@ export default function Registration({ changeLoginStatus }: Props) {
               {newErrors.get('country')}
             </p>
           )}
+          <div style={{ fontSize: '15px' }}>
+            <SwitchButton
+              checked={isDefaultAddress}
+              onChange={handleSwitchChange}
+            />
+            <Tooltip
+              title="Default Ship / Bill Address"
+              arrow
+              slotProps={{
+                tooltip: {
+                  sx: {
+                    fontSize: '14px',
+                  },
+                },
+              }}
+            >
+              <span>Set default address?</span>
+            </Tooltip>
+          </div>
+          <PopupForm
+            streetName={streetName}
+            setStreetName={setStreetName}
+            city={city}
+            setCity={setCity}
+            postalCode={postalCode}
+            setPostalCode={setPostalCode}
+            country={country}
+            setCountry={setCountry}
+          />
         </div>
       </div>
       <button className={classes['form-register__btn']} type="submit">
         Sign up
       </button>
-      <p style={{ textAlign: 'center' }}>
+      <p style={{ textAlign: 'center', margin: 0 }}>
         Already have an account?{' '}
         <a onClick={() => navigate('/login')}>Sign up</a>
         <br />
@@ -314,12 +366,17 @@ export default function Registration({ changeLoginStatus }: Props) {
       </p>
 
       {isErrorDialogOpen && (
-        <dialog open className={classes['error_dialog']}>
-          <p>{errorMessage}</p>
-          <button className={classes['dialog-btn']} onClick={closeErrorDialog}>
-            Close
-          </button>
-        </dialog>
+        <div className={classes['dialog-wrapper']}>
+          <dialog open className={classes['error_dialog']}>
+            <p>{errorMessage}</p>
+            <button
+              className={classes['dialog-btn']}
+              onClick={closeErrorDialog}
+            >
+              Close
+            </button>
+          </dialog>
+        </div>
       )}
 
       {isSuccessDialogOpen && (

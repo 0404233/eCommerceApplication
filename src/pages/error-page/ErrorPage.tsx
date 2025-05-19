@@ -1,7 +1,8 @@
+import { ReactElement } from 'react';
 import classes from './error-page.module.css';
 import { useNavigate } from 'react-router';
 
-export default function ErrorPage() {
+export default function ErrorPage(): ReactElement {
   const url = window.location.pathname.slice(1);
 
   const navigate = useNavigate();

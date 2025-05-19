@@ -1,14 +1,11 @@
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import HomeIcon from '../../../assets/svg/home.svg?react';
 import styles from './header.module.css';
-import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { userLoginStatus } from '../../../utils/user-data';
 import {
   deleteTokenCookie,
   getTokenFromCookie,
 } from '../../../services/http/get-token-from-cookie';
-import { logoutCustomer } from '../../../services/http/logout-customer';
 
 type HeaderProps = {
   location: string;
