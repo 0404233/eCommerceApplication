@@ -30,6 +30,7 @@ export default class SDKInterface {
         message: 'The account was created successfully!',
       };
     } catch (error) {
+      console.log(error);
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       return {

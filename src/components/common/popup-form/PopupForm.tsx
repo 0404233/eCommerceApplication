@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -12,29 +11,21 @@ import {
   MenuItem,
 } from '@mui/material';
 import { customSwithTheme } from '../switch-button/switch-button-theme';
+import { BillingAdressOptions } from '../../../types/types';
+import { useState } from 'react';
 
-type PopupFormProps = {
-  streetName: string;
-  setStreetName: React.Dispatch<React.SetStateAction<string>>;
-  city: string;
-  setCity: React.Dispatch<React.SetStateAction<string>>;
-  postalCode: string;
-  setPostalCode: React.Dispatch<React.SetStateAction<string>>;
-  country: string;
-  setCountry: React.Dispatch<React.SetStateAction<string>>;
+type Props = {
+  onAddBillingAdress: (options: BillingAdressOptions) => void;
 };
 
 export default function PopupForm({
-  streetName,
-  setStreetName,
-  city,
-  setCity,
-  postalCode,
-  setPostalCode,
-  country,
-  setCountry,
-}: PopupFormProps): React.ReactElement {
-  const [open, setOpen] = React.useState(false);
+  onAddBillingAdress,
+}: Props): React.ReactElement {
+  const [open, setOpen] = useState(false);
+  const [streetName, setStreetName] = useState('');
+  const [city, setCity] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [country, setCountry] = useState('');
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOpen(event.target.checked);
@@ -55,6 +46,11 @@ export default function PopupForm({
     if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
       event.preventDefault();
     }
+  };
+
+  const handleSumbit = () => {
+    onAddBillingAdress({ streetName, city, postalCode, country });
+    setOpen(false);
   };
 
   return (
@@ -117,14 +113,14 @@ export default function PopupForm({
             value={country}
             onChange={(e) => setCountry(e.target.value)}
           >
-            <MenuItem value="Russian">Russian</MenuItem>
+            <MenuItem value="Russia">Russia</MenuItem>
             <MenuItem value="USA">USA</MenuItem>
             <MenuItem value="Belarus">Belarus</MenuItem>
           </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
-          <Button variant="contained" onClick={handleClose}>
+          <Button variant="contained" onClick={handleSumbit}>
             Save
           </Button>
         </DialogActions>

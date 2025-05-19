@@ -23,3 +23,10 @@ export interface SwitchButtonProps {
   checked: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+
+export type BillingAdressOptions = {
+  streetName: string;
+  city: string;
+  postalCode: string;
+  country: string;
+};

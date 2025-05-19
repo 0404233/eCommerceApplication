@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import classes from './registration.module.css';
 import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import { sdk } from '../../services/sdk/create-client';
-import { LoginStatus, UserData } from '../../types/types';
+import { BillingAdressOptions, LoginStatus, UserData } from '../../types/types';
 import { BaseAddress } from '@commercetools/platform-sdk';
 import AuthAlert from '../../components/common/auth-alert/AuthAlert';
 import { LoginResponse } from '../../types/types';
@@ -33,6 +33,12 @@ export default function Registration({
     });
   const [isOpenAlert, setIsOpenAlert] = useState<boolean>(false);
   const [isDefaultAddress, setIsDefaultAddress] = useState(false);
+  const [billingAdress, setBillingAdress] = useState<BillingAdressOptions>({
+    streetName,
+    city,
+    postalCode,
+    country,
+  });
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsDefaultAddress(event.target.checked);
@@ -120,42 +126,41 @@ export default function Registration({
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (validateForm()) {
-      const addresses: BaseAddress[] = isDefaultAddress
-        ? [
-            {
-              country:
-                country !== 'Belarus'
-                  ? country.slice(0, 2).toUpperCase()
-                  : 'BY',
-              city,
-              streetName,
-              postalCode,
-            },
-          ]
-        : [];
+      const shipping = {
+        streetName,
+        city,
+        country:
+          country !== 'Belarus' ? country.slice(0, 2).toUpperCase() : 'BY',
+        postalCode,
+      };
+      const billing = {
+        ...billingAdress,
+        country:
+          billingAdress.country !== 'Belarus'
+            ? country.slice(0, 2).toUpperCase()
+            : 'BY',
+      };
 
-      const userData: UserData = addresses.length
-        ? {
-            email,
-            firstName,
-            lastName,
-            password,
-            addresses,
-            defaultShippingAddress: 0,
-            defaultBillingAddress: 0,
-          }
-        : {
-            email,
-            firstName,
-            lastName,
-            password,
-            // addresses: [],
-            // defaultShippingAddress: 0,
-            // defaultBillingAddress: 0,
-          };
+      const addresses = [shipping];
+      if (!isDefaultAddress) {
+        const { streetName, city, country, postalCode } = billing;
+        if (streetName && city && country && postalCode) {
+          addresses.push(billing);
+        }
+      }
 
+      const userData: UserData = {
+        email,
+        firstName,
+        lastName,
+        password,
+        addresses,
+        defaultShippingAddress: 0,
+      };
+      if (isDefaultAddress) {
+        userData.defaultBillingAddress = 1;
+      }
       const response = await sdk.createCustomer(userData, navigate);
       setCreateCustomerResponse(response);
       setIsOpenAlert(true);
@@ -175,6 +180,17 @@ export default function Registration({
 
   const closeSuccessDialog = () => {
     setIsSuccessDialogOpen(false);
+  };
+
+  const onAddBillingAdress = (options: BillingAdressOptions): void => {
+    setBillingAdress({ ...options });
+    if (isDefaultAddress) {
+      const { streetName, city, postalCode, country } = options;
+      setStreetName(streetName);
+      setCity(city);
+      setPostalCode(postalCode);
+      setCountry(country);
+    }
   };
 
   return (
@@ -266,6 +282,7 @@ export default function Registration({
           <label htmlFor="street">Street</label>
           <input
             id="street"
+            value={streetName}
             type="text"
             placeholder="Arbatskaya"
             className={`${classes['form-register__input']} ${newErrors.has('street') ? classes['input-error'] : ''}`}
@@ -280,6 +297,7 @@ export default function Registration({
           <label htmlFor="city">City</label>
           <input
             id="city"
+            value={city}
             type="text"
             placeholder="Moscow"
             className={`${classes['form-register__input']} ${newErrors.has('city') ? classes['input-error'] : ''}`}
@@ -294,6 +312,7 @@ export default function Registration({
           <label htmlFor="postalCode">Postal code</label>
           <input
             id="postalCode"
+            value={postalCode}
             type="text"
             maxLength={6}
             placeholder="141345"
@@ -309,6 +328,7 @@ export default function Registration({
           <label htmlFor="country">Country</label>
           <select
             id="country"
+            value={country}
             className={`${classes['form-register__input']} ${newErrors.has('country') ? classes['input-error'] : ''}`}
             onChange={(e) => setCountry(e.target.value)}
           >
@@ -341,16 +361,7 @@ export default function Registration({
               <span>Set default address?</span>
             </Tooltip>
           </div>
-          <PopupForm
-            streetName={streetName}
-            setStreetName={setStreetName}
-            city={city}
-            setCity={setCity}
-            postalCode={postalCode}
-            setPostalCode={setPostalCode}
-            country={country}
-            setCountry={setCountry}
-          />
+          <PopupForm onAddBillingAdress={onAddBillingAdress} />
         </div>
       </div>
       <button className={classes['form-register__btn']} type="submit">
