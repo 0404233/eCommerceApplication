@@ -1,7 +1,7 @@
 import { Route, Routes, useLocation } from 'react-router';
 import { lazy, ReactElement } from 'react';
 import Header from '../components/layout/Header/Header';
-import Footer from '../components/layout/footer/Footer';
+import Footer from '../components/layout/Footer/Footer';
 
 const Login = lazy(() => import('../pages/Login/Login'));
 const Registration = lazy(() => import('../pages/Registration/Registration'));
