@@ -35,7 +35,16 @@ export const ctpClient = () => {
   const [accessToken, refreshToken] = getToken();
   if (!accessToken) {
     return new ClientBuilder()
-      .withClientCredentialsFlow(authMiddlewareOptions)
+      .withAnonymousSessionFlow({
+        host: AUTH_URL,
+        projectKey: projectKey,
+        credentials: {
+          clientId: CLIENT_ID,
+          clientSecret: CLIENT_SECRET,
+        },
+        scopes,
+        fetch,
+      })
       .withHttpMiddleware(httpMiddlewareOptions)
       .build();
   }
