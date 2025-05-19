@@ -26,6 +26,7 @@ export default function PopupForm({
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('');
+  const [errors, setErrors] = useState<Map<string, string>>(new Map());
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOpen(event.target.checked);
@@ -33,6 +34,7 @@ export default function PopupForm({
 
   const handleClose = () => {
     setOpen(false);
+    setErrors(new Map());
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -48,9 +50,35 @@ export default function PopupForm({
     }
   };
 
+  const validate = () => {
+    const newErrors = new Map<string, string>();
+
+    if (streetName.trim().length === 0) {
+      newErrors.set('streetName', 'Street is required.');
+    }
+
+    if (!/^[a-zA-Z\s]+$/.test(city) || city.trim().length === 0) {
+      newErrors.set('city', 'City must contain only letters.');
+    }
+
+    if (!/^\d{6}$/.test(postalCode)) {
+      newErrors.set('postalCode', 'Postal code must be exactly 6 digits.');
+    }
+
+    if (!country) {
+      newErrors.set('country', 'Please select a country.');
+    }
+
+    setErrors(newErrors);
+    return newErrors.size === 0;
+  };
+
   const handleSumbit = () => {
-    onAddBillingAdress({ streetName, city, postalCode, country });
-    setOpen(false);
+    if (validate()) {
+      onAddBillingAdress({ streetName, city, postalCode, country });
+      setOpen(false);
+      setErrors(new Map());
+    }
   };
 
   return (
@@ -84,6 +112,8 @@ export default function PopupForm({
             margin="dense"
             value={streetName}
             onChange={(e) => setStreetName(e.target.value)}
+            error={errors.has('streetName')}
+            helperText={errors.get('streetName')}
           />
           <TextField
             label="City"
@@ -91,6 +121,8 @@ export default function PopupForm({
             margin="dense"
             value={city}
             onChange={(e) => setCity(e.target.value)}
+            error={errors.has('city')}
+            helperText={errors.get('city')}
           />
           <TextField
             label="Postal code"
@@ -104,6 +136,8 @@ export default function PopupForm({
                 inputProps: { maxLength: 6 },
               },
             }}
+            error={errors.has('postalCode')}
+            helperText={errors.get('postalCode')}
           />
           <TextField
             select
@@ -112,6 +146,8 @@ export default function PopupForm({
             margin="dense"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
+            error={errors.has('country')}
+            helperText={errors.get('country')}
           >
             <MenuItem value="Russia">Russia</MenuItem>
             <MenuItem value="USA">USA</MenuItem>
