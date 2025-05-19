@@ -10,7 +10,7 @@ type Props = {
 
 export function AuthAlert({ response, onCloseAlert }: Props): ReactElement {
   const [open, setOpen] = useState(true);
-  const [alertType, setAlertType] = useState<'success' | 'error'>(
+  const [alertType] = useState<'success' | 'error'>(
     response.success ? 'success' : 'error',
   );
   return (

@@ -1,7 +1,6 @@
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
-import { NavigateFunction } from 'react-router';
 import { UserData } from '../../types/types';
 import { LoginResponse } from '../../types/types';
 
@@ -11,10 +10,7 @@ export default class SDKInterface {
     projectKey: this.projectKey,
   });
 
-  async createCustomer(
-    userData: UserData,
-    navigate: NavigateFunction,
-  ): Promise<LoginResponse> {
+  async createCustomer(userData: UserData): Promise<LoginResponse> {
     try {
       await this.apiRoot
         .customers()
@@ -24,7 +20,7 @@ export default class SDKInterface {
           },
         })
         .execute();
-      await this.loginCustomer(userData, navigate);
+      await this.loginCustomer(userData);
       return {
         success: true,
         message: 'The account was created successfully!',
@@ -40,10 +36,7 @@ export default class SDKInterface {
     }
   }
 
-  async loginCustomer(
-    userData: UserData,
-    navigate: NavigateFunction,
-  ): Promise<LoginResponse> {
+  async loginCustomer(userData: UserData): Promise<LoginResponse> {
     const { email, password } = userData;
 
     try {

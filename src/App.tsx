@@ -35,7 +35,7 @@ function App(): ReactElement {
         .post({ body: { currency: 'USD' } })
         .execute();
 
-      cart.then((res) => setIsLoading(false));
+      cart.then(() => setIsLoading(false));
     }
   }, []);
   return (

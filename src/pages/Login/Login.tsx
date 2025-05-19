@@ -91,7 +91,7 @@ export default function Login({
     setErrors(findErrors);
 
     if (valid) {
-      const result = await sdk.loginCustomer({ email, password }, navigate);
+      const result = await sdk.loginCustomer({ email, password });
 
       if (result && result.success !== true) {
         setErrors({

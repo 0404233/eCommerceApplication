@@ -1,15 +1,15 @@
 import { Route, Routes, useLocation } from 'react-router';
 import { lazy, ReactElement } from 'react';
-import Header from '../components/layout/header/Header';
-import Footer from '../components/layout/footer/Footer';
+import Header from '../components/layout/Header/Header';
+import Footer from '../components/layout/Footer/Footer';
 
-const Login = lazy(() => import('../pages/login/Login'));
-const Registration = lazy(() => import('../pages/registration/Registration'));
-const MainPage = lazy(() => import('../pages/main/Main'));
+const Login = lazy(() => import('../pages/Login/Login'));
+const Registration = lazy(() => import('../pages/Registration/Registration'));
+const MainPage = lazy(() => import('../pages/Main/Main'));
 const CatalogProduct = lazy(
   () => import('../pages/catalog-product/CatalogProduct'),
 );
-const Basket = lazy(() => import('../pages/basket/Basket'));
+const Basket = lazy(() => import('../pages/Basket/Basket'));
 const AboutUs = lazy(() => import('../pages/about-us/AboutUs'));
 const UserProfile = lazy(() => import('../pages/user-profile/UserProfile'));
 const DetailedProduct = lazy(
@@ -39,7 +39,7 @@ export default function AppRoutes({
     },
     {
       path: '/register',
-      element: <Registration changeLoginStatus={changeLoginStatus} />,
+      element: <Registration />,
     },
     { path: '/user', element: <UserProfile /> },
     { path: '/catalog', element: <CatalogProduct /> },

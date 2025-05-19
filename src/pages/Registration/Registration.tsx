@@ -2,17 +2,14 @@ import { useNavigate } from 'react-router';
 import classes from './registration.module.css';
 import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import { sdk } from '../../services/sdk/create-client';
-import { BillingAdressOptions, LoginStatus, UserData } from '../../types/types';
-import { BaseAddress } from '@commercetools/platform-sdk';
+import { BillingAdressOptions, UserData } from '../../types/types';
 import AuthAlert from '../../components/common/auth-alert/AuthAlert';
 import { LoginResponse } from '../../types/types';
 import SwitchButton from '../../components/common/switch-button/SwitchButton';
 import { Tooltip } from '@mui/material';
 import PopupForm from '../../components/common/popup-form/PopupForm';
 
-export default function Registration({
-  changeLoginStatus,
-}: LoginStatus): ReactElement {
+export default function Registration(): ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -161,7 +158,7 @@ export default function Registration({
       if (isDefaultAddress) {
         userData.defaultBillingAddress = 1;
       }
-      const response = await sdk.createCustomer(userData, navigate);
+      const response = await sdk.createCustomer(userData);
       setCreateCustomerResponse(response);
       setIsOpenAlert(true);
       if (response.success) {
