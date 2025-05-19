@@ -3,12 +3,12 @@ const __vite__mapDeps = (
   m = __vite__mapDeps,
   d = m.f ||
     (m.f = [
-      'assets/Login-BMn9Jnif.js',
-      'assets/AuthAlert-CJPtO78E.js',
+      'assets/Login-DfCd-F4T.js',
+      'assets/AuthAlert-BlNq4Oee.js',
       'assets/Login-_8vj1Y_a.css',
-      'assets/Registration-3C6sEnbW.js',
+      'assets/Registration-Bb_AQ176.js',
       'assets/Registration-CddvcdoX.css',
-      'assets/ErrorPage-LDYi98VH.js',
+      'assets/ErrorPage-BpPf8ljd.js',
       'assets/ErrorPage-BwVfZp8T.css',
     ]),
 ) => i.map((i) => d[i]);
@@ -14228,25 +14228,25 @@ function Ux({ location: s, loginStatus: e, changeLoginStatus: n }) {
     ],
   });
 }
-const Tx = '_footer_1x4q1_1',
+const Tx = '_footer_1svme_1',
   Rx = { footer: Tx };
 function xx() {
   return xe.jsx('footer', { className: Rx.footer, children: 'FOOTER' });
 }
 const wx = G.lazy(() =>
-    Gt(() => import('./Login-BMn9Jnif.js'), __vite__mapDeps([0, 1, 2])),
+    Gt(() => import('./Login-DfCd-F4T.js'), __vite__mapDeps([0, 1, 2])),
   ),
   Ex = G.lazy(() =>
-    Gt(() => import('./Registration-3C6sEnbW.js'), __vite__mapDeps([3, 1, 4])),
+    Gt(() => import('./Registration-Bb_AQ176.js'), __vite__mapDeps([3, 1, 4])),
   ),
-  Rh = G.lazy(() => Gt(() => import('./Main-CRPhLuXQ.js'), [])),
-  Kx = G.lazy(() => Gt(() => import('./CatalogProduct-JKvoIEEv.js'), [])),
-  Sx = G.lazy(() => Gt(() => import('./Basket-lnTMMjjc.js'), [])),
-  jx = G.lazy(() => Gt(() => import('./AboutUs-hy9T0jQf.js'), [])),
-  vx = G.lazy(() => Gt(() => import('./UserProfile-lhiRB9_N.js'), [])),
-  Bx = G.lazy(() => Gt(() => import('./DetailedProduct-BGov2G4r.js'), [])),
+  Rh = G.lazy(() => Gt(() => import('./Main-CcsX_PFn.js'), [])),
+  Kx = G.lazy(() => Gt(() => import('./CatalogProduct-Dr3qCADF.js'), [])),
+  Sx = G.lazy(() => Gt(() => import('./Basket-BgHzBauk.js'), [])),
+  jx = G.lazy(() => Gt(() => import('./AboutUs-f4GSB9Bk.js'), [])),
+  vx = G.lazy(() => Gt(() => import('./UserProfile-DYD_6gG-.js'), [])),
+  Bx = G.lazy(() => Gt(() => import('./DetailedProduct-BIGYdysj.js'), [])),
   Px = G.lazy(() =>
-    Gt(() => import('./ErrorPage-LDYi98VH.js'), __vite__mapDeps([5, 6])),
+    Gt(() => import('./ErrorPage-BpPf8ljd.js'), __vite__mapDeps([5, 6])),
   );
 function Dx({ loginStatus: s, changeLoginStatus: e }) {
   const n = Ur(),

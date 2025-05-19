@@ -1,4 +1,4 @@
-import { u as t, j as r } from './index-DKhjynYn.js';
+import { u as t, j as r } from './index-CXu3F4hy.js';
 const _ = '_error__btn_1kqwo_27',
   e = {
     'error-page__wrapper': '_error-page__wrapper_1kqwo_1',
