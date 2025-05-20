@@ -156,14 +156,19 @@ export default function Registration(): ReactElement {
         defaultShippingAddress: 0,
       };
       if (isDefaultAddress) {
-        userData.defaultBillingAddress = 1;
+        userData.defaultBillingAddress = 0;
+      } else {
+        const billingAdress = addresses[1];
+        if (billingAdress) {
+          userData.defaultBillingAddress = 1;
+        }
       }
       const response = await sdk.createCustomer(userData);
       setCreateCustomerResponse(response);
       setIsOpenAlert(true);
       if (response.success) {
         setTimeout(() => {
-          navigate('/');
+          navigate('/main');
           window.location.reload();
         }, 1500);
       }
@@ -179,7 +184,7 @@ export default function Registration(): ReactElement {
     setIsSuccessDialogOpen(false);
   };
 
-  const onAddBillingAdress = (options: BillingAdressOptions): void => {
+  const onAddBillingAddress = (options: BillingAdressOptions): void => {
     setBillingAdress({ ...options });
     if (isDefaultAddress) {
       const { streetName, city, postalCode, country } = options;
@@ -358,7 +363,7 @@ export default function Registration(): ReactElement {
               <span>Set default address?</span>
             </Tooltip>
           </div>
-          <PopupForm onAddBillingAdress={onAddBillingAdress} />
+          <PopupForm onAddBillingAddress={onAddBillingAddress} />
         </div>
       </div>
       <button className={classes['form-register__btn']} type="submit">

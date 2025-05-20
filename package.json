@@ -13,7 +13,8 @@
     "commitlint": "commitlint --edit",
     "test": "vitest",
     "prepare": "echo skipped",
-    "pre-commit": "husky-run pre-commit"
+    "pre-commit": "husky-run pre-commit",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@commercetools/platform-sdk": "^8.9.0",
