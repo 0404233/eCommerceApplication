@@ -15,21 +15,36 @@ import { BillingAdressOptions } from '../../../types/types';
 import { useState } from 'react';
 
 type Props = {
-  onAddBillingAdress: (options: BillingAdressOptions) => void;
+  onAddBillingAddress: (options: BillingAdressOptions) => void;
 };
 
 export default function PopupForm({
-  onAddBillingAdress,
+  onAddBillingAddress,
 }: Props): React.ReactElement {
   const [open, setOpen] = useState(false);
   const [streetName, setStreetName] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('');
+  const [isBillingAddressExist, setIsBillingAddressExist] =
+    useState<boolean>(false);
   const [errors, setErrors] = useState<Map<string, string>>(new Map());
 
-  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setOpen(event.target.checked);
+  const clearFields = () => {
+    setStreetName('');
+    setCity('');
+    setPostalCode('');
+    setCountry('');
+    onAddBillingAddress({ streetName, city, postalCode, country });
+  };
+
+  const handleSwitchChange = () => {
+    if (!isBillingAddressExist) {
+      setOpen(true);
+    } else {
+      setIsBillingAddressExist(false);
+      clearFields();
+    }
   };
 
   const handleClose = () => {
@@ -75,8 +90,9 @@ export default function PopupForm({
 
   const handleSumbit = () => {
     if (validate()) {
-      onAddBillingAdress({ streetName, city, postalCode, country });
+      onAddBillingAddress({ streetName, city, postalCode, country });
       setOpen(false);
+      setIsBillingAddressExist(true);
       setErrors(new Map());
     }
   };
@@ -87,7 +103,7 @@ export default function PopupForm({
         control={
           <ThemeProvider theme={customSwithTheme}>
             <Switch
-              checked={open}
+              checked={isBillingAddressExist}
               onChange={handleSwitchChange}
               color="success"
             />

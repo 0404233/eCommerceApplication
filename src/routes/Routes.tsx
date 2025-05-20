@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from 'react-router';
+import { Route, Routes, useLocation, useMatch } from 'react-router';
 import { lazy, ReactElement } from 'react';
 import Header from '../components/layout/Header/Header';
 import Footer from '../components/layout/Footer/Footer';
@@ -27,8 +27,7 @@ export default function AppRoutes({
   changeLoginStatus,
 }: Props): ReactElement {
   const location = useLocation();
-
-  const hideHeaderPaths = ['/login', '/register', '*'];
+  const basename = '/eCommerceApplication';
 
   const navigationRoutes = [
     { path: '/', element: <MainPage /> },
@@ -49,9 +48,17 @@ export default function AppRoutes({
     { path: '*', element: <ErrorPage /> },
   ];
 
+  const pagePath = window.location.pathname.replace(basename, '');
+  const isLogin = useMatch('/login');
+  const isRegister = useMatch('/register');
+  const correctPath = navigationRoutes
+    .slice(0, -1)
+    .some(({ path }) => path.includes(pagePath));
+  const hideHeaderPaths = isLogin || isRegister || !correctPath;
+
   return (
     <>
-      {!hideHeaderPaths.includes(location.pathname) && (
+      {!hideHeaderPaths && (
         <Header
           location={location.pathname}
           loginStatus={loginStatus}
@@ -63,7 +70,7 @@ export default function AppRoutes({
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
       </Routes>
-      {!hideHeaderPaths.includes(location.pathname) && <Footer />}
+      {!hideHeaderPaths && <Footer />}
     </>
   );
 }

@@ -1,12 +1,15 @@
 .error-page__wrapper {
-  width: 30rem;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
+  margin: auto;
   border: 1px solid #808080;
   border-radius: 10px;
   box-shadow: 0 0 15px #808080;
 }
 
 .error-page__title {
+  display: block;
   width: 100%;
   overflow-wrap: break-word;
 }
