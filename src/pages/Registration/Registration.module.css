@@ -13,6 +13,7 @@
 
 .form-register__input,
 select {
+  width: 100%;
   padding: 10px;
   border: 1px solid #1a1a1a;
   border-radius: 5px;
@@ -57,6 +58,28 @@ select:focus {
   flex-direction: column;
   gap: 5px;
   width: 50%;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-container input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.address-container {
+  font-size: '15px';
 }
 
 .form-register__error {

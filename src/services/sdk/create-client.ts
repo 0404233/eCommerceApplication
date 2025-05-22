@@ -20,7 +20,9 @@ export default class SDKInterface {
           },
         })
         .execute();
+
       await this.loginCustomer(userData);
+
       return {
         success: true,
         message: 'The account was created successfully!',
