@@ -13,6 +13,7 @@ import {
 import { customSwithTheme } from '../switch-button/switch-button-theme';
 import { BillingAdressOptions } from '../../../types/types';
 import { useState } from 'react';
+import countryFormatter from '../../../utils/date-formatter';
 
 type Props = {
   onAddBillingAddress: (options: BillingAdressOptions) => void;
@@ -90,7 +91,12 @@ export default function PopupForm({
 
   const handleSumbit = () => {
     if (validate()) {
-      onAddBillingAddress({ streetName, city, postalCode, country });
+      onAddBillingAddress({
+        country: countryFormatter(country),
+        city,
+        streetName,
+        postalCode,
+      });
       setOpen(false);
       setIsBillingAddressExist(true);
       setErrors(new Map());
