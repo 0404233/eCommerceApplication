@@ -10,9 +10,7 @@ import ButtonSignIn from '../../components/common/form-links/ButtonSignIn';
 import FormInput from '../../components/common/input-form/FormInput';
 import validateForm from '../../utils/validate-form-login';
 
-export default function Login({
-  changeLoginStatus,
-}: LoginStatus): ReactElement {
+export default function Login({ changeLoginStatus }: LoginStatus): ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -65,9 +63,7 @@ export default function Login({
 
   return (
     <form className={classes['form-login']} onSubmit={handleSubmit}>
-      {isOpenAlert && (
-        <AuthAlert response={loginResponse} onCloseAlert={onCloseAlert} />
-      )}
+      {isOpenAlert && <AuthAlert response={loginResponse} onCloseAlert={onCloseAlert} />}
       <h1>Sign in</h1>
 
       <FormInput
