@@ -1,4 +1,4 @@
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { createApiBuilderFromCtpClient, ProductProjection } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
 import { UserData } from '../../types/types';
@@ -28,9 +28,7 @@ export default class SDKInterface {
         message: 'The account was created successfully!',
       };
     } catch (error) {
-      console.log(error);
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         success: false,
         message: errorMessage,
@@ -58,12 +56,33 @@ export default class SDKInterface {
         message: 'Login completed successfully!',
       };
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         success: false,
         message: errorMessage,
       };
+    }
+  }
+
+  async carsCategory(id: string): Promise<ProductProjection[]> {
+    try {
+      const res = await sdk.apiRoot
+        .productProjections()
+        .get({
+          queryArgs: {
+            where: `categories(id="${id}")`,
+            limit: 20,
+          },
+        })
+        .execute();
+      console.log(res);
+
+      return res.body.results;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw error;
     }
   }
 }
