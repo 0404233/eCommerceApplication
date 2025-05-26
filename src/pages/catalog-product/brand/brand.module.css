@@ -25,3 +25,9 @@ img {
   font-weight: bold;
   margin-top: 1rem;
 }
+
+@media (max-width: 600px) {
+  .brand-name {
+    font-size: 0.8rem;
+  }
+}

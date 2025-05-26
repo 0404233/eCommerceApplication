@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -9,64 +8,66 @@ import bugatti from '../../../assets/images/catalog-title/bugatti.png';
 import { sdk } from '../../../services/sdk/create-client';
 import { ProductProjection } from '@commercetools/platform-sdk';
 import CardCar from '../card-car/CardCar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
-  value: number | null;
-}
-
-enum CategoriesID {
-  FERRARI = 'bcbee2c0-496e-42b8-b6c5-0203f2b89865',
-  BUGATTI = 'e5eac371-fe66-444f-918c-8aa445942e2a',
-  LAMBORGHINI = '756f7061-f9fe-475b-81ac-f74cb1a9cd0f',
+  value: number;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index } = props;
 
-  return <div>{value === index && <Box>{children}</Box>}</div>;
+  return (
+    <div>
+      {value === index && (
+        <Box sx={{ padding: '10px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1rem' }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
 }
 
 export default function BasicTabs(): React.ReactElement {
-  const [value, setValue] = useState<number | null>(null);
+  const [value, setValue] = useState(0);
   const [products, setProducts] = useState<ProductProjection[]>([]);
+
+  useEffect(() => {
+    const categoryMap = [
+      '756f7061-f9fe-475b-81ac-f74cb1a9cd0f',
+      'bcbee2c0-496e-42b8-b6c5-0203f2b89865',
+      'e5eac371-fe66-444f-918c-8aa445942e2a',
+    ];
+
+    const fetchData = async () => {
+      if (!categoryMap[value]) return;
+
+      const results = await sdk.carsCategory(categoryMap[value]);
+      setProducts(results);
+    };
+
+    fetchData();
+  }, [value]);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  function carsCategory(id: string) {
-    sdk.apiRoot
-      .productProjections()
-
-      .get({
-        queryArgs: {
-          where: `categories(id="${id}")`,
-          limit: 20,
-        },
-      })
-      .execute()
-      .then((res) => {
-        if (res.statusCode === 200) {
-          setProducts(res.body.results);
-          console.log(res);
-        }
-      });
-  }
-
   function GetCars() {
     return products.map(({ id, name, description, masterVariant }) => {
       const price = masterVariant?.prices?.[0]?.value?.centAmount;
       const images = masterVariant?.images;
+      const discount = masterVariant?.prices?.[0]?.discounted?.value?.centAmount;
 
       return (
         <CardCar
           key={id}
           name={name['en-US']}
           description={description?.['en-US']}
-          price={Number(price)}
+          price={Number(price) / 100}
+          discount={Number(discount) / 100}
           images={images}
         />
       );
@@ -87,28 +88,18 @@ export default function BasicTabs(): React.ReactElement {
           '& .MuiTab-root:focus': {
             outline: 'none',
           },
+          '& .MuiTab-root.Mui-selected': {
+            color: '#646cff',
+          },
           '& .MuiTabs-indicator': {
             display: 'none',
           },
-
           backgroundColor: '#cacaca',
         }}
       >
-        <Tab
-          disableRipple
-          label={<Brand src={lamborghini} alt={'lamborghini'} brand={'lamborghini'} />}
-          onClick={() => carsCategory(CategoriesID.LAMBORGHINI)}
-        />
-        <Tab
-          disableRipple
-          label={<Brand src={ferrari} alt={'ferrari'} brand={'ferrari'} />}
-          onClick={() => carsCategory(CategoriesID.FERRARI)}
-        />
-        <Tab
-          disableRipple
-          label={<Brand src={bugatti} alt={'bugatti'} brand={'bugatti'} />}
-          onClick={() => carsCategory(CategoriesID.BUGATTI)}
-        />
+        <Tab disableRipple label={<Brand src={lamborghini} alt={'lamborghini'} brand={'lamborghini'} />} />
+        <Tab disableRipple label={<Brand src={ferrari} alt={'ferrari'} brand={'ferrari'} />} />
+        <Tab disableRipple label={<Brand src={bugatti} alt={'bugatti'} brand={'bugatti'} />} />
       </Tabs>
       <CustomTabPanel value={value} index={0}>
         <GetCars />
