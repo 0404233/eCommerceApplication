@@ -6,6 +6,7 @@ import {
   deleteTokenCookie,
   getTokenFromCookie,
 } from '../../../services/http/get-token-from-cookie';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type HeaderProps = {
   location: string;
@@ -21,7 +22,6 @@ export default function Header({
   const navigate = useNavigate();
 
   const navigationRoutes = [
-    { path: '/user' },
     { path: '/catalog' },
     { path: '/product' },
     { path: '/basket' },
@@ -82,12 +82,19 @@ export default function Header({
           </>
         )}
         {loginStatus && (
-          <button
-            className={styles['button-header-route']}
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <>
+            <AccountCircleIcon
+              onClick={() => navigate('/user')}
+              sx={{ fontSize: 31 }}
+              className={`${styles['user-icon']} ${location === '/user' ? styles['selected'] : ''}`}
+            ></AccountCircleIcon>
+            <button
+              className={styles['button-header-route']}
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </>
         )}
       </div>
     </header>

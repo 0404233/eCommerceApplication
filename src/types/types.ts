@@ -5,6 +5,7 @@ export interface UserData {
   lastName?: string;
   email: string;
   password: string;
+  dateOfBirth: string;
   addresses?: BaseAddress[];
   defaultShippingAddress?: number;
   defaultBillingAddress?: number;

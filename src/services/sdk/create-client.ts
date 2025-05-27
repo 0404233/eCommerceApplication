@@ -19,7 +19,8 @@ export default class SDKInterface {
             ...userData,
           },
         })
-        .execute();
+        .execute()
+        .then(res => console.log(res))
 
       await this.loginCustomer(userData);
 
@@ -66,6 +67,14 @@ export default class SDKInterface {
       };
     }
   }
+
+  async getCustomerInfo() {
+    return this.apiRoot
+      .me()
+      .get()
+      .execute()
+      .then(res => res.body)
+  };
 }
 
 export const sdk = new SDKInterface();
