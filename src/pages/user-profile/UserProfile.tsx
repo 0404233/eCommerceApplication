@@ -8,6 +8,7 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import { sdk } from '../../services/sdk/create-client';
 import styles from './UserProfile.module.css';
+import validateUserProfileForm from '../../utils/validate-user-profile-form';
 
 type EditableAddress = {
   id: string;
@@ -29,6 +30,7 @@ export default function UserProfile(): ReactElement {
     type: 'success' | 'error';
     text: string;
   } | null>(null);
+  const [formErrors, setFormErrors] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     if (message) {
@@ -45,10 +47,12 @@ export default function UserProfile(): ReactElement {
       setLoading(true);
       try {
         const data = await sdk.getCustomerInfo();
+        console.log(data);
         setUserData(data);
         setFormData({
           firstName: data.firstName || '',
           lastName: data.lastName || '',
+          email: data.email || '',
           dateOfBirth: data.dateOfBirth || '',
         });
         setEditableAddresses(
@@ -88,6 +92,9 @@ export default function UserProfile(): ReactElement {
 
   const handleSave = async () => {
     if (!userData) return;
+    const errors = validateUserProfileForm(formData, editableAddresses);
+    setFormErrors(errors);
+    if (errors.size > 0) return;
     setLoading(true);
     setMessage(null);
 
@@ -123,7 +130,7 @@ export default function UserProfile(): ReactElement {
       <>
         {message && (
           <Alert
-            icon={<CheckIcon fontSize='large' />}
+            icon={<CheckIcon fontSize="large" />}
             severity={message.type}
             sx={{ mb: 2 }}
           >
@@ -175,12 +182,22 @@ export default function UserProfile(): ReactElement {
               onChange={(e) => handleChange('firstName', e.target.value)}
               fullWidth
               margin="normal"
+              error={formErrors.has('firstName')}
+              helperText={formErrors.get('firstName')}
             />
             <TextField
               className={`${styles['edit-field']}`}
               label="Last Name"
               value={formData.lastName || ''}
               onChange={(e) => handleChange('lastName', e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              className={`${styles['edit-field']}`}
+              label="Email"
+              value={formData.email || ''}
+              onChange={(e) => handleChange('email', e.target.value)}
               fullWidth
               margin="normal"
             />
@@ -204,7 +221,13 @@ export default function UserProfile(): ReactElement {
               <strong>Last Name:</strong> {userData.lastName}
             </p>
             <p>
+              <strong>Email:</strong> {userData.email}
+            </p>
+            <p>
               <strong>Date of Birth:</strong> {userData.dateOfBirth}
+            </p>
+            <p>
+              <strong>Password:</strong> {userData.password}
             </p>
           </>
         )}
