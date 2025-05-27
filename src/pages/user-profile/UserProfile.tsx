@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useState } from 'react';
-import { Customer } from '@commercetools/platform-sdk';
+import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -9,6 +9,15 @@ import CheckIcon from '@mui/icons-material/Check';
 import { sdk } from '../../services/sdk/create-client';
 import styles from './UserProfile.module.css';
 import validateUserProfileForm from '../../utils/validate-user-profile-form';
+
+const validateAddress = (address: EditableAddress) => {
+  const errors = new Map<string, string>();
+  if (!address.streetName) errors.set('streetName', 'Street is required');
+  if (!address.city) errors.set('city', 'City is required');
+  if (!address.postalCode) errors.set('postalCode', 'ZIP is required');
+  if (!address.country) errors.set('country', 'Country is required');
+  return errors;
+};
 
 type EditableAddress = {
   id: string;
@@ -25,6 +34,16 @@ export default function UserProfile(): ReactElement {
   const [editableAddresses, setEditableAddresses] = useState<EditableAddress[]>(
     [],
   );
+  const [newAddress, setNewAddress] = useState<EditableAddress>({
+    id: '',
+    streetName: '',
+    city: '',
+    postalCode: '',
+    country: '',
+  });
+  const [newAddressErrors, setNewAddressErrors] = useState<Map<string, string>>(
+    new Map(),
+  );
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{
     type: 'success' | 'error';
@@ -34,12 +53,10 @@ export default function UserProfile(): ReactElement {
 
   useEffect(() => {
     if (message) {
-      const timer = setTimeout(() => {
-        setMessage(null);
-      }, 3000);
+      const timer = setTimeout(() => setMessage(null), 3000);
       return () => clearTimeout(timer);
     }
-    return () => undefined;
+    return;
   }, [message]);
 
   useEffect(() => {
@@ -47,7 +64,6 @@ export default function UserProfile(): ReactElement {
       setLoading(true);
       try {
         const data = await sdk.getCustomerInfo();
-        console.log(data);
         setUserData(data);
         setFormData({
           firstName: data.firstName || '',
@@ -64,7 +80,7 @@ export default function UserProfile(): ReactElement {
             country: addr.country || '',
           })),
         );
-      } catch (err) {
+      } catch {
         setMessage({ type: 'error', text: 'Failed to fetch user data' });
       } finally {
         setLoading(false);
@@ -92,25 +108,98 @@ export default function UserProfile(): ReactElement {
 
   const handleSave = async () => {
     if (!userData) return;
+
     const errors = validateUserProfileForm(formData, editableAddresses);
     setFormErrors(errors);
     if (errors.size > 0) return;
+
     setLoading(true);
     setMessage(null);
 
     try {
-      setUserData((prev) =>
-        prev
-          ? ({
-              ...prev,
-              ...formData,
-              addresses: editableAddresses,
-            } as Customer)
-          : prev,
+      const actions: MyCustomerUpdateAction[] = [];
+
+      if (formData.firstName !== userData.firstName) {
+        actions.push({
+          action: 'setFirstName',
+          firstName: formData.firstName!,
+        });
+      }
+      if (formData.lastName !== userData.lastName) {
+        actions.push({ action: 'setLastName', lastName: formData.lastName! });
+      }
+      if (formData.email !== userData.email) {
+        actions.push({ action: 'changeEmail', email: formData.email! });
+      }
+      if (formData.dateOfBirth !== userData.dateOfBirth) {
+        actions.push({
+          action: 'setDateOfBirth',
+          dateOfBirth: formData.dateOfBirth!,
+        });
+      }
+
+      const existingIds = new Set(userData.addresses.map((a) => a.id));
+      const currentIds = new Set(editableAddresses.map((a) => a.id));
+
+      userData.addresses.forEach((addr) => {
+        if (!currentIds.has(addr.id!)) {
+          actions.push({ action: 'removeAddress', addressId: addr.id! });
+        }
+      });
+
+      editableAddresses.forEach((addr) => {
+        if (!existingIds.has(addr.id)) {
+          actions.push({
+            action: 'addAddress',
+            address: {
+              streetName: addr.streetName,
+              city: addr.city,
+              postalCode: addr.postalCode,
+              country: addr.country,
+            },
+          });
+        } else {
+          const original = userData.addresses.find((a) => a.id === addr.id);
+          const hasChange = [
+            'streetName',
+            'city',
+            'postalCode',
+            'country',
+          ].some(
+            (key) =>
+              original?.[key as keyof typeof original] !==
+              addr[key as keyof EditableAddress],
+          );
+          if (hasChange) {
+            actions.push({
+              action: 'changeAddress',
+              addressId: addr.id,
+              address: {
+                ...original,
+                streetName: addr.streetName,
+                city: addr.city,
+                postalCode: addr.postalCode,
+                country: addr.country,
+              },
+            });
+          }
+        }
+      });
+
+      if (actions.length === 0) {
+        setMessage({ type: 'success', text: 'No changes to save.' });
+        setEditMode(false);
+        return;
+      }
+
+      const updatedCustomer = await sdk.updateCustomerProfile(
+        userData.version,
+        actions,
       );
+      setUserData(updatedCustomer);
       setMessage({ type: 'success', text: 'Profile updated successfully' });
       setEditMode(false);
-    } catch (error) {
+    } catch {
       setMessage({ type: 'error', text: 'Failed to update profile' });
     } finally {
       setLoading(false);
@@ -126,28 +215,21 @@ export default function UserProfile(): ReactElement {
   }
 
   if (!userData) {
-    return (
-      <>
-        {message && (
-          <Alert
-            icon={<CheckIcon fontSize="large" />}
-            severity={message.type}
-            sx={{ mb: 2 }}
-          >
-            {message.text}
-          </Alert>
-        )}
-      </>
+    return message ? (
+      <Alert
+        icon={<CheckIcon fontSize="large" />}
+        severity={message.type}
+        sx={{ mb: 2 }}
+      >
+        {message.text}
+      </Alert>
+    ) : (
+      <></>
     );
   }
 
   const { defaultBillingAddressId, defaultShippingAddressId } = userData;
-
-  const countryMap = {
-    BY: 'Belarus',
-    RU: 'Russia',
-    US: 'USA',
-  };
+  const countryMap = { BY: 'Belarus', RU: 'Russia', US: 'USA' };
 
   return (
     <div className={styles['profile-container']}>
@@ -226,9 +308,6 @@ export default function UserProfile(): ReactElement {
             <p>
               <strong>Date of Birth:</strong> {userData.dateOfBirth}
             </p>
-            <p>
-              <strong>Password:</strong> {userData.password}
-            </p>
           </>
         )}
       </section>
@@ -306,6 +385,81 @@ export default function UserProfile(): ReactElement {
             )}
           </div>
         ))}
+
+        {editMode && (
+          <div className={styles['address-card']}>
+            <h3>Add New Address</h3>
+            <TextField
+              className={`${styles['edit-field']}`}
+              label="Street"
+              value={newAddress.streetName}
+              onChange={(e) =>
+                setNewAddress({ ...newAddress, streetName: e.target.value })
+              }
+              fullWidth
+              margin="dense"
+              error={newAddressErrors.has('streetName')}
+              helperText={newAddressErrors.get('streetName')}
+            />
+            <TextField
+              className={`${styles['edit-field']}`}
+              label="City"
+              value={newAddress.city}
+              onChange={(e) =>
+                setNewAddress({ ...newAddress, city: e.target.value })
+              }
+              fullWidth
+              margin="dense"
+              error={newAddressErrors.has('city')}
+              helperText={newAddressErrors.get('city')}
+            />
+            <TextField
+              className={`${styles['edit-field']}`}
+              label="ZIP"
+              value={newAddress.postalCode}
+              onChange={(e) =>
+                setNewAddress({ ...newAddress, postalCode: e.target.value })
+              }
+              fullWidth
+              margin="dense"
+              error={newAddressErrors.has('postalCode')}
+              helperText={newAddressErrors.get('postalCode')}
+            />
+            <TextField
+              className={`${styles['edit-field']}`}
+              label="Country"
+              value={newAddress.country}
+              onChange={(e) =>
+                setNewAddress({ ...newAddress, country: e.target.value })
+              }
+              fullWidth
+              margin="dense"
+              error={newAddressErrors.has('country')}
+              helperText={newAddressErrors.get('country')}
+            />
+            <Button
+              variant="outlined"
+              onClick={() => {
+                const validationErrors = validateAddress(newAddress);
+                setNewAddressErrors(validationErrors);
+                if (validationErrors.size > 0) return;
+                const newAddr = { ...newAddress, id: crypto.randomUUID() };
+                setEditableAddresses([...editableAddresses, newAddr]);
+                setNewAddress({
+                  id: '',
+                  streetName: '',
+                  city: '',
+                  postalCode: '',
+                  country: '',
+                });
+                setNewAddressErrors(new Map());
+              }}
+              sx={{ mt: 1 }}
+            >
+              Add Address
+            </Button>
+          </div>
+        )}
       </section>
 
       {editMode && (

@@ -1,4 +1,4 @@
-import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { createApiBuilderFromCtpClient, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
 import { UserData } from '../../types/types';
@@ -75,6 +75,22 @@ export default class SDKInterface {
       .execute()
       .then(res => res.body)
   };
+
+  async updateCustomerProfile(
+    version: number,
+    actions: MyCustomerUpdateAction[]
+  ) {
+    return this.apiRoot
+      .me()
+      .post({
+        body: {
+          version,
+          actions,
+        },
+      })
+      .execute()
+      .then((res) => res.body);
+  }
 }
 
 export const sdk = new SDKInterface();
