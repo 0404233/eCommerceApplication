@@ -9,12 +9,20 @@ import { sdk } from '../../../services/sdk/create-client';
 import { ProductProjection } from '@commercetools/platform-sdk';
 import CardCar from '../card-car/CardCar';
 import { useEffect, useState } from 'react';
+import GroupedSelect from '../sort-cars/SortCars';
+import SearchProduct from '../search-product/SearchProduct';
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
+
+const CATEGORY_MAP = [
+  '756f7061-f9fe-475b-81ac-f74cb1a9cd0f',
+  'bcbee2c0-496e-42b8-b6c5-0203f2b89865',
+  'e5eac371-fe66-444f-918c-8aa445942e2a',
+];
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index } = props;
@@ -30,21 +38,16 @@ function CustomTabPanel(props: TabPanelProps) {
   );
 }
 
-export default function BasicTabs(): React.ReactElement {
-  const [value, setValue] = useState(0);
+export default function ShowCars(): React.ReactElement {
+  const [value, setValue] = useState<number>(0);
   const [products, setProducts] = useState<ProductProjection[]>([]);
+  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    const categoryMap = [
-      '756f7061-f9fe-475b-81ac-f74cb1a9cd0f',
-      'bcbee2c0-496e-42b8-b6c5-0203f2b89865',
-      'e5eac371-fe66-444f-918c-8aa445942e2a',
-    ];
-
     const fetchData = async () => {
-      if (!categoryMap[value]) return;
+      if (!CATEGORY_MAP[value]) return;
 
-      const results = await sdk.carsCategory(categoryMap[value]);
+      const results = await sdk.getCarsCategory(CATEGORY_MAP[value]);
       setProducts(results);
     };
 
@@ -55,19 +58,44 @@ export default function BasicTabs(): React.ReactElement {
     setValue(newValue);
   };
 
-  function GetCars() {
+  const handleSearchInputChange = async (text: string) => {
+    setSearchText(text);
+
+    if (!text.trim()) {
+      const categoryId = CATEGORY_MAP[value];
+      if (!categoryId) return;
+
+      const results = await sdk.getCarsCategory(categoryId);
+      setProducts(results);
+      return;
+    }
+
+    try {
+      const searchResults = await sdk.getProductBySearch(text);
+      setProducts(searchResults);
+    } catch (error) {
+      console.error('Ошибка при поиске товаров:', error);
+    }
+  };
+
+  const filteredProducts = products.filter((product) => {
+    const name = product.name?.['en-US']?.toLowerCase() || '';
+    return name.includes(searchText.toLowerCase());
+  });
+
+  function GetCars({ products }: { products: ProductProjection[] }) {
     return products.map(({ id, name, description, masterVariant }) => {
-      const price = masterVariant?.prices?.[0]?.value?.centAmount;
+      const price = Number(masterVariant?.prices?.[0]?.value?.centAmount) / 100;
       const images = masterVariant?.images;
-      const discount = masterVariant?.prices?.[0]?.discounted?.value?.centAmount;
+      const discount = Number(masterVariant?.prices?.[0]?.discounted?.value?.centAmount) / 100;
 
       return (
         <CardCar
           key={id}
           name={name['en-US']}
           description={description?.['en-US']}
-          price={Number(price) / 100}
-          discount={Number(discount) / 100}
+          price={price}
+          discount={discount}
           images={images}
         />
       );
@@ -101,14 +129,18 @@ export default function BasicTabs(): React.ReactElement {
         <Tab disableRipple label={<Brand src={ferrari} alt={'ferrari'} brand={'ferrari'} />} />
         <Tab disableRipple label={<Brand src={bugatti} alt={'bugatti'} brand={'bugatti'} />} />
       </Tabs>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
+        <GroupedSelect onSort={setProducts} categoryId={CATEGORY_MAP[value]} />
+        <SearchProduct inputValue={searchText} onInputChange={handleSearchInputChange} />
+      </div>
       <CustomTabPanel value={value} index={0}>
-        <GetCars />
+        <GetCars products={filteredProducts} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <GetCars />
+        <GetCars products={filteredProducts} />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <GetCars />
+        <GetCars products={filteredProducts} />
       </CustomTabPanel>
     </>
   );
