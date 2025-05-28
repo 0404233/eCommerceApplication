@@ -69,7 +69,6 @@ export default class SDKInterface {
     }
   }
 
-
   async getCarsCategory(id: string): Promise<ProductProjection[]> {
     try {
       const res = await sdk.apiRoot
@@ -120,7 +119,6 @@ export default class SDKInterface {
 
     return filtered;
   }
-
 }
 
 export const sdk = new SDKInterface();

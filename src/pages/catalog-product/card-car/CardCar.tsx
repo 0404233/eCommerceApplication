@@ -19,8 +19,6 @@ export default function CardCar({ name, description, price, images, discount }: 
   const navigate = useNavigate();
   return (
     <div className={styles['card-car-container']} onClick={() => navigate('/product')}>
-  return (
-    <div className={styles['card-car-container']}>
       <h2 className={styles['card-title']}>{name}</h2>
       <img className={styles['card-img']} src={images?.[0]?.url} alt={images?.[0]?.label} />
       <div>
