@@ -30,3 +30,9 @@ export type BillingAdressOptions = {
   postalCode: string;
   country: string;
 };
+
+export type GetProductBySearch = {
+  id: string;
+  name: string;
+  slug: string;
+};

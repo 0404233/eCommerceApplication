@@ -1,4 +1,9 @@
-import { createApiBuilderFromCtpClient, ProductProjection } from '@commercetools/platform-sdk';
+import {
+  ClientResponse,
+  createApiBuilderFromCtpClient,
+  ProductProjection,
+  ProductProjectionPagedSearchResponse,
+} from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
 import { UserData } from '../../types/types';
@@ -64,7 +69,8 @@ export default class SDKInterface {
     }
   }
 
-  async carsCategory(id: string): Promise<ProductProjection[]> {
+
+  async getCarsCategory(id: string): Promise<ProductProjection[]> {
     try {
       const res = await sdk.apiRoot
         .productProjections()
@@ -85,6 +91,36 @@ export default class SDKInterface {
       throw error;
     }
   }
+
+  async sortByOptions(sort: string, categoryId: string): Promise<ClientResponse<ProductProjectionPagedSearchResponse>> {
+    return await sdk.apiRoot
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          'filter.query': [`categories.id:"${categoryId}"`],
+          sort,
+          priceCurrency: 'USD',
+          staged: true,
+        },
+      })
+      .execute();
+  }
+
+  async getProductBySearch(text: string): Promise<ProductProjection[]> {
+    const res = await sdk.apiRoot
+      .productProjections()
+      .get({ queryArgs: { limit: 100 } })
+      .execute();
+
+    const filtered = res.body.results.filter((product) => {
+      const name = product.name?.['en-US']?.toLowerCase() || '';
+      return name.includes(text.toLowerCase());
+    });
+
+    return filtered;
+  }
+
 }
 
 export const sdk = new SDKInterface();
