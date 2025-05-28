@@ -6,7 +6,7 @@ import {
 } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
-import { GetProductBySearch, UserData } from '../../types/types';
+import { UserData } from '../../types/types';
 import { LoginResponse } from '../../types/types';
 
 export default class SDKInterface {
@@ -69,6 +69,7 @@ export default class SDKInterface {
     }
   }
 
+
   async getCarsCategory(id: string): Promise<ProductProjection[]> {
     try {
       const res = await sdk.apiRoot
@@ -119,6 +120,7 @@ export default class SDKInterface {
 
     return filtered;
   }
+
 }
 
 export const sdk = new SDKInterface();
