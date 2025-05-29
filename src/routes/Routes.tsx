@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation, useMatch } from 'react-router';
+import { matchPath, Route, Routes, useLocation, useMatch } from 'react-router';
 import { lazy, ReactElement } from 'react';
 import Header from '../components/layout/Header/Header';
 import Footer from '../components/layout/Footer/Footer';
@@ -35,29 +35,43 @@ export default function AppRoutes({ loginStatus, changeLoginStatus }: Props): Re
     },
     { path: '/user', element: <UserProfile /> },
     { path: '/catalog', element: <CatalogProduct /> },
-    { path: '/product', element: <DetailedProduct /> },
+    { path: '/product/:id', element: <DetailedProduct /> },
     { path: '/basket', element: <Basket /> },
     { path: '/about', element: <AboutUs /> },
     { path: '*', element: <ErrorPage /> },
   ];
 
-  const pagePath = window.location.pathname.replace(basename, '');
+  const pagePath = location.pathname.replace(basename, '');
   const isLogin = useMatch('/login');
   const isRegister = useMatch('/register');
-  const correctPath = navigationRoutes.slice(0, -1).some(({ path }) => path.includes(pagePath));
+  const correctPath = navigationRoutes.slice(0, -1).some(({ path }) => {
+    return matchPath({ path, end: true }, pagePath);
+  });
   const hideHeaderPaths = isLogin || isRegister || !correctPath;
 
   return (
     <>
-      {!hideHeaderPaths && (
-        <Header location={location.pathname} loginStatus={loginStatus} changeLoginStatus={changeLoginStatus} />
+      {hideHeaderPaths ? (
+        <main className="auth-main">
+          <Routes>
+            {navigationRoutes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element} />
+            ))}
+          </Routes>
+        </main>
+      ) : (
+        <>
+          <Header location={location.pathname} loginStatus={loginStatus} changeLoginStatus={changeLoginStatus} />
+          <main className="main-content">
+            <Routes>
+              {navigationRoutes.map((route) => (
+                <Route key={route.path} path={route.path} element={route.element} />
+              ))}
+            </Routes>
+          </main>
+          <Footer />
+        </>
       )}
-      <Routes>
-        {navigationRoutes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
-      </Routes>
-      {!hideHeaderPaths && <Footer />}
     </>
   );
 }

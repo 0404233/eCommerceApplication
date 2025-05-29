@@ -74,7 +74,7 @@ export default function ShowCars(): React.ReactElement {
       const searchResults = await sdk.getProductBySearch(text);
       setProducts(searchResults);
     } catch (error) {
-      console.error('Ошибка при поиске товаров:', error);
+      console.error('Error when searching for products:', error);
     }
   };
 

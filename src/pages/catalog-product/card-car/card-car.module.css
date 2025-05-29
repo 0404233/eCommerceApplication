@@ -10,7 +10,12 @@
   overflow: hidden;
 }
 
-.card-car-container:hover > .card-img {
+.img-wrapper {
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.img-wrapper:hover > .card-img {
   transform: scale(1.08);
 }
 
@@ -40,23 +45,30 @@
   overflow: hidden;
 }
 
+.price-wrapper {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  gap: 0.5rem;
+}
+
 .card-price,
 .old-price {
   margin: 0;
   text-align: right;
-  font-size: large;
 }
 
 .old-price {
   text-decoration: line-through;
   color: #808080;
+  font-size: 1rem;
 }
 
 .discount-price {
   margin: 0;
   color: rgb(44, 189, 25);
   font-weight: bold;
-  font-size: larger;
+  font-size: 1.3rem;
 }
 
 .card-img {

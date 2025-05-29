@@ -3,11 +3,11 @@ import { useLocation } from 'react-router-dom';
 
 export default function DetailedProduct(): ReactElement {
   const location = useLocation();
-  const id = location.state?.id;
+  const carID = location.pathname.replace('/product/', '');
 
   return (
     <>
-      <h1>Detailed Product page; ID car:{id}</h1>
+      <h1>Detailed Product page; ID car: {carID}</h1>
     </>
   );
 }

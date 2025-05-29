@@ -80,7 +80,6 @@ export default class SDKInterface {
           },
         })
         .execute();
-      console.log(res);
 
       return res.body.results;
     } catch (error) {

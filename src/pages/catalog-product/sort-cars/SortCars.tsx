@@ -27,7 +27,7 @@ export default function GroupedSelect({ onSort, categoryId }: GroupedSelectProps
           const res = await sdk.getCarsCategory(categoryId);
           if (res) onSort(res);
         } catch (err) {
-          console.error('Ошибка при сбросе:', err);
+          console.error('Reset error:', err);
         }
         return;
       }
@@ -61,7 +61,7 @@ export default function GroupedSelect({ onSort, categoryId }: GroupedSelectProps
         const res = await sdk.sortByOptions(field, categoryId);
         if (res) onSort(res.body.results);
       } catch (err) {
-        console.error('Ошибка сортировки:', err);
+        console.error('Sorting error:', err);
       }
     };
 
