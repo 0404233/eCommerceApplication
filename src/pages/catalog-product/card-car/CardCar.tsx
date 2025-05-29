@@ -31,7 +31,7 @@ export default function CardCar({ id, name, description, price, discount, images
               <span className={styles['old-price']}>{price}$</span>
             </>
           ) : (
-            <p className={styles['card-price']}>{price}</p>
+            <p className={styles['card-price']}>{price}$</p>
           )}
         </div>
         <p className={styles['card-description']}>{description}</p>
