@@ -41,12 +41,7 @@ function App(): ReactElement {
   return (
     <>
       {isLoading && <LoadingSpinner />}
-      {!isLoading && (
-        <AppRoutes
-          loginStatus={loginStatus}
-          changeLoginStatus={changeLoginStatus}
-        />
-      )}
+      {!isLoading && <AppRoutes loginStatus={loginStatus} changeLoginStatus={changeLoginStatus} />}
     </>
   );
 }

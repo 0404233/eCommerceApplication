@@ -1,8 +1,4 @@
-import {
-  Client,
-  ClientBuilder,
-  type HttpMiddlewareOptions,
-} from '@commercetools/sdk-client-v2';
+import { Client, ClientBuilder, type HttpMiddlewareOptions } from '@commercetools/sdk-client-v2';
 import { getToken } from '../http/get-token-from-cookie';
 
 const AUTH_URL = import.meta.env['VITE_AUTH_URL'];

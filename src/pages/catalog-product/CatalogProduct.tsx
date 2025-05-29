@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
+import ShowCars from './show-cars/ShowCars';
 
 export default function CatalogProduct(): ReactElement {
-  return <h1>Catalog Product page</h1>;
+  return <ShowCars />;
 }

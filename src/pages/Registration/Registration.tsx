@@ -25,11 +25,10 @@ export default function Registration(): ReactElement {
   const [postalCode, setPostalCode] = useState('');
   const [country, setCountry] = useState('');
   const [newErrors, setNewErrors] = useState(new Map());
-  const [createCustomerResponse, setCreateCustomerResponse] =
-    useState<LoginResponse>({
-      success: false,
-      message: '',
-    });
+  const [createCustomerResponse, setCreateCustomerResponse] = useState<LoginResponse>({
+    success: false,
+    message: '',
+  });
   const [isOpenAlert, setIsOpenAlert] = useState<boolean>(false);
   const [isDefaultAddress, setIsDefaultAddress] = useState(false);
   const [billingAdress, setBillingAdress] = useState<BillingAdressOptions>({
@@ -68,11 +67,7 @@ export default function Registration(): ReactElement {
     setNewErrors(errors);
 
     if (errors.size === 0) {
-      const userData = createUserData(
-        datasForm,
-        isDefaultAddress,
-        billingAdress,
-      );
+      const userData = createUserData(datasForm, isDefaultAddress, billingAdress);
 
       const response = await sdk.createCustomer(userData);
       setCreateCustomerResponse(response);
@@ -93,12 +88,7 @@ export default function Registration(): ReactElement {
   return (
     <form className={classes['form-register']} onSubmit={handleSubmit}>
       <h1>Sign up</h1>
-      {isOpenAlert && (
-        <AuthAlert
-          response={createCustomerResponse}
-          onCloseAlert={onCloseAlert}
-        />
-      )}
+      {isOpenAlert && <AuthAlert response={createCustomerResponse} onCloseAlert={onCloseAlert} />}
       <div className={classes['form-register__inputs-wrapper']}>
         <div className={classes['form-register__input-container']}>
           <FormInput
@@ -150,13 +140,7 @@ export default function Registration(): ReactElement {
             onChange={setStreetName}
             error={newErrors.get('street')}
           />
-          <FormInput
-            label="City"
-            id="city"
-            value={city}
-            onChange={setCity}
-            error={newErrors.get('city')}
-          />
+          <FormInput label="City" id="city" value={city} onChange={setCity} error={newErrors.get('city')} />
           <FormInput
             label="Postal Code"
             id="postalCode"
@@ -165,22 +149,13 @@ export default function Registration(): ReactElement {
             maxLength={6}
             error={newErrors.get('postalCode')}
           />
-          <CountrySelect
-            country={country}
-            setCountry={setCountry}
-            newErrors={newErrors}
-          />
+          <CountrySelect country={country} setCountry={setCountry} newErrors={newErrors} />
           {newErrors.has('country') && (
-            <span className={classes['form-register__error']}>
-              {newErrors.get('country')}
-            </span>
+            <span className={classes['form-register__error']}>{newErrors.get('country')}</span>
           )}
 
           <div className={classes['address-container']}>
-            <SwitchButton
-              checked={isDefaultAddress}
-              onChange={handleSwitchChange}
-            />
+            <SwitchButton checked={isDefaultAddress} onChange={handleSwitchChange} />
             <Tooltip />
           </div>
 

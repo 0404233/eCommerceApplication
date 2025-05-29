@@ -1,5 +1,13 @@
 import { ReactElement } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function DetailedProduct(): ReactElement {
-  return <h1>Detailed Product page</h1>;
+  const location = useLocation();
+  const carID = location.pathname.replace('/product/', '');
+
+  return (
+    <>
+      <h1>Detailed Product page; ID car: {carID}</h1>
+    </>
+  );
 }
