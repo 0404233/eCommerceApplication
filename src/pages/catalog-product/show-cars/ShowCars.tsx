@@ -92,6 +92,7 @@ export default function ShowCars(): React.ReactElement {
       return (
         <CardCar
           key={id}
+          id={id}
           name={name['en-US']}
           description={description?.['en-US']}
           price={price}

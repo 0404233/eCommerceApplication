@@ -8,6 +8,7 @@ type Image = {
 };
 
 type CartCar = {
+  id: string;
   name?: string | undefined;
   description?: string | undefined;
   price?: number;
@@ -15,10 +16,10 @@ type CartCar = {
   images?: Image[] | undefined;
 };
 
-export default function CardCar({ name, description, price, images, discount }: CartCar): ReactElement {
+export default function CardCar({ id, name, description, price, discount, images }: CartCar): ReactElement {
   const navigate = useNavigate();
   return (
-    <div className={styles['card-car-container']} onClick={() => navigate('/product')}>
+    <div className={styles['card-car-container']} onClick={() => navigate('/product/', { state: { id: `${id}` } })}>
       <h2 className={styles['card-title']}>{name}</h2>
       <img className={styles['card-img']} src={images?.[0]?.url} alt={images?.[0]?.label} />
       <div>
