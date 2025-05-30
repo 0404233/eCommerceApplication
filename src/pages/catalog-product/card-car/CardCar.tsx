@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import styles from './card-car.module.css';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 
 type Image = {
   url?: string;

@@ -11,6 +11,7 @@ import CardCar from '../card-car/CardCar';
 import { useEffect, useState } from 'react';
 import GroupedSelect from '../sort-cars/SortCars';
 import SearchProduct from '../search-product/SearchProduct';
+import styles from './show-cars.module.css';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -130,7 +131,7 @@ export default function ShowCars(): React.ReactElement {
         <Tab disableRipple label={<Brand src={ferrari} alt={'ferrari'} brand={'ferrari'} />} />
         <Tab disableRipple label={<Brand src={bugatti} alt={'bugatti'} brand={'bugatti'} />} />
       </Tabs>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px' }}>
+      <div className={styles['show-cars-wrapper']}>
         <GroupedSelect onSort={setProducts} categoryId={CATEGORY_MAP[value]} />
         <SearchProduct inputValue={searchText} onInputChange={handleSearchInputChange} />
       </div>
