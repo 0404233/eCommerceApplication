@@ -5,10 +5,7 @@ const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
 const CLIENT_SECRET = import.meta.env['VITE_CLIENT_SECRET'];
 const CLIENT_ID = import.meta.env['VITE_CLIENT_ID'];
 
-export default async function getCustomerToken(
-  username: string,
-  password: string,
-): Promise<void> {
+export default async function getCustomerToken(username: string, password: string): Promise<void> {
   const credentials = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
 
   const params = new URLSearchParams({
