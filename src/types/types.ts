@@ -36,3 +36,19 @@ export type GetProductBySearch = {
   name: string;
   slug: string;
 };
+
+type ImageCar = {
+  dimensions: {
+    h: number;
+    w: number;
+  };
+  url: string;
+};
+
+export type DetailCarData = {
+  name: string;
+  description: string;
+  price: number;
+  discounted?: number;
+  images: ImageCar[];
+};

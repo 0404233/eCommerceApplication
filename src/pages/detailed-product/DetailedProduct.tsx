@@ -1,13 +1,43 @@
-import { ReactElement } from 'react';
-import { useLocation } from 'react-router-dom';
+import { ReactElement, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import styles from './detailed-product.module.css';
+import { sdk } from '../../services/sdk/create-client';
+import { ProductProjection } from '@commercetools/platform-sdk';
+import { extractDetails } from '../../utils/extract-details';
+import { DetailCarData } from '../../types/types';
+import Slider from '../../components/common/slider/slider';
 
 export default function DetailedProduct(): ReactElement {
-  const location = useLocation();
-  const carID = location.pathname.replace('/product/', '');
+  const { id } = useParams<{ id: string }>();
+  const [carData, setCarData] = useState<DetailCarData | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      const fetchData = async () => {
+        const product: ProductProjection = await sdk.getProductById(id);
+        const detailData = extractDetails(product);
+        setCarData(detailData);
+      };
+      fetchData();
+    }
+  }, [id]);
 
   return (
-    <>
-      <h1>Detailed Product page; ID car: {carID}</h1>
-    </>
+    <main className={styles['detailed-product']}>
+      {carData && (
+        <div className={styles['detailed-product-container']}>
+          {<Slider images={carData.images} />}
+          <div className={styles['detailed-product-info']}>
+            <h1 className={styles['detailed-product-title']}>{carData.name}</h1>
+            <p className={styles['price-container']}>
+              <span className={styles['active-price']}>${carData.discounted ?? carData.price}</span>
+              {carData.discounted && <span className={styles['full-price']}>${carData.price}</span>}
+            </p>
+            <p className={styles['detailed-product-description']}>{carData.description}</p>
+            <button className={styles['add-product']}>add to basket</button>
+          </div>
+        </div>
+      )}
+    </main>
   );
 }
