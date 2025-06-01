@@ -7,18 +7,19 @@
 }
 
 .detailed-product-container {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   height: 100%;
 }
 
+.detailed-product-slider,
 .detailed-product-info {
-  padding: 0px 100px 40px;
-  width: 50%;
+  margin: 30px;
 }
 
 .detailed-product-title {
   display: block;
+  margin-top: 0;
   font-family: 'Oswald', sans-serif;
   text-shadow: #cacaca 0 1px 6px;
 }
@@ -73,7 +74,6 @@
 
 @media screen and (max-width: 768px) {
   .detailed-product-container {
-    flex-direction: column;
-    justify-content: center;
+    grid-template-columns: 1fr;
   }
 }

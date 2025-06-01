@@ -5,7 +5,7 @@ import { sdk } from '../../services/sdk/create-client';
 import { ProductProjection } from '@commercetools/platform-sdk';
 import { extractDetails } from '../../utils/extract-details';
 import { DetailCarData } from '../../types/types';
-import Slider from '../../components/common/slider/slider';
+import Slider from '../../components/common/slider/Slider';
 
 export default function DetailedProduct(): ReactElement {
   const { id } = useParams<{ id: string }>();
@@ -26,7 +26,7 @@ export default function DetailedProduct(): ReactElement {
     <main className={styles['detailed-product']}>
       {carData && (
         <div className={styles['detailed-product-container']}>
-          {<Slider images={carData.images} />}
+          <div className={styles['detailed-product-slider']}>{<Slider images={carData.images} />}</div>
           <div className={styles['detailed-product-info']}>
             <h1 className={styles['detailed-product-title']}>{carData.name}</h1>
             <p className={styles['price-container']}>
