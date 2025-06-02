@@ -37,7 +37,7 @@ export type GetProductBySearch = {
   slug: string;
 };
 
-type ImageCar = {
+export type ImageCar = {
   dimensions: {
     h: number;
     w: number;
