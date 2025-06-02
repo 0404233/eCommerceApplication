@@ -87,10 +87,15 @@ export default class SDKInterface {
   }
 
   async changeCustomerPassword(data: CustomerChangePassword): Promise<Customer> {
+    const {version, currentPassword, newPassword} = data;
     return this.apiRoot
-      .customers()
+      .me()
       .password()
-      .post({ body: data })
+      .post({ body: {
+        version,
+        currentPassword,
+        newPassword
+      } })
       .execute()
       .then((res) => res.body);
   };
