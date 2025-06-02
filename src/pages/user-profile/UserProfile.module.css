@@ -7,7 +7,12 @@
 }
 
 .profile-container {
+  flex: 1;
   padding: 2rem;
+}
+
+.user-profile__tabs * {
+  color: #fff;
 }
 
 .section {
@@ -29,7 +34,7 @@
   }
 
   .shipping {
-    color: green
+    color: green;
   }
 }
 

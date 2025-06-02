@@ -1,14 +1,30 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Alert from '@mui/material/Alert';
+import {
+  CircularProgress,
+  Box,
+  Button,
+  TextField,
+  Tabs,
+  Tab,
+  Select,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Alert,
+} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { sdk } from '../../services/sdk/create-client';
 import styles from './UserProfile.module.css';
 import validateUserProfileForm from '../../utils/validate-user-profile-form';
+
+type EditableAddress = {
+  id: string;
+  streetName: string;
+  city: string;
+  postalCode: string;
+  country: string;
+};
 
 const validateAddress = (address: EditableAddress) => {
   const errors = new Map<string, string>();
@@ -19,15 +35,13 @@ const validateAddress = (address: EditableAddress) => {
   return errors;
 };
 
-type EditableAddress = {
-  id: string;
-  streetName: string;
-  city: string;
-  postalCode: string;
-  country: string;
-};
+export default function UserProfile(): ReactElement | null {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
-export default function UserProfile(): ReactElement {
+  const [selectedTab, setSelectedTab] = useState(0);
   const [userData, setUserData] = useState<Customer | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<Customer>>({});
@@ -44,20 +58,27 @@ export default function UserProfile(): ReactElement {
   const [newAddressErrors, setNewAddressErrors] = useState<Map<string, string>>(
     new Map(),
   );
+  const [formErrors, setFormErrors] = useState<Map<string, string>>(new Map());
+  const [defaultBillingId, setDefaultBillingId] = useState<
+    string | undefined
+  >();
+  const [defaultShippingId, setDefaultShippingId] = useState<
+    string | undefined
+  >();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
-  const [formErrors, setFormErrors] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(null), 3000);
-      return () => clearTimeout(timer);
-    }
-    return;
+    const timer = message ? setTimeout(() => setMessage(null), 3000) : null;
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [message]);
+
+  // console.log(editableAddresses);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -80,13 +101,14 @@ export default function UserProfile(): ReactElement {
             country: addr.country || '',
           })),
         );
+        setDefaultBillingId(data.defaultBillingAddressId);
+        setDefaultShippingId(data.defaultShippingAddressId);
       } catch {
         setMessage({ type: 'error', text: 'Failed to fetch user data' });
       } finally {
         setLoading(false);
       }
     };
-
     fetchUserData();
   }, []);
 
@@ -106,12 +128,26 @@ export default function UserProfile(): ReactElement {
     }
   };
 
+  const handleDeleteAddress = (id: string) => {
+    if (id === defaultBillingId) setDefaultBillingId(undefined);
+    if (id === defaultShippingId) setDefaultShippingId(undefined);
+    setEditableAddresses((prev) => prev.filter((addr) => addr.id !== id));
+  };
+
   const handleSave = async () => {
     if (!userData) return;
 
     const errors = validateUserProfileForm(formData, editableAddresses);
     setFormErrors(errors);
     if (errors.size > 0) return;
+
+    if (!defaultBillingId || !defaultShippingId) {
+      setMessage({
+        type: 'error',
+        text: 'Please set default billing and shipping addresses.',
+      });
+      return;
+    }
 
     setLoading(true);
     setMessage(null);
@@ -186,6 +222,34 @@ export default function UserProfile(): ReactElement {
         }
       });
 
+      if (defaultBillingId !== userData.defaultBillingAddressId) {
+        if (defaultBillingId) {
+          actions.push({
+            action: 'setDefaultBillingAddress',
+            addressId: defaultBillingId,
+          });
+        } else if (userData.defaultBillingAddressId) {
+          actions.push({
+            action: 'removeBillingAddressId',
+            addressId: userData.defaultBillingAddressId,
+          });
+        }
+      }
+
+      if (defaultShippingId !== userData.defaultShippingAddressId) {
+        if (defaultShippingId) {
+          actions.push({
+            action: 'setDefaultShippingAddress',
+            addressId: defaultShippingId,
+          });
+        } else if (userData.defaultShippingAddressId) {
+          actions.push({
+            action: 'removeShippingAddressId',
+            addressId: userData.defaultShippingAddressId,
+          });
+        }
+      }
+
       if (actions.length === 0) {
         setMessage({ type: 'success', text: 'No changes to save.' });
         setEditMode(false);
@@ -223,24 +287,67 @@ export default function UserProfile(): ReactElement {
       >
         {message.text}
       </Alert>
-    ) : (
-      <></>
-    );
+    ) : null;
   }
 
-  const { defaultBillingAddressId, defaultShippingAddressId } = userData;
   const countryMap = { BY: 'Belarus', RU: 'Russia', US: 'USA' };
+
+  const handleChangePassword = async () => {
+    if (!userData) return;
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
+      return;
+    }
+
+    setPasswordError(null);
+    setLoading(true);
+    setMessage(null);
+
+    console.log(userData.id, currentPassword, newPassword)
+
+    try {
+      await sdk.changeCustomerPassword({
+        id: userData.id,
+        version: userData.version,
+        currentPassword,
+        newPassword,
+      });
+      setMessage({ type: 'success', text: 'Password changed successfully' });
+
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to change password' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles['profile-container']}>
       <h1>User Profile</h1>
 
+      <Tabs
+        className={styles['user-profile__tabs'] ?? ''}
+        value={selectedTab}
+        onChange={(_, val) => setSelectedTab(val)}
+        sx={{ mb: 2, '& .MuiTabs-indicator': { backgroundColor: '#737aff' } }}
+        textColor="inherit"
+      >
+        <Tab label="User Info" />
+        <Tab label="Addresses" />
+        <Tab label="Change Password" />
+      </Tabs>
+
       {message && (
-        <Alert
-          icon={<CheckIcon fontSize="inherit" />}
-          severity={message.type}
-          sx={{ mb: 2 }}
-        >
+        <Alert icon={<CheckIcon />} severity={message.type} sx={{ mb: 2 }}>
           {message.text}
         </Alert>
       )}
@@ -253,214 +360,378 @@ export default function UserProfile(): ReactElement {
         {editMode ? 'Cancel' : 'Edit Profile'}
       </Button>
 
-      <section className={styles['section']}>
-        <h2>Personal Information</h2>
-        {editMode ? (
-          <>
-            <TextField
-              className={`${styles['edit-field']}`}
-              label="First Name"
-              value={formData.firstName || ''}
-              onChange={(e) => handleChange('firstName', e.target.value)}
-              fullWidth
-              margin="normal"
-              error={formErrors.has('firstName')}
-              helperText={formErrors.get('firstName')}
-            />
-            <TextField
-              className={`${styles['edit-field']}`}
-              label="Last Name"
-              value={formData.lastName || ''}
-              onChange={(e) => handleChange('lastName', e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              className={`${styles['edit-field']}`}
-              label="Email"
-              value={formData.email || ''}
-              onChange={(e) => handleChange('email', e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              className={`${styles['edit-field']}`}
-              label="Date of Birth"
-              type="date"
-              value={formData.dateOfBirth || ''}
-              onChange={(e) => handleChange('dateOfBirth', e.target.value)}
-              fullWidth
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-            />
-          </>
-        ) : (
-          <>
-            <p>
-              <strong>First Name:</strong> {userData.firstName}
-            </p>
-            <p>
-              <strong>Last Name:</strong> {userData.lastName}
-            </p>
-            <p>
-              <strong>Email:</strong> {userData.email}
-            </p>
-            <p>
-              <strong>Date of Birth:</strong> {userData.dateOfBirth}
-            </p>
-          </>
-        )}
-      </section>
+      {selectedTab === 0 && (
+        <section className={styles['section']}>
+          <h2>Personal Information</h2>
+          {editMode ? (
+            <>
+              <TextField
+                className={`${styles['edit-field']}`}
+                label="First Name"
+                value={formData.firstName || ''}
+                onChange={(e) => handleChange('firstName', e.target.value)}
+                fullWidth
+                margin="normal"
+                error={formErrors.has('firstName')}
+                helperText={formErrors.get('firstName')}
+              />
+              <TextField
+                className={`${styles['edit-field']}`}
+                label="Last Name"
+                value={formData.lastName || ''}
+                onChange={(e) => handleChange('lastName', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                className={`${styles['edit-field']}`}
+                label="Email"
+                value={formData.email || ''}
+                onChange={(e) => handleChange('email', e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                className={`${styles['edit-field']}`}
+                label="Date of Birth"
+                type="date"
+                value={formData.dateOfBirth || ''}
+                onChange={(e) => handleChange('dateOfBirth', e.target.value)}
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+              />
+            </>
+          ) : (
+            <>
+              <p>
+                <strong>First Name:</strong> {userData.firstName}
+              </p>
+              <p>
+                <strong>Last Name:</strong> {userData.lastName}
+              </p>
+              <p>
+                <strong>Email:</strong> {userData.email}
+              </p>
+              <p>
+                <strong>Date of Birth:</strong> {userData.dateOfBirth}
+              </p>
+            </>
+          )}
+        </section>
+      )}
 
-      <section className={styles['section']}>
-        <h2>Addresses</h2>
-        {editableAddresses.map((address, index) => (
-          <div key={index} className={styles['address-card']}>
-            {editMode ? (
-              <>
-                <TextField
-                  className={`${styles['edit-field']}`}
-                  label="Street"
-                  value={address.streetName}
+      {selectedTab === 1 && (
+        <section className={styles['section']}>
+          <h2>Addresses</h2>
+          {editableAddresses.map((address, index) => (
+            <div key={address.id} className={styles['address-card']}>
+              {editMode ? (
+                <>
+                  <TextField
+                    className={`${styles['edit-field']}`}
+                    label="Street"
+                    value={address.streetName}
+                    onChange={(e) =>
+                      handleAddressChange(index, 'streetName', e.target.value)
+                    }
+                    fullWidth
+                    margin="dense"
+                  />
+                  <TextField
+                    className={`${styles['edit-field']}`}
+                    label="City"
+                    value={address.city}
+                    onChange={(e) =>
+                      handleAddressChange(index, 'city', e.target.value)
+                    }
+                    fullWidth
+                    margin="dense"
+                  />
+                  <TextField
+                    className={`${styles['edit-field']}`}
+                    label="ZIP"
+                    value={address.postalCode}
+                    onChange={(e) =>
+                      handleAddressChange(index, 'postalCode', e.target.value)
+                    }
+                    fullWidth
+                    margin="dense"
+                  />
+                  <FormControl fullWidth margin="dense">
+                    <InputLabel id="country-label" sx={{ color: '#737aff' }}>
+                      Country
+                    </InputLabel>
+                    <Select
+                      value={address.country}
+                      onChange={(e) =>
+                        handleAddressChange(index, 'country', e.target.value)
+                      }
+                      label="Country"
+                      sx={{
+                        color: '#fff',
+                        '.MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#737aff',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#737aff',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#737aff',
+                        },
+                        '.MuiSvgIcon-root': {
+                          color: '#737aff',
+                        },
+                      }}
+                    >
+                      <MenuItem value="BY">Belarus</MenuItem>
+                      <MenuItem value="RU">Russia</MenuItem>
+                      <MenuItem value="US">USA</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                    <label>
+                      <input
+                        type="radio"
+                        name="billing"
+                        checked={defaultBillingId === address.id}
+                        onChange={() => setDefaultBillingId(address.id)}
+                      />
+                      Default Billing
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="shipping"
+                        checked={defaultShippingId === address.id}
+                        onChange={() => setDefaultShippingId(address.id)}
+                      />
+                      Default Shipping
+                    </label>
+                  </Box>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleDeleteAddress(address.id)}
+                    sx={{ mt: 1 }}
+                  >
+                    Delete Address
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p>
+                    <strong>Street:</strong> {address.streetName}
+                  </p>
+                  <p>
+                    <strong>City:</strong> {address.city}
+                  </p>
+                  <p>
+                    <strong>ZIP:</strong> {address.postalCode}
+                  </p>
+                  <p>
+                    <strong>Country:</strong>{' '}
+                    {countryMap[address.country as keyof typeof countryMap] ||
+                      address.country}
+                  </p>
+                  {address.id === defaultBillingId && (
+                    <p className={styles['billing']}>
+                      ✔ Default Billing Address
+                    </p>
+                  )}
+                  {address.id === defaultShippingId && (
+                    <p className={styles['shipping']}>
+                      ✔ Default Shipping Address
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+
+          {editMode && (
+            <div className={styles['address-card']}>
+              <h3>Add New Address</h3>
+              <TextField
+                className={`${styles['edit-field']}`}
+                label="Street"
+                value={newAddress.streetName}
+                onChange={(e) =>
+                  setNewAddress({ ...newAddress, streetName: e.target.value })
+                }
+                fullWidth
+                margin="dense"
+                error={newAddressErrors.has('streetName')}
+                helperText={newAddressErrors.get('streetName')}
+              />
+              <TextField
+                className={`${styles['edit-field']}`}
+                label="City"
+                value={newAddress.city}
+                onChange={(e) =>
+                  setNewAddress({ ...newAddress, city: e.target.value })
+                }
+                fullWidth
+                margin="dense"
+                error={newAddressErrors.has('city')}
+                helperText={newAddressErrors.get('city')}
+              />
+              <TextField
+                className={`${styles['edit-field']}`}
+                label="ZIP"
+                value={newAddress.postalCode}
+                onChange={(e) =>
+                  setNewAddress({ ...newAddress, postalCode: e.target.value })
+                }
+                fullWidth
+                margin="dense"
+                error={newAddressErrors.has('postalCode')}
+                helperText={newAddressErrors.get('postalCode')}
+              />
+              <FormControl fullWidth margin="dense">
+                <InputLabel id="country-label" sx={{ color: '#737aff' }}>
+                  Country
+                </InputLabel>
+                <Select
+                  value={newAddress.country}
                   onChange={(e) =>
-                    handleAddressChange(index, 'streetName', e.target.value)
+                    setNewAddress({ ...newAddress, country: e.target.value })
                   }
-                  fullWidth
-                  margin="dense"
-                />
-                <TextField
-                  className={`${styles['edit-field']}`}
-                  label="City"
-                  value={address.city}
-                  onChange={(e) =>
-                    handleAddressChange(index, 'city', e.target.value)
-                  }
-                  fullWidth
-                  margin="dense"
-                />
-                <TextField
-                  className={`${styles['edit-field']}`}
-                  label="ZIP"
-                  value={address.postalCode}
-                  onChange={(e) =>
-                    handleAddressChange(index, 'postalCode', e.target.value)
-                  }
-                  fullWidth
-                  margin="dense"
-                />
-                <TextField
-                  className={`${styles['edit-field']}`}
                   label="Country"
-                  value={address.country}
-                  onChange={(e) =>
-                    handleAddressChange(index, 'country', e.target.value)
-                  }
-                  fullWidth
-                  margin="dense"
-                />
-              </>
-            ) : (
-              <>
-                <p>
-                  <strong>Street:</strong> {address.streetName}
-                </p>
-                <p>
-                  <strong>City:</strong> {address.city}
-                </p>
-                <p>
-                  <strong>ZIP:</strong> {address.postalCode}
-                </p>
-                <p>
-                  <strong>Country:</strong>{' '}
-                  {countryMap[address.country as keyof typeof countryMap] ||
-                    address.country}
-                </p>
-              </>
-            )}
-            {address.id === defaultBillingAddressId && (
-              <p className={styles['billing']}>✔ Default Billing Address</p>
-            )}
-            {address.id === defaultShippingAddressId && (
-              <p className={styles['shipping']}>✔ Default Shipping Address</p>
-            )}
-          </div>
-        ))}
+                  sx={{
+                    color: '#fff',
+                    '.MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#737aff',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#737aff',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#737aff',
+                    },
+                    '.MuiSvgIcon-root': {
+                      color: '#737aff',
+                    },
+                  }}
+                >
+                  <MenuItem value="BY">Belarus</MenuItem>
+                  <MenuItem value="RU">Russia</MenuItem>
+                  <MenuItem value="US">USA</MenuItem>
+                </Select>
+              </FormControl>
 
-        {editMode && (
-          <div className={styles['address-card']}>
-            <h3>Add New Address</h3>
-            <TextField
-              className={`${styles['edit-field']}`}
-              label="Street"
-              value={newAddress.streetName}
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, streetName: e.target.value })
-              }
-              fullWidth
-              margin="dense"
-              error={newAddressErrors.has('streetName')}
-              helperText={newAddressErrors.get('streetName')}
-            />
-            <TextField
-              className={`${styles['edit-field']}`}
-              label="City"
-              value={newAddress.city}
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, city: e.target.value })
-              }
-              fullWidth
-              margin="dense"
-              error={newAddressErrors.has('city')}
-              helperText={newAddressErrors.get('city')}
-            />
-            <TextField
-              className={`${styles['edit-field']}`}
-              label="ZIP"
-              value={newAddress.postalCode}
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, postalCode: e.target.value })
-              }
-              fullWidth
-              margin="dense"
-              error={newAddressErrors.has('postalCode')}
-              helperText={newAddressErrors.get('postalCode')}
-            />
-            <TextField
-              className={`${styles['edit-field']}`}
-              label="Country"
-              value={newAddress.country}
-              onChange={(e) =>
-                setNewAddress({ ...newAddress, country: e.target.value })
-              }
-              fullWidth
-              margin="dense"
-              error={newAddressErrors.has('country')}
-              helperText={newAddressErrors.get('country')}
-            />
-            <Button
-              variant="outlined"
-              onClick={() => {
-                const validationErrors = validateAddress(newAddress);
-                setNewAddressErrors(validationErrors);
-                if (validationErrors.size > 0) return;
-                const newAddr = { ...newAddress, id: crypto.randomUUID() };
-                setEditableAddresses([...editableAddresses, newAddr]);
-                setNewAddress({
-                  id: '',
-                  streetName: '',
-                  city: '',
-                  postalCode: '',
-                  country: '',
-                });
-                setNewAddressErrors(new Map());
-              }}
-              sx={{ mt: 1 }}
-            >
-              Add Address
-            </Button>
-          </div>
-        )}
-      </section>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  const validationErrors = validateAddress(newAddress);
+                  setNewAddressErrors(validationErrors);
+                  if (validationErrors.size > 0) return;
+
+                  const newAddr = { ...newAddress, id: crypto.randomUUID() };
+                  setEditableAddresses([...editableAddresses, newAddr]);
+                  setNewAddress({
+                    id: '',
+                    streetName: '',
+                    city: '',
+                    postalCode: '',
+                    country: '',
+                  });
+                  setNewAddressErrors(new Map());
+                }}
+                sx={{ mt: 1 }}
+              >
+                Add Address
+              </Button>
+            </div>
+          )}
+        </section>
+      )}
+      {selectedTab === 2 && (
+        <section className={styles['section']}>
+          <h2>Change Password</h2>
+          <TextField
+            label="Current Password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            fullWidth
+            margin="normal"
+            className={`${styles['edit-field']}`}
+            sx={{
+              color: '#fff',
+              '.MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '.MuiSvgIcon-root': {
+                color: '#737aff',
+              },
+            }}
+          />
+          <TextField
+            className={`${styles['edit-field']}`}
+            label="New Password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            fullWidth
+            margin="normal"
+            sx={{
+              color: '#fff',
+              '.MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '.MuiSvgIcon-root': {
+                color: '#737aff',
+              },
+            }}
+          />
+          <TextField
+            className={`${styles['edit-field']}`}
+            label="Confirm New Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            fullWidth
+            margin="normal"
+            error={!!passwordError}
+            helperText={passwordError}
+            sx={{
+              color: '#fff',
+              '.MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#737aff',
+              },
+              '.MuiSvgIcon-root': {
+                color: '#737aff',
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={handleChangePassword}
+            sx={{ mt: 2, backgroundColor: '#737aff' }}
+          >
+            Change Password
+          </Button>
+        </section>
+      )}
 
       {editMode && (
         <Button
