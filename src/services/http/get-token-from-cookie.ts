@@ -26,15 +26,15 @@ export function getToken(): { accessToken?: string; refreshToken?: string } {
     }
     return acc;
   }, {});
-
+  console.log(cookies);
   const result: { accessToken?: string; refreshToken?: string } = {};
 
-  if ('access_token' in cookies) {
-    result.accessToken = cookies['access_token'];
+  if ('customer_token' in cookies) {
+    result.accessToken = cookies['customer_token'];
   }
 
-  if ('refresh_token' in cookies) {
-    result.refreshToken = cookies['refresh_token'];
+  if ('customer_refresh_token' in cookies) {
+    result.refreshToken = cookies['customer_refresh_token'];
   }
 
   return result;
