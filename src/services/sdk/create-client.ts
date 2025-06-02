@@ -15,6 +15,12 @@ export default class SDKInterface {
     projectKey: this.projectKey,
   });
 
+  setApiRootAfterLogin(): void {
+    this.apiRoot = createApiBuilderFromCtpClient(ctpClient()).withProjectKey({
+      projectKey: this.projectKey,
+    });
+  }
+
   async createCustomer(userData: UserData): Promise<LoginResponse> {
     try {
       await this.apiRoot
@@ -55,7 +61,7 @@ export default class SDKInterface {
           },
         })
         .execute();
-      getCustomerToken(email, password);
+      await getCustomerToken(email, password);
       return {
         success: true,
         message: 'Login completed successfully!',
@@ -71,7 +77,7 @@ export default class SDKInterface {
 
   async getCarsCategory(id: string): Promise<ProductProjection[]> {
     try {
-      const res = await sdk.apiRoot
+      const res = await this.apiRoot
         .productProjections()
         .get({
           queryArgs: {
@@ -91,7 +97,7 @@ export default class SDKInterface {
   }
 
   async sortByOptions(sort: string, categoryId: string): Promise<ClientResponse<ProductProjectionPagedSearchResponse>> {
-    return await sdk.apiRoot
+    return await this.apiRoot
       .productProjections()
       .search()
       .get({
@@ -106,7 +112,7 @@ export default class SDKInterface {
   }
 
   async getProductBySearch(text: string): Promise<ProductProjection[]> {
-    const res = await sdk.apiRoot
+    const res = await this.apiRoot
       .productProjections()
       .get({ queryArgs: { limit: 100 } })
       .execute();

@@ -17,9 +17,9 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
 };
 
 export const ctpClient = (): Client => {
-  const [accessToken, refreshToken] = getToken();
+  const { accessToken, refreshToken } = getToken();
 
-  if (!accessToken) {
+  if (!accessToken || !refreshToken) {
     return new ClientBuilder()
       .withAnonymousSessionFlow({
         host: AUTH_URL,
@@ -43,7 +43,8 @@ export const ctpClient = (): Client => {
         clientId: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
       },
-      refreshToken: refreshToken || '',
+      refreshToken,
+      fetch,
     })
     .withHttpMiddleware(httpMiddlewareOptions)
     .build();

@@ -59,6 +59,8 @@ export default function GroupedSelect({ onSort, categoryId }: GroupedSelectProps
 
       try {
         const res = await sdk.sortByOptions(field, categoryId);
+        console.log(res);
+
         if (res) onSort(res.body.results);
       } catch (err) {
         console.error('Sorting error:', err);

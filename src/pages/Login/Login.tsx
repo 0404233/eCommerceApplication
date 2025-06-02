@@ -28,7 +28,7 @@ export default function Login({ changeLoginStatus }: LoginStatus): ReactElement 
         navigate('/');
       }
     }, 300);
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,6 +40,8 @@ export default function Login({ changeLoginStatus }: LoginStatus): ReactElement 
 
     if (valid) {
       const result = await sdk.loginCustomer({ email, password });
+
+      sdk.setApiRootAfterLogin();
 
       if (result && result.success !== true) {
         setErrors({
