@@ -124,6 +124,18 @@ export default class SDKInterface {
 
     return filtered;
   }
+
+  async getProductById(id: string): Promise<ProductProjection> {
+    try {
+      const data = await this.apiRoot.productProjections().withId({ ID: id }).get().execute();
+      return data.body;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
 }
 
 export const sdk = new SDKInterface();
