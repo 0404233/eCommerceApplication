@@ -19,19 +19,20 @@ import styles from './UserProfile.module.css';
 import validateUserProfileForm from '../../utils/validate-user-profile-form';
 
 type EditableAddress = {
-  id: string;
-  streetName: string;
   city: string;
-  postalCode: string;
   country: string;
+  id: string;
+  postalCode: string;
+  streetName: string;
 };
 
 const validateAddress = (address: EditableAddress) => {
   const errors = new Map<string, string>();
-  if (!address.streetName) errors.set('streetName', 'Street is required');
-  if (!address.city) errors.set('city', 'City is required');
-  if (!address.postalCode) errors.set('postalCode', 'ZIP is required');
-  if (!address.country) errors.set('country', 'Country is required');
+  if (address.streetName.length === 0) errors.set('streetName', 'Street must contain at least one character.');
+  if (!/^[a-zA-Z]+$/.test(address.city) || address.city.length === 0)
+    errors.set('city', 'City must have at least one letter, no digits or symbols.');
+  if (!/^\d{6}$|^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(address.postalCode))
+    errors.set('postalCode', 'ZIP is required');
   return errors;
 };
 
@@ -45,9 +46,7 @@ export default function UserProfile(): ReactElement | null {
   const [userData, setUserData] = useState<Customer | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<Partial<Customer>>({});
-  const [editableAddresses, setEditableAddresses] = useState<EditableAddress[]>(
-    [],
-  );
+  const [editableAddresses, setEditableAddresses] = useState<EditableAddress[]>([]);
   const [newAddress, setNewAddress] = useState<EditableAddress>({
     id: '',
     streetName: '',
@@ -55,16 +54,10 @@ export default function UserProfile(): ReactElement | null {
     postalCode: '',
     country: '',
   });
-  const [newAddressErrors, setNewAddressErrors] = useState<Map<string, string>>(
-    new Map(),
-  );
+  const [newAddressErrors, setNewAddressErrors] = useState<Map<string, string>>(new Map());
   const [formErrors, setFormErrors] = useState<Map<string, string>>(new Map());
-  const [defaultBillingId, setDefaultBillingId] = useState<
-    string | undefined
-  >();
-  const [defaultShippingId, setDefaultShippingId] = useState<
-    string | undefined
-  >();
+  const [defaultBillingId, setDefaultBillingId] = useState<string | undefined>();
+  const [defaultShippingId, setDefaultShippingId] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{
     type: 'success' | 'error';
@@ -116,11 +109,7 @@ export default function UserProfile(): ReactElement | null {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleAddressChange = (
-    index: number,
-    field: keyof EditableAddress,
-    value: string,
-  ) => {
+  const handleAddressChange = (index: number, field: keyof EditableAddress, value: string) => {
     const updated = [...editableAddresses];
     if (updated[index]) {
       updated[index][field] = value;
@@ -136,6 +125,8 @@ export default function UserProfile(): ReactElement | null {
 
   const handleSave = async () => {
     if (!userData) return;
+
+  
 
     const errors = validateUserProfileForm(formData, editableAddresses);
     setFormErrors(errors);
@@ -196,15 +187,8 @@ export default function UserProfile(): ReactElement | null {
           });
         } else {
           const original = userData.addresses.find((a) => a.id === addr.id);
-          const hasChange = [
-            'streetName',
-            'city',
-            'postalCode',
-            'country',
-          ].some(
-            (key) =>
-              original?.[key as keyof typeof original] !==
-              addr[key as keyof EditableAddress],
+          const hasChange = ['streetName', 'city', 'postalCode', 'country'].some(
+            (key) => original?.[key as keyof typeof original] !== addr[key as keyof EditableAddress],
           );
           if (hasChange) {
             actions.push({
@@ -256,10 +240,7 @@ export default function UserProfile(): ReactElement | null {
         return;
       }
 
-      const updatedCustomer = await sdk.updateCustomerProfile(
-        userData.version,
-        actions,
-      );
+      const updatedCustomer = await sdk.updateCustomerProfile(userData.version, actions);
       setUserData(updatedCustomer);
       setMessage({ type: 'success', text: 'Profile updated successfully' });
       setEditMode(false);
@@ -280,11 +261,7 @@ export default function UserProfile(): ReactElement | null {
 
   if (!userData) {
     return message ? (
-      <Alert
-        icon={<CheckIcon fontSize="large" />}
-        severity={message.type}
-        sx={{ mb: 2 }}
-      >
+      <Alert icon={<CheckIcon fontSize="large" />} severity={message.type} sx={{ mb: 2 }}>
         {message.text}
       </Alert>
     ) : null;
@@ -309,7 +286,7 @@ export default function UserProfile(): ReactElement | null {
     setLoading(true);
     setMessage(null);
 
-    console.log(userData.id, currentPassword, newPassword)
+    console.log(userData.id, currentPassword, newPassword);
 
     try {
       await sdk.changeCustomerPassword({
@@ -352,11 +329,7 @@ export default function UserProfile(): ReactElement | null {
         </Alert>
       )}
 
-      <Button
-        variant="contained"
-        onClick={() => setEditMode(!editMode)}
-        sx={{ mb: 2, backgroundColor: '#737aff' }}
-      >
+      <Button variant="contained" onClick={() => setEditMode(!editMode)} sx={{ mb: 2, backgroundColor: '#737aff' }}>
         {editMode ? 'Cancel' : 'Edit Profile'}
       </Button>
 
@@ -432,9 +405,7 @@ export default function UserProfile(): ReactElement | null {
                     className={`${styles['edit-field']}`}
                     label="Street"
                     value={address.streetName}
-                    onChange={(e) =>
-                      handleAddressChange(index, 'streetName', e.target.value)
-                    }
+                    onChange={(e) => handleAddressChange(index, 'streetName', e.target.value)}
                     fullWidth
                     margin="dense"
                   />
@@ -442,9 +413,7 @@ export default function UserProfile(): ReactElement | null {
                     className={`${styles['edit-field']}`}
                     label="City"
                     value={address.city}
-                    onChange={(e) =>
-                      handleAddressChange(index, 'city', e.target.value)
-                    }
+                    onChange={(e) => handleAddressChange(index, 'city', e.target.value)}
                     fullWidth
                     margin="dense"
                   />
@@ -452,9 +421,7 @@ export default function UserProfile(): ReactElement | null {
                     className={`${styles['edit-field']}`}
                     label="ZIP"
                     value={address.postalCode}
-                    onChange={(e) =>
-                      handleAddressChange(index, 'postalCode', e.target.value)
-                    }
+                    onChange={(e) => handleAddressChange(index, 'postalCode', e.target.value)}
                     fullWidth
                     margin="dense"
                   />
@@ -464,9 +431,7 @@ export default function UserProfile(): ReactElement | null {
                     </InputLabel>
                     <Select
                       value={address.country}
-                      onChange={(e) =>
-                        handleAddressChange(index, 'country', e.target.value)
-                      }
+                      onChange={(e) => handleAddressChange(index, 'country', e.target.value)}
                       label="Country"
                       sx={{
                         color: '#fff',
@@ -531,18 +496,11 @@ export default function UserProfile(): ReactElement | null {
                   </p>
                   <p>
                     <strong>Country:</strong>{' '}
-                    {countryMap[address.country as keyof typeof countryMap] ||
-                      address.country}
+                    {countryMap[address.country as keyof typeof countryMap] || address.country}
                   </p>
-                  {address.id === defaultBillingId && (
-                    <p className={styles['billing']}>
-                      ✔ Default Billing Address
-                    </p>
-                  )}
+                  {address.id === defaultBillingId && <p className={styles['billing']}>✔ Default Billing Address</p>}
                   {address.id === defaultShippingId && (
-                    <p className={styles['shipping']}>
-                      ✔ Default Shipping Address
-                    </p>
+                    <p className={styles['shipping']}>✔ Default Shipping Address</p>
                   )}
                 </>
               )}
@@ -556,9 +514,7 @@ export default function UserProfile(): ReactElement | null {
                 className={`${styles['edit-field']}`}
                 label="Street"
                 value={newAddress.streetName}
-                onChange={(e) =>
-                  setNewAddress({ ...newAddress, streetName: e.target.value })
-                }
+                onChange={(e) => setNewAddress({ ...newAddress, streetName: e.target.value })}
                 fullWidth
                 margin="dense"
                 error={newAddressErrors.has('streetName')}
@@ -568,9 +524,7 @@ export default function UserProfile(): ReactElement | null {
                 className={`${styles['edit-field']}`}
                 label="City"
                 value={newAddress.city}
-                onChange={(e) =>
-                  setNewAddress({ ...newAddress, city: e.target.value })
-                }
+                onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
                 fullWidth
                 margin="dense"
                 error={newAddressErrors.has('city')}
@@ -580,9 +534,7 @@ export default function UserProfile(): ReactElement | null {
                 className={`${styles['edit-field']}`}
                 label="ZIP"
                 value={newAddress.postalCode}
-                onChange={(e) =>
-                  setNewAddress({ ...newAddress, postalCode: e.target.value })
-                }
+                onChange={(e) => setNewAddress({ ...newAddress, postalCode: e.target.value })}
                 fullWidth
                 margin="dense"
                 error={newAddressErrors.has('postalCode')}
@@ -594,9 +546,7 @@ export default function UserProfile(): ReactElement | null {
                 </InputLabel>
                 <Select
                   value={newAddress.country}
-                  onChange={(e) =>
-                    setNewAddress({ ...newAddress, country: e.target.value })
-                  }
+                  onChange={(e) => setNewAddress({ ...newAddress, country: e.target.value })}
                   label="Country"
                   sx={{
                     color: '#fff',
@@ -723,23 +673,14 @@ export default function UserProfile(): ReactElement | null {
               },
             }}
           />
-          <Button
-            variant="contained"
-            onClick={handleChangePassword}
-            sx={{ mt: 2, backgroundColor: '#737aff' }}
-          >
+          <Button variant="contained" onClick={handleChangePassword} sx={{ mt: 2, backgroundColor: '#737aff' }}>
             Change Password
           </Button>
         </section>
       )}
 
       {editMode && (
-        <Button
-          variant="contained"
-          onClick={handleSave}
-          disabled={loading}
-          sx={{ mt: 2, backgroundColor: '#737aff' }}
-        >
+        <Button variant="contained" onClick={handleSave} disabled={loading} sx={{ mt: 2, backgroundColor: '#737aff' }}>
           Save Changes
         </Button>
       )}
