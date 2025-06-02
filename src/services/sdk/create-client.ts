@@ -105,7 +105,6 @@ export default class SDKInterface {
           'filter.query': [`categories.id:"${categoryId}"`],
           sort,
           priceCurrency: 'USD',
-          staged: true,
         },
       })
       .execute();
