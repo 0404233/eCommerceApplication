@@ -50,5 +50,6 @@ export const ctpClient = (): Client => {
       refreshToken: refreshToken || '',
     })
     .withHttpMiddleware(httpMiddlewareOptions)
+    .withLoggerMiddleware()
     .build();
 };

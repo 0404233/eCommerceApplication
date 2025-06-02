@@ -1,6 +1,8 @@
 import {
   createApiBuilderFromCtpClient,
   MyCustomerUpdateAction,
+  CustomerChangePassword,
+  Customer
 } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
@@ -83,6 +85,15 @@ export default class SDKInterface {
       .execute()
       .then((res) => res.body);
   }
+
+  async changeCustomerPassword(data: CustomerChangePassword): Promise<Customer> {
+    return this.apiRoot
+      .customers()
+      .password()
+      .post({ body: data })
+      .execute()
+      .then((res) => res.body);
+  };
 }
 
 export const sdk = new SDKInterface();
