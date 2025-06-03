@@ -17,7 +17,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import { sdk } from '../../services/sdk/create-client';
 import styles from './UserProfile.module.css';
 import validateUserProfileForm from '../../utils/validate-user-profile-form';
-
+import { useNavigate } from 'react-router';
+import { getTokenFromCookie } from '../../services/http/get-token-from-cookie';
 type EditableAddress = {
   city: string;
   country: string;
@@ -64,6 +65,8 @@ export default function UserProfile(): ReactElement | null {
     text: string;
   } | null>(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const timer = message ? setTimeout(() => setMessage(null), 3000) : null;
     return () => {
@@ -71,9 +74,13 @@ export default function UserProfile(): ReactElement | null {
     };
   }, [message]);
 
-  // console.log(editableAddresses);
-
   useEffect(() => {
+    const token = getTokenFromCookie();
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
     const fetchUserData = async () => {
       setLoading(true);
       try {
@@ -97,7 +104,7 @@ export default function UserProfile(): ReactElement | null {
         setDefaultBillingId(data.defaultBillingAddressId);
         setDefaultShippingId(data.defaultShippingAddressId);
       } catch {
-        setMessage({ type: 'error', text: 'Failed to fetch user data' });
+        navigate('/login');
       } finally {
         setLoading(false);
       }
@@ -125,8 +132,6 @@ export default function UserProfile(): ReactElement | null {
 
   const handleSave = async () => {
     if (!userData) return;
-
-  
 
     const errors = validateUserProfileForm(formData, editableAddresses);
     setFormErrors(errors);
