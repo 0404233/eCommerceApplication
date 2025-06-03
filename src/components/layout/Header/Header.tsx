@@ -3,6 +3,7 @@ import HomeIcon from '../../../assets/svg/home.svg?react';
 import styles from './header.module.css';
 import { useNavigate } from 'react-router';
 import { deleteTokenCookie, getTokenFromCookie } from '../../../services/http/get-token-from-cookie';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type HeaderProps = {
   location: string;
@@ -23,14 +24,14 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
 
   const navigate = useNavigate();
 
-  const navigationRoutes = [{ path: '/user' }, { path: '/catalog' }, { path: '/basket' }, { path: '/about' }];
+  const navigationRoutes = [{ path: '/catalog' }, { path: '/product' }, { path: '/basket' }, { path: '/about' }];
 
   const handleLogout = () => {
     const token = getTokenFromCookie();
     if (token) {
+      navigate('/main');
       deleteTokenCookie();
       changeLoginStatus(false);
-      navigate('/main');
     }
   };
 
@@ -77,9 +78,19 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
             </>
           )}
           {loginStatus && (
-            <button className={styles['button-header-route']} onClick={handleLogout}>
-              Logout
-            </button>
+            <>
+              <AccountCircleIcon
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/user');
+                }}
+                sx={{ fontSize: 31 }}
+                className={`${styles['user-icon']} ${location === '/user' ? styles['selected'] : ''}`}
+              ></AccountCircleIcon>
+              <button className={styles['button-header-route']} onClick={handleLogout}>
+                Logout
+              </button>
+            </>
           )}
         </div>
       </nav>

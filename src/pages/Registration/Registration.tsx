@@ -19,7 +19,7 @@ export default function Registration(): ReactElement {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState('');
+  const [dateOfBirth, setDob] = useState('');
   const [streetName, setStreetName] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
@@ -56,7 +56,7 @@ export default function Registration(): ReactElement {
       password,
       firstName,
       lastName,
-      dob,
+      dateOfBirth,
       streetName,
       city,
       postalCode,
@@ -126,7 +126,7 @@ export default function Registration(): ReactElement {
             label="Date of Birth"
             id="dob"
             type="date"
-            value={dob}
+            value={dateOfBirth}
             onChange={setDob}
             error={newErrors.get('dob')}
           />

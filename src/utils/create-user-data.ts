@@ -10,6 +10,7 @@ type DatasForm = {
   city: string;
   postalCode: string;
   country: string;
+  dateOfBirth: string;
 };
 
 type Address = {
@@ -50,6 +51,7 @@ export default function createUserData(
     password: datasForm.password,
     addresses: addresses,
     defaultShippingAddress: 0,
+    dateOfBirth: datasForm.dateOfBirth  
   };
 
   if (isDefaultAddress) userData.defaultBillingAddress = 0;

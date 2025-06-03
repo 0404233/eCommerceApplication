@@ -7,9 +7,28 @@
   background-color: #565656;
 }
 
+.user-icon {
+  border-radius: 5px;
+  padding: 4px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #6b6b6b;
+    transition: 0.3s linear;
+  }
+
+  &.selected {
+    color: #737aff;
+    box-shadow: 0 0 5px 5px #737aff;
+    background-color: #6b6b6b;
+    transition: 0.2s ease;
+  }
+}
+
 .button-group {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 20px;
 }
 
 .button-header-route,
@@ -88,7 +107,7 @@
 @media (max-width: 768px) {
   .burger {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 5px;
     background: none;
     border: none;
@@ -127,6 +146,7 @@
 
   .links-to-pages {
     position: fixed;
+    justify-content: center;
     top: 0;
     right: 0;
     width: 100%;

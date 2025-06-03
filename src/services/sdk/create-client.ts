@@ -3,6 +3,9 @@ import {
   createApiBuilderFromCtpClient,
   ProductProjection,
   ProductProjectionPagedSearchResponse,
+  MyCustomerUpdateAction,
+  CustomerChangePassword,
+  Customer
 } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
@@ -135,6 +138,46 @@ export default class SDKInterface {
       throw error;
     }
   }
+
+  async getCustomerInfo() {
+    return this.apiRoot
+      .me()
+      .get()
+      .execute()
+      .then((res) => res.body);
+  }
+
+  async updateCustomerProfile(
+    version: number,
+    actions: MyCustomerUpdateAction[]
+  ) {
+    return this.apiRoot
+      .me()
+      .post({
+        body: {
+          version,
+          actions,
+        },
+      })
+      .execute()
+      .then((res) => res.body);
+  }
+
+  async changeCustomerPassword(data: CustomerChangePassword): Promise<Customer> {
+    const { version, currentPassword, newPassword } = data;
+    return this.apiRoot
+      .me()
+      .password()
+      .post({
+        body: {
+          version,
+          currentPassword,
+          newPassword
+        }
+      })
+      .execute()
+      .then((res) => res.body);
+  };
 }
 
 export const sdk = new SDKInterface();

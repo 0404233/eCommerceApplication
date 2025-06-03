@@ -8,6 +8,7 @@ export interface UserData {
   addresses?: BaseAddress[];
   defaultShippingAddress?: number;
   defaultBillingAddress?: number;
+  dateOfBirth?: string;
 }
 
 export type LoginResponse = {
