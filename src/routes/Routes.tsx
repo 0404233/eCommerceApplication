@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation, useMatch } from 'react-router';
+import { matchPath, Route, Routes, useLocation, useMatch } from 'react-router';
 import { lazy, ReactElement } from 'react';
 import Header from '../components/layout/Header/Header';
 import Footer from '../components/layout/Footer/Footer';
@@ -6,15 +6,11 @@ import Footer from '../components/layout/Footer/Footer';
 const Login = lazy(() => import('../pages/Login/Login'));
 const Registration = lazy(() => import('../pages/Registration/Registration'));
 const MainPage = lazy(() => import('../pages/Main/Main'));
-const CatalogProduct = lazy(
-  () => import('../pages/catalog-product/CatalogProduct'),
-);
+const CatalogProduct = lazy(() => import('../pages/catalog-product/CatalogProduct'));
 const Basket = lazy(() => import('../pages/Basket/Basket'));
 const AboutUs = lazy(() => import('../pages/about-us/AboutUs'));
 const UserProfile = lazy(() => import('../pages/user-profile/UserProfile'));
-const DetailedProduct = lazy(
-  () => import('../pages/detailed-product/DetailedProduct'),
-);
+const DetailedProduct = lazy(() => import('../pages/detailed-product/DetailedProduct'));
 const ErrorPage = lazy(() => import('../pages/error-page/ErrorPage'));
 
 type Props = {
@@ -22,10 +18,7 @@ type Props = {
   changeLoginStatus: (status: boolean) => void;
 };
 
-export default function AppRoutes({
-  loginStatus,
-  changeLoginStatus,
-}: Props): ReactElement {
+export default function AppRoutes({ loginStatus, changeLoginStatus }: Props): ReactElement {
   const location = useLocation();
   const basename = '/eCommerceApplication';
 
@@ -42,35 +35,43 @@ export default function AppRoutes({
     },
     { path: '/user', element: <UserProfile /> },
     { path: '/catalog', element: <CatalogProduct /> },
-    { path: '/product', element: <DetailedProduct /> },
+    { path: '/product/:id', element: <DetailedProduct /> },
     { path: '/basket', element: <Basket /> },
     { path: '/about', element: <AboutUs /> },
     { path: '*', element: <ErrorPage /> },
   ];
 
-  const pagePath = window.location.pathname.replace(basename, '');
+  const pagePath = location.pathname.replace(basename, '');
   const isLogin = useMatch('/login');
   const isRegister = useMatch('/register');
-  const correctPath = navigationRoutes
-    .slice(0, -1)
-    .some(({ path }) => path.includes(pagePath));
+  const correctPath = navigationRoutes.slice(0, -1).some(({ path }) => {
+    return matchPath({ path, end: true }, pagePath);
+  });
   const hideHeaderPaths = isLogin || isRegister || !correctPath;
 
   return (
     <>
-      {!hideHeaderPaths && (
-        <Header
-          location={location.pathname}
-          loginStatus={loginStatus}
-          changeLoginStatus={changeLoginStatus}
-        />
+      {hideHeaderPaths ? (
+        <main className="auth-main">
+          <Routes>
+            {navigationRoutes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element} />
+            ))}
+          </Routes>
+        </main>
+      ) : (
+        <>
+          <Header location={location.pathname} loginStatus={loginStatus} changeLoginStatus={changeLoginStatus} />
+          <main className="main-content">
+            <Routes>
+              {navigationRoutes.map((route) => (
+                <Route key={route.path} path={route.path} element={route.element} />
+              ))}
+            </Routes>
+          </main>
+          <Footer />
+        </>
       )}
-      <Routes>
-        {navigationRoutes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
-      </Routes>
-      {!hideHeaderPaths && <Footer />}
     </>
   );
 }

@@ -8,6 +8,7 @@ export interface UserData {
   addresses?: BaseAddress[];
   defaultShippingAddress?: number;
   defaultBillingAddress?: number;
+  dateOfBirth?: string;
 }
 
 export type LoginResponse = {
@@ -29,4 +30,26 @@ export type BillingAdressOptions = {
   city: string;
   postalCode: string;
   country: string;
+};
+
+export type GetProductBySearch = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export type ImageCar = {
+  dimensions: {
+    h: number;
+    w: number;
+  };
+  url: string;
+};
+
+export type DetailCarData = {
+  name: string;
+  description: string;
+  price: number;
+  discounted?: number;
+  images: ImageCar[];
 };

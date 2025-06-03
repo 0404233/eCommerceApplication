@@ -9,12 +9,12 @@ import { getToken } from './services/http/get-token-from-cookie';
 function App(): ReactElement {
   const [isLoading, setIsLoading] = useState(true);
   const [loginStatus, setLoginStatus] = useState(userLoginStatus.getUserData());
-  const [accessToken] = getToken();
   const changeLoginStatus = (status: boolean) => {
     userLoginStatus.setUserLogin(status);
     setLoginStatus(status);
   };
   useEffect(() => {
+    const { accessToken } = getToken();
     if (accessToken) {
       sdk.apiRoot
         .me()
@@ -41,12 +41,7 @@ function App(): ReactElement {
   return (
     <>
       {isLoading && <LoadingSpinner />}
-      {!isLoading && (
-        <AppRoutes
-          loginStatus={loginStatus}
-          changeLoginStatus={changeLoginStatus}
-        />
-      )}
+      {!isLoading && <AppRoutes loginStatus={loginStatus} changeLoginStatus={changeLoginStatus} />}
     </>
   );
 }

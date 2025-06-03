@@ -3,7 +3,7 @@ type FormData = {
   password: string;
   firstName: string;
   lastName: string;
-  dob: string;
+  dateOfBirth: string;
   streetName: string;
   city: string;
   postalCode: string;
@@ -16,7 +16,7 @@ export default function validateForm(formData: FormData): Map<string, string> {
     password,
     firstName,
     lastName,
-    dob,
+    dateOfBirth,
     streetName,
     city,
     postalCode,
@@ -51,9 +51,9 @@ export default function validateForm(formData: FormData): Map<string, string> {
   }
 
   const today = new Date();
-  const dobCheck = new Date(dob);
+  const dobCheck = new Date(dateOfBirth);
 
-  if (!dob) newMap.set('dob', 'Please enter a valid birthday');
+  if (!dateOfBirth) newMap.set('dob', 'Please enter a valid birthday');
 
   const age = today.getFullYear() - dobCheck.getFullYear();
 
