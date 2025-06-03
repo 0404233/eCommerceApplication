@@ -32,7 +32,7 @@ const validateAddress = (address: EditableAddress) => {
   if (!/^[a-zA-Z]+$/.test(address.city) || address.city.length === 0)
     errors.set('city', 'City must have at least one letter, no digits or symbols.');
   if (!/^\d{6}$|^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(address.postalCode))
-    errors.set('postalCode', 'ZIP is required');
+    errors.set('postalCode', 'Postal code must match the country format.');
   return errors;
 };
 

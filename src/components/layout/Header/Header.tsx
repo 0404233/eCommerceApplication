@@ -2,10 +2,7 @@ import { ReactElement } from 'react';
 import HomeIcon from '../../../assets/svg/home.svg?react';
 import styles from './header.module.css';
 import { useNavigate } from 'react-router';
-import {
-  deleteTokenCookie,
-  getTokenFromCookie,
-} from '../../../services/http/get-token-from-cookie';
+import { deleteTokenCookie, getTokenFromCookie } from '../../../services/http/get-token-from-cookie';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type HeaderProps = {
@@ -14,42 +11,24 @@ type HeaderProps = {
   changeLoginStatus: (status: boolean) => void;
 };
 
-export default function Header({
-  location,
-  loginStatus,
-  changeLoginStatus,
-}: HeaderProps): ReactElement {
+export default function Header({ location, loginStatus, changeLoginStatus }: HeaderProps): ReactElement {
   const navigate = useNavigate();
 
-  const navigationRoutes = [
-    { path: '/catalog' },
-    { path: '/product' },
-    { path: '/basket' },
-    { path: '/about' },
-  ];
+  const navigationRoutes = [{ path: '/catalog' }, { path: '/product' }, { path: '/basket' }, { path: '/about' }];
 
   const handleLogout = () => {
     const token = getTokenFromCookie();
     if (token) {
+      navigate('/main');
       deleteTokenCookie();
       changeLoginStatus(false);
-      navigate('/main');
     }
   };
 
   return (
     <header className={styles['header-layout']}>
-      <button
-        className={styles['header__to-main']}
-        onClick={() => navigate('/main')}
-      >
-        <HomeIcon
-          width={30}
-          height={30}
-          fill={
-            location === '/main' || location === '/' ? '#737aff' : '#FFFFFF'
-          }
-        />
+      <button className={styles['header__to-main']} onClick={() => navigate('/main')}>
+        <HomeIcon width={30} height={30} fill={location === '/main' || location === '/' ? '#737aff' : '#FFFFFF'} />
       </button>
       <nav className={styles['links-to-pages']}>
         <ul className={styles['links-list']}>
@@ -67,16 +46,10 @@ export default function Header({
       <div className={styles['button-group']}>
         {!loginStatus && (
           <>
-            <button
-              className={styles['button-header-route']}
-              onClick={() => navigate('/register')}
-            >
+            <button className={styles['button-header-route']} onClick={() => navigate('/register')}>
               Registration
             </button>
-            <button
-              className={styles['button-header-route']}
-              onClick={() => navigate('/login')}
-            >
+            <button className={styles['button-header-route']} onClick={() => navigate('/login')}>
               Login
             </button>
           </>
@@ -88,10 +61,7 @@ export default function Header({
               sx={{ fontSize: 31 }}
               className={`${styles['user-icon']} ${location === '/user' ? styles['selected'] : ''}`}
             ></AccountCircleIcon>
-            <button
-              className={styles['button-header-route']}
-              onClick={handleLogout}
-            >
+            <button className={styles['button-header-route']} onClick={handleLogout}>
               Logout
             </button>
           </>
