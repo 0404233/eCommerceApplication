@@ -19,6 +19,7 @@ import styles from './UserProfile.module.css';
 import validateUserProfileForm from '../../utils/validate-user-profile-form';
 import { useNavigate } from 'react-router';
 import { getTokenFromCookie } from '../../services/http/get-token-from-cookie';
+
 type EditableAddress = {
   city: string;
   country: string;
@@ -34,6 +35,7 @@ const validateAddress = (address: EditableAddress) => {
     errors.set('city', 'City must have at least one letter, no digits or symbols.');
   if (!/^\d{6}$|^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(address.postalCode))
     errors.set('postalCode', 'Postal code must match the country format.');
+  if (!address.country) errors.set('country', 'Country is required');
   return errors;
 };
 
@@ -85,6 +87,7 @@ export default function UserProfile(): ReactElement | null {
       setLoading(true);
       try {
         const data = await sdk.getCustomerInfo();
+
         setUserData(data);
         setFormData({
           firstName: data.firstName || '',
@@ -212,31 +215,37 @@ export default function UserProfile(): ReactElement | null {
       });
 
       if (defaultBillingId !== userData.defaultBillingAddressId) {
-        if (defaultBillingId) {
+        if (!userData.billingAddressIds?.includes(defaultBillingId)) {
           actions.push({
-            action: 'setDefaultBillingAddress',
+            action: 'addBillingAddressId',
             addressId: defaultBillingId,
           });
-        } else if (userData.defaultBillingAddressId) {
-          actions.push({
-            action: 'removeBillingAddressId',
-            addressId: userData.defaultBillingAddressId,
-          });
         }
+
+        actions.push({
+          action: 'setDefaultBillingAddress',
+          addressId: defaultBillingId,
+        });
       }
 
       if (defaultShippingId !== userData.defaultShippingAddressId) {
-        if (defaultShippingId) {
-          actions.push({
-            action: 'setDefaultShippingAddress',
-            addressId: defaultShippingId,
-          });
-        } else if (userData.defaultShippingAddressId) {
+        if (!userData.shippingAddressIds?.includes(defaultShippingId)) {
+          // console.log(userData.defaultShippingAddressId);
           actions.push({
             action: 'removeShippingAddressId',
-            addressId: userData.defaultShippingAddressId,
+            addressId: userData.defaultShippingAddressId!,
+          });
+          // console.log(defaultShippingId);
+          actions.push({
+            action: 'addShippingAddressId',
+            addressId: defaultShippingId,
           });
         }
+
+        actions.push({
+          action: 'setDefaultShippingAddress',
+          addressId: defaultShippingId,
+        });
       }
 
       if (actions.length === 0) {
@@ -245,10 +254,13 @@ export default function UserProfile(): ReactElement | null {
         return;
       }
 
+      // console.log(editableAddresses);
+
       const updatedCustomer = await sdk.updateCustomerProfile(userData.version, actions);
       setUserData(updatedCustomer);
       setMessage({ type: 'success', text: 'Profile updated successfully' });
       setEditMode(false);
+      window.location.reload();
     } catch {
       setMessage({ type: 'error', text: 'Failed to update profile' });
     } finally {
@@ -291,7 +303,7 @@ export default function UserProfile(): ReactElement | null {
     setLoading(true);
     setMessage(null);
 
-    console.log(userData.id, currentPassword, newPassword);
+    // console.log(userData.id, currentPassword, newPassword);
 
     try {
       await sdk.changeCustomerPassword({
@@ -465,7 +477,29 @@ export default function UserProfile(): ReactElement | null {
                         type="radio"
                         name="billing"
                         checked={defaultBillingId === address.id}
-                        onChange={() => setDefaultBillingId(address.id)}
+                        onChange={() => {
+                          // if (address.id === '') {
+                          //   (async function update() {
+                          //     console.log('start');
+                          //     if (userData) {
+                          //       const updatedCustomer = await sdk.updateCustomerProfile(userData.version, [
+                          //         {
+                          //           action: 'addAddress',
+                          //           address: {
+                          //             streetName: address.streetName,
+                          //             city: address.city,
+                          //             postalCode: address.postalCode,
+                          //             country: address.country,
+                          //           },
+                          //         },
+                          //       ]);
+                          //       console.log(updatedCustomer.addresses)
+                          //     }
+                          //     setTimeout(() => setDefaultBillingId(address.id), 0);
+                          //   })();
+                          // }
+                          setDefaultBillingId(address.id);
+                        }}
                       />
                       Default Billing
                     </label>
@@ -474,7 +508,30 @@ export default function UserProfile(): ReactElement | null {
                         type="radio"
                         name="shipping"
                         checked={defaultShippingId === address.id}
-                        onChange={() => setDefaultShippingId(address.id)}
+                        onChange={() => {
+                          // if (address.id === '') {
+                          //   (async function update() {
+                          //     console.log('start');
+                          //     if (userData) {
+                          //       const updatedCustomer = await sdk.updateCustomerProfile(userData.version, [
+                          //         {
+                          //           action: 'addAddress',
+                          //           address: {
+                          //             streetName: address.streetName,
+                          //             city: address.city,
+                          //             postalCode: address.postalCode,
+                          //             country: address.country,
+                          //           },
+                          //         },
+                          //       ]);
+                          //       setUserData(updatedCustomer);
+                          //       console.log(userData.addresses[userData.addresses.length - 1]!.id);
+                          //       setDefaultShippingId(address.id);
+                          //     }
+                          //   })();
+                          // }
+                          setDefaultShippingId(address.id);
+                        }}
                       />
                       Default Shipping
                     </label>
@@ -582,8 +639,7 @@ export default function UserProfile(): ReactElement | null {
                   setNewAddressErrors(validationErrors);
                   if (validationErrors.size > 0) return;
 
-                  const newAddr = { ...newAddress, id: crypto.randomUUID() };
-                  setEditableAddresses([...editableAddresses, newAddr]);
+                  setEditableAddresses([...editableAddresses, newAddress]);
                   setNewAddress({
                     id: '',
                     streetName: '',
