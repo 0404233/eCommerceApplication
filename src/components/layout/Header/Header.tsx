@@ -24,7 +24,7 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
 
   const navigate = useNavigate();
 
-  const navigationRoutes = [{ path: '/catalog' }, { path: '/product' }, { path: '/basket' }, { path: '/about' }];
+  const navigationRoutes = [{ path: '/catalog' }, { path: '/basket' }, { path: '/about' }];
 
   const handleLogout = () => {
     const token = getTokenFromCookie();
