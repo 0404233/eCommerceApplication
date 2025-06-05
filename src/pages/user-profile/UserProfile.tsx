@@ -87,7 +87,7 @@ export default function UserProfile(): ReactElement | null {
       setLoading(true);
       try {
         const data = await sdk.getCustomerInfo();
-        console.log(data)
+        console.log(data);
         setUserData(data);
         setFormData({
           firstName: data.firstName || '',
@@ -471,71 +471,32 @@ export default function UserProfile(): ReactElement | null {
                       <MenuItem value="US">USA</MenuItem>
                     </Select>
                   </FormControl>
-                  <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
-                    <label>
-                      <input
-                        type="radio"
-                        name="billing"
-                        checked={defaultBillingId === address.id}
-                        onChange={() => {
-                          // if (address.id === '') {
-                          //   (async function update() {
-                          //     console.log('start');
-                          //     if (userData) {
-                          //       const updatedCustomer = await sdk.updateCustomerProfile(userData.version, [
-                          //         {
-                          //           action: 'addAddress',
-                          //           address: {
-                          //             streetName: address.streetName,
-                          //             city: address.city,
-                          //             postalCode: address.postalCode,
-                          //             country: address.country,
-                          //           },
-                          //         },
-                          //       ]);
-                          //       console.log(updatedCustomer.addresses)
-                          //     }
-                          //     setTimeout(() => setDefaultBillingId(address.id), 0);
-                          //   })();
-                          // }
-                          setDefaultBillingId(address.id);
-                        }}
-                      />
-                      Default Billing
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="shipping"
-                        checked={defaultShippingId === address.id}
-                        onChange={() => {
-                          // if (address.id === '') {
-                          //   (async function update() {
-                          //     console.log('start');
-                          //     if (userData) {
-                          //       const updatedCustomer = await sdk.updateCustomerProfile(userData.version, [
-                          //         {
-                          //           action: 'addAddress',
-                          //           address: {
-                          //             streetName: address.streetName,
-                          //             city: address.city,
-                          //             postalCode: address.postalCode,
-                          //             country: address.country,
-                          //           },
-                          //         },
-                          //       ]);
-                          //       setUserData(updatedCustomer);
-                          //       console.log(userData.addresses[userData.addresses.length - 1]!.id);
-                          //       setDefaultShippingId(address.id);
-                          //     }
-                          //   })();
-                          // }
-                          setDefaultShippingId(address.id);
-                        }}
-                      />
-                      Default Shipping
-                    </label>
-                  </Box>
+                  {address.id !== '' && (
+                    <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+                      <label>
+                        <input
+                          type="radio"
+                          name="billing"
+                          checked={defaultBillingId === address.id}
+                          onChange={() => {
+                            setDefaultBillingId(address.id);
+                          }}
+                        />
+                        Default Billing
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="shipping"
+                          checked={defaultShippingId === address.id}
+                          onChange={() => {
+                            setDefaultShippingId(address.id);
+                          }}
+                        />
+                        Default Shipping
+                      </label>
+                    </Box>
+                  )}
                   <Button
                     variant="outlined"
                     color="error"
