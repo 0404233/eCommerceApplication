@@ -1,30 +1,29 @@
 import { ReactElement } from 'react';
 import classes from '../../../pages/Registration/Registration.module.css';
+import { Country } from '../../../types/types';
+import { COUNTRIES } from '../../../utils/countries';
 
 type CountrySelect = {
   country: string;
-  setCountry: React.Dispatch<React.SetStateAction<string>>;
+  setCountry: React.Dispatch<React.SetStateAction<keyof typeof Country>>;
   newErrors: Map<string, string>;
 };
 
-export default function CountrySelect({
-  country,
-  setCountry,
-  newErrors,
-}: CountrySelect): ReactElement {
+export default function CountrySelect({ country, setCountry, newErrors }: CountrySelect): ReactElement {
   return (
     <>
       <label htmlFor="country">Country</label>
       <select
         id="country"
-        value={country}
+        value={country || 'Belarus'}
         className={`${classes['form-register__input']} ${newErrors.has('country') ? classes['input-error'] : ''}`}
-        onChange={(e) => setCountry(e.target.value)}
+        onChange={(e) => setCountry(e.target.value as keyof typeof Country)}
       >
-        <option value=""></option>
-        <option value="Russia">Russia</option>
-        <option value="USA">USA</option>
-        <option value="Belarus">Belarus</option>
+        {COUNTRIES.map((el, i) => (
+          <option key={i} value={el}>
+            {el}
+          </option>
+        ))}
       </select>
     </>
   );

@@ -27,6 +27,7 @@ export function getToken(): { accessToken?: string; refreshToken?: string } {
     return acc;
   }, {});
   const result: { accessToken?: string; refreshToken?: string } = {};
+  console.log(cookies);
 
   if ('customer_token' in cookies) {
     result.accessToken = cookies['customer_token'];

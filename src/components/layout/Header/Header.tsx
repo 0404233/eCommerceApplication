@@ -41,7 +41,13 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
 
   return (
     <header className={styles['header-layout']}>
-      <button className={styles['header__to-main']} onClick={() => navigate('/main')}>
+      <button
+        className={styles['header__to-main']}
+        onClick={() => {
+          setMenuOpen(false);
+          navigate('/main');
+        }}
+      >
         <HomeIcon width={30} height={30} fill={location === '/main' || location === '/' ? '#737aff' : '#FFFFFF'} />
       </button>
 

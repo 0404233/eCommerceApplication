@@ -8,11 +8,9 @@ type Props = {
   onCloseAlert: () => void;
 };
 
-export function AuthAlert({ response, onCloseAlert }: Props): ReactElement {
+function AuthAlert({ response, onCloseAlert }: Props): ReactElement {
   const [open, setOpen] = useState(true);
-  const [alertType] = useState<'success' | 'error'>(
-    response.success ? 'success' : 'error',
-  );
+
   return (
     <Snackbar
       open={open}
@@ -24,7 +22,7 @@ export function AuthAlert({ response, onCloseAlert }: Props): ReactElement {
       }}
     >
       <Alert
-        severity={alertType}
+        severity={response.success ? 'success' : 'error'}
         onClose={() => {
           setOpen(false);
           onCloseAlert();

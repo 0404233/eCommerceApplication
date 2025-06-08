@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 import classes from './registration.module.css';
 import { FormEvent, ReactElement, useState } from 'react';
 import { sdk } from '../../services/sdk/create-client';
-import { BillingAdressOptions, LoginResponse } from '../../types/types';
+import { BillingAdressOptions, Country, LoginResponse } from '../../types/types';
 import AuthAlert from '../../components/common/auth-alert/AuthAlert';
 import SwitchButton from '../../components/common/switch-button/SwitchButton';
 import PopupForm from '../../components/common/popup-form/PopupForm';
@@ -23,7 +23,7 @@ export default function Registration(): ReactElement {
   const [streetName, setStreetName] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [country, setCountry] = useState('');
+  const [country, setCountry] = useState<keyof typeof Country>(Country.Belarus);
   const [newErrors, setNewErrors] = useState(new Map());
   const [createCustomerResponse, setCreateCustomerResponse] = useState<LoginResponse>({
     success: false,

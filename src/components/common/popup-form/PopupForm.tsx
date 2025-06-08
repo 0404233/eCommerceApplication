@@ -11,9 +11,10 @@ import {
   MenuItem,
 } from '@mui/material';
 import { customSwithTheme } from '../switch-button/switch-button-theme';
-import { BillingAdressOptions } from '../../../types/types';
+import { BillingAdressOptions, Country } from '../../../types/types';
 import { useState } from 'react';
 import countryFormatter from '../../../utils/date-formatter';
+import { COUNTRIES } from '../../../utils/countries';
 
 type Props = {
   onAddBillingAddress: (options: BillingAdressOptions) => void;
@@ -24,7 +25,7 @@ export default function PopupForm({ onAddBillingAddress }: Props): React.ReactEl
   const [streetName, setStreetName] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [country, setCountry] = useState('');
+  const [country, setCountry] = useState<keyof typeof Country>(Country.Belarus);
   const [isBillingAddressExist, setIsBillingAddressExist] = useState<boolean>(false);
   const [errors, setErrors] = useState<Map<string, string>>(new Map());
 
@@ -32,7 +33,7 @@ export default function PopupForm({ onAddBillingAddress }: Props): React.ReactEl
     setStreetName('');
     setCity('');
     setPostalCode('');
-    setCountry('');
+    setCountry(Country.Belarus);
     onAddBillingAddress({ streetName, city, postalCode, country });
   };
 
@@ -154,13 +155,15 @@ export default function PopupForm({ onAddBillingAddress }: Props): React.ReactEl
             fullWidth
             margin="dense"
             value={country}
-            onChange={(e) => setCountry(e.target.value)}
+            onChange={(e) => setCountry(e.target.value as keyof typeof Country)}
             error={errors.has('country')}
             helperText={errors.get('country')}
           >
-            <MenuItem value="Russia">Russia</MenuItem>
-            <MenuItem value="USA">USA</MenuItem>
-            <MenuItem value="Belarus">Belarus</MenuItem>
+            {COUNTRIES.map((el, i) => (
+              <MenuItem key={i} value={el}>
+                {el}
+              </MenuItem>
+            ))}
           </TextField>
         </DialogContent>
         <DialogActions>

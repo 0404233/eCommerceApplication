@@ -53,3 +53,9 @@ export type DetailCarData = {
   discounted?: number;
   images: ImageCar[];
 };
+
+export enum Country {
+  Belarus = 'Belarus',
+  Russia = 'Russia',
+  USA = 'USA',
+}
