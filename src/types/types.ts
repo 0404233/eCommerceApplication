@@ -87,3 +87,9 @@ export type HandleSaveParams = {
   setUserData: (data: Customer) => void;
   setEditMode: (edit: boolean) => void;
 };
+
+export enum Country {
+  Belarus = 'Belarus',
+  Russia = 'Russia',
+  USA = 'USA',
+}

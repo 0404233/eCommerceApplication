@@ -1,7 +1,7 @@
-class UserLoginStatus {
+class UserData {
   private isLogin: boolean = false;
 
-  public getUserData(): boolean {
+  public getUserLogin(): boolean {
     return this.isLogin;
   }
 
@@ -10,4 +10,4 @@ class UserLoginStatus {
   }
 }
 
-export const userLoginStatus = new UserLoginStatus();
+export const userData = new UserData();

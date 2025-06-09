@@ -5,20 +5,20 @@ import {
   ProductProjectionPagedSearchResponse,
   MyCustomerUpdateAction,
   CustomerChangePassword,
-  Customer
+  Customer,
 } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
 import { UserData } from '../../types/types';
 import { LoginResponse } from '../../types/types';
 
-export default class SDKInterface {
+export default class CreateClient {
   private projectKey = import.meta.env['VITE_PROJECT_KEY'];
   public apiRoot = createApiBuilderFromCtpClient(ctpClient()).withProjectKey({
     projectKey: this.projectKey,
   });
 
-  setApiRootAfterLogin(): void {
+  public refreshApiRoot(): void {
     this.apiRoot = createApiBuilderFromCtpClient(ctpClient()).withProjectKey({
       projectKey: this.projectKey,
     });
@@ -147,10 +147,7 @@ export default class SDKInterface {
       .then((res) => res.body);
   }
 
-  async updateCustomerProfile(
-    version: number,
-    actions: MyCustomerUpdateAction[]
-  ) {
+  async updateCustomerProfile(version: number, actions: MyCustomerUpdateAction[]) {
     return this.apiRoot
       .me()
       .post({
@@ -172,12 +169,12 @@ export default class SDKInterface {
         body: {
           version,
           currentPassword,
-          newPassword
-        }
+          newPassword,
+        },
       })
       .execute()
       .then((res) => res.body);
-  };
+  }
 }
 
-export const sdk = new SDKInterface();
+export const sdk = new CreateClient();

@@ -2,7 +2,7 @@ import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import classes from './login.module.css';
 import { useNavigate } from 'react-router';
 import { sdk } from '../../services/sdk/create-client';
-import { userLoginStatus } from '../../utils/user-data';
+import { userData } from '../../utils/user-data';
 import { LoginResponse, LoginStatus } from '../../types/types';
 import AuthAlert from '../../components/common/auth-alert/AuthAlert';
 import SignUpLink from '../../components/common/form-links/SignUpLink';
@@ -23,7 +23,7 @@ export default function Login({ changeLoginStatus }: LoginStatus): ReactElement 
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const loginStatus = userLoginStatus.getUserData();
+      const loginStatus = userData.getUserLogin();
       if (loginStatus === true) {
         navigate('/');
       }
@@ -43,7 +43,7 @@ export default function Login({ changeLoginStatus }: LoginStatus): ReactElement 
     if (valid) {
       const result = await sdk.loginCustomer({ email, password });
 
-      sdk.setApiRootAfterLogin();
+      sdk.refreshApiRoot();
 
       if (result && result.success !== true) {
         setErrors({
