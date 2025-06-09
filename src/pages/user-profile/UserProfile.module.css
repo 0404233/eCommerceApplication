@@ -38,6 +38,11 @@
   }
 }
 
+.new-address-edit {
+  text-align: center;
+  color: red;
+}
+
 .edit-field input {
   color: #fff;
 }
