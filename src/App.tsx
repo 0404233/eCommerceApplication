@@ -1,20 +1,20 @@
 import { ReactElement, useEffect, useState } from 'react';
 import './App.css';
-import AppRoutes from './routes/Routes';
+import AppRoutes from './routes/AppRoutes';
 import { sdk } from './services/sdk/create-client';
-import { userLoginStatus } from './utils/user-data';
+import { userData } from './utils/user-data';
 import LoadingSpinner from './components/common/loading-spinner/LoadingSpinner';
 import { getToken } from './services/http/get-token-from-cookie';
 
 function App(): ReactElement {
   const [isLoading, setIsLoading] = useState(true);
-  const [loginStatus, setLoginStatus] = useState(userLoginStatus.getUserData());
-  const [accessToken] = getToken();
+  const [loginStatus, setLoginStatus] = useState(userData.getUserLogin());
   const changeLoginStatus = (status: boolean) => {
-    userLoginStatus.setUserLogin(status);
+    userData.setUserLogin(status);
     setLoginStatus(status);
   };
   useEffect(() => {
+    const { accessToken } = getToken();
     if (accessToken) {
       sdk.apiRoot
         .me()
@@ -41,12 +41,7 @@ function App(): ReactElement {
   return (
     <>
       {isLoading && <LoadingSpinner />}
-      {!isLoading && (
-        <AppRoutes
-          loginStatus={loginStatus}
-          changeLoginStatus={changeLoginStatus}
-        />
-      )}
+      {!isLoading && <AppRoutes loginStatus={loginStatus} changeLoginStatus={changeLoginStatus} />}
     </>
   );
 }

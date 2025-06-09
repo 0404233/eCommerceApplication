@@ -11,31 +11,29 @@ import {
   MenuItem,
 } from '@mui/material';
 import { customSwithTheme } from '../switch-button/switch-button-theme';
-import { BillingAdressOptions } from '../../../types/types';
+import { BillingAdressOptions, Country } from '../../../types/types';
 import { useState } from 'react';
 import countryFormatter from '../../../utils/date-formatter';
+import { COUNTRIES } from '../../../utils/countries';
 
 type Props = {
   onAddBillingAddress: (options: BillingAdressOptions) => void;
 };
 
-export default function PopupForm({
-  onAddBillingAddress,
-}: Props): React.ReactElement {
+export default function PopupForm({ onAddBillingAddress }: Props): React.ReactElement {
   const [open, setOpen] = useState(false);
   const [streetName, setStreetName] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [country, setCountry] = useState('');
-  const [isBillingAddressExist, setIsBillingAddressExist] =
-    useState<boolean>(false);
+  const [country, setCountry] = useState<keyof typeof Country>(Country.Belarus);
+  const [isBillingAddressExist, setIsBillingAddressExist] = useState<boolean>(false);
   const [errors, setErrors] = useState<Map<string, string>>(new Map());
 
   const clearFields = () => {
     setStreetName('');
     setCity('');
     setPostalCode('');
-    setCountry('');
+    setCountry(Country.Belarus);
     onAddBillingAddress({ streetName, city, postalCode, country });
   };
 
@@ -54,13 +52,7 @@ export default function PopupForm({
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    const allowedKeys = [
-      'Backspace',
-      'ArrowLeft',
-      'ArrowRight',
-      'Tab',
-      'Delete',
-    ];
+    const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete'];
     if (!/[0-9]/.test(event.key) && !allowedKeys.includes(event.key)) {
       event.preventDefault();
     }
@@ -108,11 +100,7 @@ export default function PopupForm({
       <FormControlLabel
         control={
           <ThemeProvider theme={customSwithTheme}>
-            <Switch
-              checked={isBillingAddressExist}
-              onChange={handleSwitchChange}
-              color="success"
-            />
+            <Switch checked={isBillingAddressExist} onChange={handleSwitchChange} color="success" />
           </ThemeProvider>
         }
         label="Add billing address?"
@@ -167,13 +155,15 @@ export default function PopupForm({
             fullWidth
             margin="dense"
             value={country}
-            onChange={(e) => setCountry(e.target.value)}
+            onChange={(e) => setCountry(e.target.value as keyof typeof Country)}
             error={errors.has('country')}
             helperText={errors.get('country')}
           >
-            <MenuItem value="Russia">Russia</MenuItem>
-            <MenuItem value="USA">USA</MenuItem>
-            <MenuItem value="Belarus">Belarus</MenuItem>
+            {COUNTRIES.map((el) => (
+              <MenuItem key={el} value={el}>
+                {el}
+              </MenuItem>
+            ))}
           </TextField>
         </DialogContent>
         <DialogActions>

@@ -2,7 +2,7 @@ import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import classes from './login.module.css';
 import { useNavigate } from 'react-router';
 import { sdk } from '../../services/sdk/create-client';
-import { userLoginStatus } from '../../utils/user-data';
+import { userData } from '../../utils/user-data';
 import { LoginResponse, LoginStatus } from '../../types/types';
 import AuthAlert from '../../components/common/auth-alert/AuthAlert';
 import SignUpLink from '../../components/common/form-links/SignUpLink';
@@ -10,9 +10,7 @@ import ButtonSignIn from '../../components/common/form-links/ButtonSignIn';
 import FormInput from '../../components/common/input-form/FormInput';
 import validateForm from '../../utils/validate-form-login';
 
-export default function Login({
-  changeLoginStatus,
-}: LoginStatus): ReactElement {
+export default function Login({ changeLoginStatus }: LoginStatus): ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
@@ -24,13 +22,15 @@ export default function Login({
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTimeout(() => {
-      const loginStatus = userLoginStatus.getUserData();
+    const timer = setTimeout(() => {
+      const loginStatus = userData.getUserLogin();
       if (loginStatus === true) {
         navigate('/');
       }
     }, 300);
-  }, []);
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,6 +42,8 @@ export default function Login({
 
     if (valid) {
       const result = await sdk.loginCustomer({ email, password });
+
+      sdk.refreshApiRoot();
 
       if (result && result.success !== true) {
         setErrors({
@@ -65,9 +67,7 @@ export default function Login({
 
   return (
     <form className={classes['form-login']} onSubmit={handleSubmit}>
-      {isOpenAlert && (
-        <AuthAlert response={loginResponse} onCloseAlert={onCloseAlert} />
-      )}
+      {isOpenAlert && <AuthAlert response={loginResponse} onCloseAlert={onCloseAlert} />}
       <h1>Sign in</h1>
 
       <FormInput

@@ -68,7 +68,6 @@ select:focus {
 
 .input-container input {
   width: 100%;
-  padding-right: 2.5rem;
 }
 
 .toggle-password {
