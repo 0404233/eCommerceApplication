@@ -72,7 +72,6 @@ export default function UserProfile(): ReactElement | null {
       setLoading(true);
       try {
         const data = await sdk.getCustomerInfo();
-        console.log(data);
         setUserData(data);
         setFormData({
           firstName: data.firstName || '',

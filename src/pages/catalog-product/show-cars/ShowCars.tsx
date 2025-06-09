@@ -46,10 +46,16 @@ export default function ShowCars(): React.ReactElement {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!CATEGORY_MAP[value]) return;
+      const categoryId = CATEGORY_MAP[value];
+      if (!categoryId) return;
 
-      const results = await sdk.getCarsCategory(CATEGORY_MAP[value]);
-      setProducts(results);
+      try {
+        const results = await sdk.getCarsCategory(categoryId);
+        setProducts(results);
+      } catch (error) {
+        console.error('Error fetching category products:', error);
+        setProducts([]);
+      }
     };
 
     fetchData();
@@ -62,12 +68,17 @@ export default function ShowCars(): React.ReactElement {
   const handleSearchInputChange = async (text: string) => {
     setSearchText(text);
 
-    if (!text.trim()) {
-      const categoryId = CATEGORY_MAP[value];
-      if (!categoryId) return;
+    const categoryId = CATEGORY_MAP[value];
+    if (!categoryId) return;
 
-      const results = await sdk.getCarsCategory(categoryId);
-      setProducts(results);
+    if (!text.trim()) {
+      try {
+        const results = await sdk.getCarsCategory(categoryId);
+        setProducts(results);
+      } catch (error) {
+        console.error('Error fetching category products on clear:', error);
+        setProducts([]);
+      }
       return;
     }
 
@@ -75,7 +86,8 @@ export default function ShowCars(): React.ReactElement {
       const searchResults = await sdk.getProductBySearch(text);
       setProducts(searchResults);
     } catch (error) {
-      console.error('Error when searching for products:', error);
+      console.error('Error searching for products:', error);
+      setProducts([]);
     }
   };
 
@@ -127,14 +139,16 @@ export default function ShowCars(): React.ReactElement {
           backgroundColor: '#cacaca',
         }}
       >
-        <Tab disableRipple label={<Brand src={lamborghini} alt={'lamborghini'} brand={'lamborghini'} />} />
-        <Tab disableRipple label={<Brand src={ferrari} alt={'ferrari'} brand={'ferrari'} />} />
-        <Tab disableRipple label={<Brand src={bugatti} alt={'bugatti'} brand={'bugatti'} />} />
+        <Tab disableRipple label={<Brand src={lamborghini} alt="lamborghini" brand="lamborghini" />} />
+        <Tab disableRipple label={<Brand src={ferrari} alt="ferrari" brand="ferrari" />} />
+        <Tab disableRipple label={<Brand src={bugatti} alt="bugatti" brand="bugatti" />} />
       </Tabs>
+
       <div className={styles['show-cars-wrapper']}>
         <GroupedSelect onSort={setProducts} categoryId={CATEGORY_MAP[value]} />
         <SearchProduct inputValue={searchText} onInputChange={handleSearchInputChange} />
       </div>
+
       <CustomTabPanel value={value} index={0}>
         <GetCars products={filteredProducts} />
       </CustomTabPanel>

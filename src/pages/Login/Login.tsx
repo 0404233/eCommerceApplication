@@ -22,12 +22,14 @@ export default function Login({ changeLoginStatus }: LoginStatus): ReactElement 
   const navigate = useNavigate();
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       const loginStatus = userLoginStatus.getUserData();
       if (loginStatus === true) {
         navigate('/');
       }
     }, 300);
+
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

@@ -19,6 +19,8 @@ type Props = {
   onAddBillingAddress: (options: BillingAdressOptions) => void;
 };
 
+const COUNTRIES = ['Russia', 'USA', 'Belarus'];
+
 export default function PopupForm({ onAddBillingAddress }: Props): React.ReactElement {
   const [open, setOpen] = useState(false);
   const [streetName, setStreetName] = useState('');
@@ -158,9 +160,11 @@ export default function PopupForm({ onAddBillingAddress }: Props): React.ReactEl
             error={errors.has('country')}
             helperText={errors.get('country')}
           >
-            <MenuItem value="Russia">Russia</MenuItem>
-            <MenuItem value="USA">USA</MenuItem>
-            <MenuItem value="Belarus">Belarus</MenuItem>
+            {COUNTRIES.map((el) => (
+              <MenuItem key={el} value={el}>
+                {el}
+              </MenuItem>
+            ))}
           </TextField>
         </DialogContent>
         <DialogActions>

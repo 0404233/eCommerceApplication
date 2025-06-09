@@ -11,6 +11,16 @@ type HeaderProps = {
   changeLoginStatus: (status: boolean) => void;
 };
 
+export const ROUTES = {
+  MAIN: '/main',
+  CATALOG: '/catalog',
+  BASKET: '/basket',
+  ABOUT: '/about',
+  LOGIN: '/login',
+  REGISTER: '/register',
+  USER: '/user',
+};
+
 export default function Header({ location, loginStatus, changeLoginStatus }: HeaderProps): ReactElement {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -24,12 +34,12 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
 
   const navigate = useNavigate();
 
-  const navigationRoutes = [{ path: '/catalog' }, { path: '/basket' }, { path: '/about' }];
+  const navigationRoutes = [ROUTES.CATALOG, ROUTES.BASKET, ROUTES.ABOUT];
 
   const handleLogout = () => {
     const token = getTokenFromCookie();
     if (token) {
-      navigate('/main');
+      navigate(ROUTES.MAIN);
       deleteTokenCookie();
       changeLoginStatus(false);
     }
@@ -41,8 +51,8 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
 
   return (
     <header className={styles['header-layout']}>
-      <button className={styles['header__to-main']} onClick={() => navigate('/main')}>
-        <HomeIcon width={30} height={30} fill={location === '/main' || location === '/' ? '#737aff' : '#FFFFFF'} />
+      <button className={styles['header__to-main']} onClick={() => navigate(ROUTES.MAIN)}>
+        <HomeIcon width={30} height={30} fill={location === ROUTES.MAIN || location === '/' ? '#737aff' : '#FFFFFF'} />
       </button>
 
       <button className={`${styles['burger']} ${menuOpen ? styles['open'] : ''}`} onClick={toggleMenu}>
@@ -53,7 +63,7 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
 
       <nav className={`${styles['links-to-pages']} ${menuOpen ? styles['open'] : ''}`}>
         <ul className={styles['links-list']}>
-          {navigationRoutes.map(({ path }) => (
+          {navigationRoutes.map((path) => (
             <li
               key={path}
               className={`${styles['page-link']} ${path === location ? styles['selected-page'] : ''}`}
@@ -62,17 +72,17 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
                 setMenuOpen(false);
               }}
             >
-              {path.slice(1, 2).toLocaleUpperCase() + path.substring(2)}
+              {path.slice(1, 2).toUpperCase() + path.substring(2)}
             </li>
           ))}
         </ul>
         <div className={styles['button-group']}>
           {!loginStatus && (
             <>
-              <button className={styles['button-header-route']} onClick={() => navigate('/register')}>
+              <button className={styles['button-header-route']} onClick={() => navigate(ROUTES.REGISTER)}>
                 Registration
               </button>
-              <button className={styles['button-header-route']} onClick={() => navigate('/login')}>
+              <button className={styles['button-header-route']} onClick={() => navigate(ROUTES.LOGIN)}>
                 Login
               </button>
             </>
@@ -82,11 +92,11 @@ export default function Header({ location, loginStatus, changeLoginStatus }: Hea
               <AccountCircleIcon
                 onClick={() => {
                   setMenuOpen(false);
-                  navigate('/user');
+                  navigate(ROUTES.USER);
                 }}
                 sx={{ fontSize: 31 }}
-                className={`${styles['user-icon']} ${location === '/user' ? styles['selected'] : ''}`}
-              ></AccountCircleIcon>
+                className={`${styles['user-icon']} ${location === ROUTES.USER ? styles['selected'] : ''}`}
+              />
               <button className={styles['button-header-route']} onClick={handleLogout}>
                 Logout
               </button>

@@ -24,6 +24,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
+    "classnames": "^2.5.1",
     "dotenv": "^16.5.0",
     "node-fetch": "^3.3.2",
     "react": "^19.0.0",

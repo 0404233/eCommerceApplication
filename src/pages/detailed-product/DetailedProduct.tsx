@@ -14,10 +14,16 @@ export default function DetailedProduct(): ReactElement {
   useEffect(() => {
     if (id) {
       const fetchData = async () => {
-        const product: ProductProjection = await sdk.getProductById(id);
-        const detailData = extractDetails(product);
-        setCarData(detailData);
+        try {
+          const product: ProductProjection = await sdk.getProductById(id);
+          const detailData = extractDetails(product);
+          setCarData(detailData);
+        } catch (error) {
+          console.error('Error fetching product details:', error);
+          setCarData(null);
+        }
       };
+
       fetchData();
     }
   }, [id]);
@@ -26,7 +32,9 @@ export default function DetailedProduct(): ReactElement {
     <main className={styles['detailed-product']}>
       {carData && (
         <div className={styles['detailed-product-container']}>
-          <div className={styles['detailed-product-slider']}>{<Slider images={carData.images} />}</div>
+          <div className={styles['detailed-product-slider']}>
+            <Slider images={carData.images} />
+          </div>
           <div className={styles['detailed-product-info']}>
             <h1 className={styles['detailed-product-title']}>{carData.name}</h1>
             <p className={styles['price-container']}>

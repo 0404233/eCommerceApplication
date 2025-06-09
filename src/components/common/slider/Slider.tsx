@@ -4,6 +4,7 @@ import styles from './slider.module.css';
 import { useEffect, useState, type ReactElement } from 'react';
 import { ImageCar } from '../../../types/types';
 import Modal from './modal/Modal';
+import classNames from 'classnames';
 
 type Props = {
   images: ImageCar[];
@@ -38,12 +39,13 @@ export default function Slider({ images, modalContext = false, imageIndex }: Pro
     }, 500);
     return () => clearTimeout(timer);
   }, [currentIndex]);
+
   return (
     <>
       {!modalContext && (
         <Modal isOpen={isModalOpen} closeModal={closeModal} images={images} imageIndex={currentIndex} />
       )}
-      <div className={`${styles['slider']} ${modalContext ? styles['modalSlider'] : ''}`}>
+      <div className={classNames(styles['slider'], { [styles['modalSlider'] as string]: modalContext })}>
         <div
           className={styles['slider-container']}
           style={{
@@ -51,17 +53,17 @@ export default function Slider({ images, modalContext = false, imageIndex }: Pro
           }}
         >
           {images.map((el, i) => (
-            <div key={i} className={styles['slide-block']} onClick={() => setIsModalOpen(true)}>
+            <div key={el.url} className={styles['slide-block']} onClick={() => setIsModalOpen(true)}>
               <img className={styles['slide-image']} src={el.url} alt="Car Image" />
             </div>
           ))}
         </div>
         {images.length > 1 && (
           <>
-            <button className={`${styles['slider-arrow']} ${styles['arrow-left']}`} onClick={prevSlide}>
+            <button className={classNames(styles['slider-arrow'], styles['arrow-left'])} onClick={prevSlide}>
               <ArrowBackIosNewIcon fontSize="large" />
             </button>
-            <button className={`${styles['slider-arrow']} ${styles['arrow-right']}`} onClick={nextSlide}>
+            <button className={classNames(styles['slider-arrow'], styles['arrow-right'])} onClick={nextSlide}>
               <ArrowForwardIosIcon fontSize="large" />
             </button>
           </>
