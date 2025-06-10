@@ -1,0 +1,23 @@
+.cart-btn {
+  padding: 0.8rem 0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s linear;
+  font-weight: bold;
+  background-color: #808080;
+  color: #fff;
+}
+
+.cart-btn:hover:not(:disabled) {
+  color: #15f821;
+  background-color: #808080ab;
+}
+
+.cart-btn:focus {
+  outline: none;
+}
+
+.cart-btn:disabled {
+  cursor: default;
+  background-color: #0000007a;
+}
