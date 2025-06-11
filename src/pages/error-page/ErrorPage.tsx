@@ -10,8 +10,7 @@ export default function ErrorPage(): ReactElement {
   return (
     <div className={classes['error-page__wrapper']}>
       <h1 className={classes['error-page__title']}>
-        Page <span className={classes['incorrect-url']}>{pagePath}</span> is not
-        found:&#40;
+        Page <span className={classes['incorrect-url']}>{pagePath}</span> is not found:&#40;
       </h1>
       <button className={classes['error__btn']} onClick={() => navigate('/')}>
         Go to Main page

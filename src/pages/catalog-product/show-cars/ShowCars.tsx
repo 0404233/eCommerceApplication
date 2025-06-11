@@ -2,9 +2,10 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Brand from '../brand/Brand';
-import lamborghini from '../../../assets/images/catalog-title/lamborghini.png';
-import ferrari from '../../../assets/images/catalog-title/ferrari.png';
-import bugatti from '../../../assets/images/catalog-title/bugatti.png';
+import ferrari from '../../../assets/images/catalog-title/ferrari.jpg';
+import bugatti from '../../../assets/images/catalog-title/bugatti.jpg';
+import lamborghini from '../../../assets/images/catalog-title/lamborghini.jpg';
+
 import { sdk } from '../../../services/sdk/create-client';
 import { ProductProjection } from '@commercetools/platform-sdk';
 import CardCar from '../card-car/CardCar';

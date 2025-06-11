@@ -3,10 +3,7 @@ type FormErrors = {
   password: string;
 };
 
-export default function validateForm(
-  email: string,
-  password: string,
-): FormErrors {
+export default function validateForm(email: string, password: string): FormErrors {
   const regexSymbolDog = /^[^\s@]+@[^\s@]+$/;
   const regexSymbolPoint = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

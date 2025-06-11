@@ -63,7 +63,7 @@ export type EditableAddress = {
 };
 
 export type HandleChangePasswordParams = {
-  email: string | undefined,
+  email: string | undefined;
   userId: string;
   version: number;
   currentPassword: string;

@@ -182,7 +182,11 @@ export default function UserProfile(): ReactElement | null {
         className={styles['user-profile__tabs'] ?? ''}
         value={selectedTab}
         onChange={(_, val) => setSelectedTab(val)}
-        sx={{ mb: 2, '& .MuiTabs-indicator': { backgroundColor: '#737aff' } }}
+        sx={{
+          mb: 2,
+          '& .MuiTabs-indicator': { backgroundColor: '#737aff' },
+          '& .MuiTab-root.Mui-selected': { outline: 'none' },
+        }}
         textColor="inherit"
       >
         <Tab label="User Info" />
@@ -334,7 +338,9 @@ export default function UserProfile(): ReactElement | null {
                     </Box>
                   )}
                   {address.id === '' && (
-                    <p className={styles['new-address-edit']}>Save changes to set default billing or shipping address!</p>
+                    <p className={styles['new-address-edit']}>
+                      Save changes to set default billing or shipping address!
+                    </p>
                   )}
                   <Button
                     variant="outlined"

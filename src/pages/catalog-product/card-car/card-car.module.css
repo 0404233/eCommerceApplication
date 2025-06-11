@@ -81,11 +81,10 @@
 }
 
 @media (max-width: 768px) {
-  
   .card-car-container {
     width: 20rem;
   }
-  
+
   .card-title,
   .card-description {
     font-size: 1rem;

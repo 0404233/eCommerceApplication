@@ -37,11 +37,9 @@ export const handleSave = async ({
     if (formData.firstName !== userData.firstName)
       actions.push({ action: 'setFirstName', firstName: formData.firstName! });
 
-    if (formData.lastName !== userData.lastName)
-      actions.push({ action: 'setLastName', lastName: formData.lastName! });
+    if (formData.lastName !== userData.lastName) actions.push({ action: 'setLastName', lastName: formData.lastName! });
 
-    if (formData.email !== userData.email)
-      actions.push({ action: 'changeEmail', email: formData.email! });
+    if (formData.email !== userData.email) actions.push({ action: 'changeEmail', email: formData.email! });
 
     if (formData.dateOfBirth !== userData.dateOfBirth)
       actions.push({ action: 'setDateOfBirth', dateOfBirth: formData.dateOfBirth! });
@@ -69,7 +67,7 @@ export const handleSave = async ({
       } else {
         const original = userData.addresses.find((a) => a.id === addr.id);
         const hasChange = ['streetName', 'city', 'postalCode', 'country'].some(
-          (key) => original?.[key as keyof typeof original] !== addr[key as keyof EditableAddress]
+          (key) => original?.[key as keyof typeof original] !== addr[key as keyof EditableAddress],
         );
         if (hasChange) {
           actions.push({
