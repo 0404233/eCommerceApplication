@@ -182,7 +182,11 @@ export default function UserProfile(): ReactElement | null {
         className={styles['user-profile__tabs'] ?? ''}
         value={selectedTab}
         onChange={(_, val) => setSelectedTab(val)}
-        sx={{ mb: 2, '& .MuiTabs-indicator': { backgroundColor: '#737aff' } }}
+        sx={{
+          mb: 2,
+          '& .MuiTabs-indicator': { backgroundColor: '#737aff' },
+          '& .MuiTab-root.Mui-selected': { outline: 'none' },
+        }}
         textColor="inherit"
       >
         <Tab label="User Info" />

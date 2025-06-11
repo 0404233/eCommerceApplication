@@ -1,28 +1,26 @@
 .header-layout {
   width: 100%;
+  height: 4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
   background-color: #565656;
+  overflow: hidden;
 }
 
+.cart-icon-link,
 .user-icon {
+  display: flex;
+  padding: 0 4px;
   border-radius: 5px;
-  padding: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s linear;
+}
 
-  &:hover {
-    cursor: pointer;
-    background-color: #6b6b6b;
-    transition: 0.3s linear;
-  }
-
-  &.selected {
-    color: #737aff;
-    box-shadow: 0 0 5px 5px #737aff;
-    background-color: #6b6b6b;
-    transition: 0.2s ease;
-  }
+.cart-icon-link:hover,
+.user-icon:hover {
+  background-color: #808080;
 }
 
 .button-group {
@@ -39,6 +37,7 @@
 .button-header-route {
   padding: 8px 15px;
   background-color: #808080;
+  transition: background-color 0.2s linear;
 }
 
 .button-header-route:hover {
@@ -49,16 +48,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px;
+  padding: 0;
   background-color: transparent;
-  transition: all 0.2s;
+  transition: box-shadow 0.2s;
   z-index: 999;
+  outline: none;
 }
 
 .header__to-main:hover,
 .page-link:hover {
   background-color: #6b6b6b;
-  color: #737aff;
+}
+
+.header__to-main:focus {
+  box-shadow: 0px 0px 10px 10px #737aff inset;
+  border-radius: 50%;
 }
 
 .links-to-pages {
@@ -176,7 +180,6 @@
 
   .links-list {
     flex-direction: column;
-    height: 100%;
     margin: 0;
   }
 
