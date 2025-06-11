@@ -14,7 +14,7 @@ export const handleChangePassword = async ({
   setLoading,
   setMessage,
   resetPasswordFields,
-}: HandleChangePasswordParams) => {
+}: HandleChangePasswordParams): Promise<void> => {
   if (newPassword !== confirmPassword) {
     setPasswordError('Passwords do not match');
     return;
@@ -41,7 +41,7 @@ export const handleChangePassword = async ({
     resetPasswordFields();
     deleteTokenCookie();
     getCustomerToken(email!, newPassword);
-  } catch (err) {
+  } catch {
     setMessage({ type: 'error', text: 'Failed to change password' });
   } finally {
     setLoading(false);

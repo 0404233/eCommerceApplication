@@ -97,7 +97,7 @@ export default function UserProfile(): ReactElement | null {
       }
     };
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   const handleChange = (field: keyof Customer, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -334,7 +334,9 @@ export default function UserProfile(): ReactElement | null {
                     </Box>
                   )}
                   {address.id === '' && (
-                    <p className={styles['new-address-edit']}>Save changes to set default billing or shipping address!</p>
+                    <p className={styles['new-address-edit']}>
+                      Save changes to set default billing or shipping address!
+                    </p>
                   )}
                   <Button
                     variant="outlined"

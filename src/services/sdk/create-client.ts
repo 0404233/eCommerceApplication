@@ -17,9 +17,13 @@ export default class CreateClient {
   public apiRoot = createApiBuilderFromCtpClient(ctpClient()).withProjectKey({
     projectKey: this.projectKey,
   });
+  user = {
+    userName: '',
+    password: '',
+  };
 
-  public refreshApiRoot(): void {
-    this.apiRoot = createApiBuilderFromCtpClient(ctpClient()).withProjectKey({
+  public refreshApiRoot(credentials?: { username: string; password: string }): void {
+    this.apiRoot = createApiBuilderFromCtpClient(ctpClient(credentials)).withProjectKey({
       projectKey: this.projectKey,
     });
   }
@@ -54,6 +58,8 @@ export default class CreateClient {
     const { email, password } = userData;
 
     try {
+      await getCustomerToken(email, password);
+
       await this.apiRoot
         .me()
         .login()
@@ -61,10 +67,13 @@ export default class CreateClient {
           body: {
             email,
             password,
+            activeCartSignInMode: 'MergeWithExistingCustomerCart',
           },
         })
         .execute();
-      await getCustomerToken(email, password);
+
+      this.refreshApiRoot({ username: email, password: password });
+
       return {
         success: true,
         message: 'Login completed successfully!',
@@ -139,7 +148,7 @@ export default class CreateClient {
     }
   }
 
-  async getCustomerInfo() {
+  async getCustomerInfo(): Promise<Customer> {
     return this.apiRoot
       .me()
       .get()
@@ -147,7 +156,7 @@ export default class CreateClient {
       .then((res) => res.body);
   }
 
-  async updateCustomerProfile(version: number, actions: MyCustomerUpdateAction[]) {
+  async updateCustomerProfile(version: number, actions: MyCustomerUpdateAction[]): Promise<Customer> {
     return this.apiRoot
       .me()
       .post({

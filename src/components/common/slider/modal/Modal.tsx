@@ -5,6 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import { DialogContent } from '@mui/material';
 import { ImageCar } from '../../../../types/types';
 import Slider from '../Slider';
+import { JSX } from 'react';
 
 type Props = {
   images: ImageCar[];
@@ -30,7 +31,7 @@ const StyledDialog = styled(Dialog)({
   },
 });
 
-export default function Modal({ images, isOpen, closeModal, imageIndex }: Props) {
+export default function Modal({ images, isOpen, closeModal, imageIndex }: Props): JSX.Element {
   return (
     <StyledDialog open={isOpen} onClose={closeModal}>
       <DialogContent>
