@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import { deleteTokenCookie, getTokenFromCookie } from '../../../services/http/get-token-from-cookie';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { ROUTES } from '../../../routes/constants-routes';
+import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
 
 type HeaderProps = {
   location: string;
