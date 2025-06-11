@@ -97,7 +97,7 @@ export default function UserProfile(): ReactElement | null {
       }
     };
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   const handleChange = (field: keyof Customer, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

@@ -6,7 +6,7 @@ export type EditableAddress = {
   streetName: string;
 };
 
-const validateAddress = (address: EditableAddress) => {
+const validateAddress = (address: EditableAddress): Map<string, string> => {
   const errors = new Map<string, string>();
 
   if (address.streetName.length === 0) errors.set('streetName', 'Street must contain at least one character.');

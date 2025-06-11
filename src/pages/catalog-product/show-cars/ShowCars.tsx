@@ -13,6 +13,8 @@ import { useEffect, useState } from 'react';
 import GroupedSelect from '../sort-cars/SortCars';
 import SearchProduct from '../search-product/SearchProduct';
 import styles from './show-cars.module.css';
+import { getAnonymousCartId } from '../../../utils/set-get-cart-id';
+import LoadingSpinner from '../../../components/common/loading-spinner/LoadingSpinner';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,8 +46,33 @@ export default function ShowCars(): React.ReactElement {
   const [value, setValue] = useState<number>(0);
   const [products, setProducts] = useState<ProductProjection[]>([]);
   const [searchText, setSearchText] = useState('');
+  const [lineItemsId, setLineItemsId] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const checkProductInTheShoppingCart = async () => {
+      const cartId = getAnonymousCartId();
+
+      if (!cartId) return;
+
+      try {
+        const res = await sdk.apiRoot.carts().withId({ ID: cartId }).get().execute();
+
+        const { lineItems } = res.body;
+
+        const ids = lineItems?.map((item) => item.productId) || [];
+        setLineItemsId(ids);
+      } catch (error) {
+        console.error('Error:', error);
+        setLineItemsId([]);
+      }
+    };
+
+    checkProductInTheShoppingCart();
+  }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
     const fetchData = async () => {
       const categoryId = CATEGORY_MAP[value];
       if (!categoryId) return;
@@ -53,6 +80,7 @@ export default function ShowCars(): React.ReactElement {
       try {
         const results = await sdk.getCarsCategory(categoryId);
         setProducts(results);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching category products:', error);
         setProducts([]);
@@ -97,11 +125,13 @@ export default function ShowCars(): React.ReactElement {
     return name.includes(searchText.toLowerCase());
   });
 
-  function GetCars({ products }: { products: ProductProjection[] }) {
+  function GetCars({ products, lineItemsId }: { products: ProductProjection[]; lineItemsId: string[] }) {
     return products.map(({ id, name, description, masterVariant }) => {
       const price = Number(masterVariant?.prices?.[0]?.value?.centAmount) / 100;
       const images = masterVariant?.images;
       const discount = Number(masterVariant?.prices?.[0]?.discounted?.value?.centAmount) / 100;
+
+      const inCart = lineItemsId.includes(id);
 
       return (
         <CardCar
@@ -112,6 +142,7 @@ export default function ShowCars(): React.ReactElement {
           price={price}
           discount={discount}
           images={images}
+          inCart={inCart}
         />
       );
     });
@@ -149,16 +180,20 @@ export default function ShowCars(): React.ReactElement {
         <GroupedSelect onSort={setProducts} categoryId={CATEGORY_MAP[value]} />
         <SearchProduct inputValue={searchText} onInputChange={handleSearchInputChange} />
       </div>
-
-      <CustomTabPanel value={value} index={0}>
-        <GetCars products={filteredProducts} />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <GetCars products={filteredProducts} />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        <GetCars products={filteredProducts} />
-      </CustomTabPanel>
+      {isLoading && <LoadingSpinner />}
+      {!isLoading && (
+        <>
+          <CustomTabPanel value={value} index={0}>
+            <GetCars products={filteredProducts} lineItemsId={lineItemsId} />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
+            <GetCars products={filteredProducts} lineItemsId={lineItemsId} />
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={2}>
+            <GetCars products={filteredProducts} lineItemsId={lineItemsId} />
+          </CustomTabPanel>
+        </>
+      )}
     </>
   );
 }

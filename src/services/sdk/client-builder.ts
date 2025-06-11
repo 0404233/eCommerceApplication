@@ -1,4 +1,10 @@
-import { Client, ClientBuilder, type HttpMiddlewareOptions } from '@commercetools/sdk-client-v2';
+import {
+  Client,
+  ClientBuilder,
+  PasswordAuthMiddlewareOptions,
+  RefreshAuthMiddlewareOptions,
+  type HttpMiddlewareOptions,
+} from '@commercetools/sdk-client-v2';
 import { getToken } from '../http/get-token-from-cookie';
 
 const AUTH_URL = import.meta.env['VITE_AUTH_URL'];
@@ -16,34 +22,52 @@ const httpMiddlewareOptions: HttpMiddlewareOptions = {
   fetch,
 };
 
-export const ctpClient = (): Client => {
-  const { accessToken, refreshToken } = getToken();
+export const ctpClient = (credentials?: { username: string; password: string }): Client => {
+  const { refreshToken } = getToken();
 
-  if (!accessToken || !refreshToken) {
-    return new ClientBuilder()
-      .withAnonymousSessionFlow({
-        host: AUTH_URL,
-        projectKey: projectKey,
-        credentials: {
-          clientId: CLIENT_ID,
-          clientSecret: CLIENT_SECRET,
+  if (credentials) {
+    const passwordAuthOptions: PasswordAuthMiddlewareOptions = {
+      host: AUTH_URL,
+      projectKey,
+      credentials: {
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        user: {
+          username: credentials.username,
+          password: credentials.password,
         },
-        scopes,
-        fetch,
-      })
-      .withHttpMiddleware(httpMiddlewareOptions)
-      .build();
+      },
+      scopes,
+      fetch,
+    };
+
+    return new ClientBuilder().withPasswordFlow(passwordAuthOptions).withHttpMiddleware(httpMiddlewareOptions).build();
   }
 
-  return new ClientBuilder()
-    .withRefreshTokenFlow({
+  if (refreshToken) {
+    const refreshOptions: RefreshAuthMiddlewareOptions = {
       host: AUTH_URL,
-      projectKey: projectKey,
+      projectKey,
       credentials: {
         clientId: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
       },
       refreshToken,
+      fetch,
+    };
+
+    return new ClientBuilder().withRefreshTokenFlow(refreshOptions).withHttpMiddleware(httpMiddlewareOptions).build();
+  }
+
+  return new ClientBuilder()
+    .withAnonymousSessionFlow({
+      host: AUTH_URL,
+      projectKey,
+      credentials: {
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+      },
+      scopes,
       fetch,
     })
     .withHttpMiddleware(httpMiddlewareOptions)

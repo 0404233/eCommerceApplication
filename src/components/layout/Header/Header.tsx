@@ -4,22 +4,12 @@ import styles from './header.module.css';
 import { useNavigate } from 'react-router';
 import { deleteTokenCookie, getTokenFromCookie } from '../../../services/http/get-token-from-cookie';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import ShoppingCartTwoToneIcon from '@mui/icons-material/ShoppingCartTwoTone';
+import { ROUTES } from '../../../routes/constants-routes';
 
 type HeaderProps = {
   location: string;
   loginStatus: boolean;
   changeLoginStatus: (status: boolean) => void;
-};
-
-export const ROUTES = {
-  MAIN: '/main',
-  CATALOG: '/catalog',
-  BASKET: '/basket',
-  ABOUT: '/about',
-  LOGIN: '/login',
-  REGISTER: '/register',
-  USER: '/user',
 };
 
 export default function Header({ location, loginStatus, changeLoginStatus }: HeaderProps): ReactElement {

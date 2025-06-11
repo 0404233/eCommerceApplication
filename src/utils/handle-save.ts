@@ -15,7 +15,7 @@ export const handleSave = async ({
   setLoading,
   setUserData,
   setEditMode,
-}: HandleSaveParams) => {
+}: HandleSaveParams): Promise<void> => {
   const errors = validateUserProfileForm(formData, editableAddresses);
   setFormErrors(errors);
   if (errors.size > 0) return;
