@@ -27,14 +27,12 @@ export default function AddToCart({ productId, disabled }: CarId): ReactElement 
       const userId = getUserId();
       if (userId) {
         const cartResponse = await sdk.getCustomerCart();
-        console.log(cartResponse);
         if (cartResponse) {
           await addCurrentProduct(cartResponse);
         }
       }
     } else if (anonymousCartId) {
       const cartResponse = await sdk.getAnonCart(anonymousCartId);
-      console.log(cartResponse);
       if (cartResponse) await addCurrentProduct(cartResponse);
     }
   };
