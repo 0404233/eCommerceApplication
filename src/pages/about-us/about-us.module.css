@@ -1,0 +1,85 @@
+.sliderContainer {
+  width: 80%;
+  margin: auto;
+  margin-bottom: 50px;
+}
+
+.memberCard {
+  text-align: center;
+  padding: 20px;
+}
+
+.avatar {
+  margin: 0 auto;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+h2 {
+  margin: 10px 0 5px;
+  font-size: 24px;
+}
+
+h3 {
+  margin: 5px 0;
+  font-size: 18px;
+  color: #666;
+}
+
+p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+a {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.teamSummary {
+  width: 80%;
+  margin: auto;
+  text-align: left;
+}
+
+.teamSummary h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.teamSummary h2 {
+  font-size: 24px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.teamSummary p,
+.teamSummary ul {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.teamSummary ul {
+  padding-left: 20px;
+}
+
+.teamSummary li {
+  margin-bottom: 5px;
+}
+
+.rssLink {
+  display: block;
+  width: 80%;
+  height: 10vh;
+  margin: 20px auto;
+  background: url('../../assets/svg/logo-rs.svg') no-repeat center;
+  background-size: contain;
+}
