@@ -2,6 +2,9 @@ import { ReactElement, useState } from 'react';
 import styles from './add-to-cart.module.css';
 import { sdk } from '../../../services/sdk/create-client';
 import { getAnonymousCartId } from '../../../utils/set-get-cart-id';
+import { getToken } from '../../../services/http/get-token-from-cookie';
+import { getUserId } from '../../../utils/set-get-user-id';
+import { Cart, ClientResponse } from '@commercetools/platform-sdk';
 
 type CarId = {
   productId: string;
@@ -11,29 +14,33 @@ type CarId = {
 export default function AddToCart({ productId, disabled }: CarId): ReactElement {
   const [isDisabled, setIsisabled] = useState(false);
 
-  const setItemToCart = async () => {
-    const cartId = getAnonymousCartId();
-
-    if (cartId) {
-      const cartResponse = await sdk.apiRoot.carts().withId({ ID: cartId }).get().execute();
-
-      const { id, version } = cartResponse.body;
-      await sdk.apiRoot
-        .carts()
-        .withId({ ID: id })
-        .post({
-          body: {
-            version: version,
-            actions: [{ action: 'addLineItem', productId: productId }],
-          },
-        })
-        .execute();
-    }
+  const addCurrentProduct = async (cartResponse: ClientResponse<Cart>) => {
+    sdk.addProductToCart(cartResponse, productId);
     setIsisabled(true);
   };
 
+  const setProductToCart = async () => {
+    const anonymousCartId = getAnonymousCartId();
+    const { refreshToken } = getToken();
+
+    if (refreshToken) {
+      const userId = getUserId();
+      if (userId) {
+        const cartResponse = await sdk.getCustomerCart();
+        console.log(cartResponse);
+        if (cartResponse) {
+          await addCurrentProduct(cartResponse);
+        }
+      }
+    } else if (anonymousCartId) {
+      const cartResponse = await sdk.getAnonCart(anonymousCartId);
+      console.log(cartResponse);
+      if (cartResponse) await addCurrentProduct(cartResponse);
+    }
+  };
+
   return (
-    <button onClick={setItemToCart} disabled={disabled || isDisabled} className={styles['cart-btn']}>
+    <button onClick={setProductToCart} disabled={disabled || isDisabled} className={styles['cart-btn']}>
       Add to Cart 🛒
     </button>
   );
