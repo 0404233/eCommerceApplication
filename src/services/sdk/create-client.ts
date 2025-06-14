@@ -6,6 +6,7 @@ import {
   MyCustomerUpdateAction,
   CustomerChangePassword,
   Customer,
+  Cart,
 } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
@@ -183,6 +184,31 @@ export default class CreateClient {
       })
       .execute()
       .then((res) => res.body);
+  }
+
+  async getCart(cartId: string): Promise<Cart> {
+    const response = await sdk.apiRoot.carts().withId({ ID: cartId }).get().execute();
+    return response.body;
+  }
+
+  async updateLineItemQuantity(cartId: string, version: number, lineItemId: string, quantity: number) {
+    const response = await this.apiRoot
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'changeLineItemQuantity',
+              lineItemId,
+              quantity,
+            },
+          ],
+        },
+      })
+      .execute();
+    return response.body;
   }
 }
 
