@@ -5,6 +5,7 @@ import styles from './about-us.module.css';
 import Andrey from '../../assets/images/members/Andrey.jpg';
 import Аndrey from '../../assets/images/members/Аndrey.jpg';
 import Alexander from '../../assets/images/members/Alexander.jpg';
+import { JSX } from 'react';
 
 const teamMembers = [
   {
@@ -39,7 +40,7 @@ const teamMembers = [
   },
 ];
 
-function AboutUs() {
+function AboutUs(): JSX.Element {
   const settings = {
     arrows: false,
     dots: true,
@@ -48,7 +49,7 @@ function AboutUs() {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    fade: true
+    fade: true,
   };
 
   return (

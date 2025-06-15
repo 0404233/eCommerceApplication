@@ -1,0 +1,20 @@
+.cart-btn-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.2s linear;
+  font-weight: bold;
+  background-color: #0000007a;
+  color: #fff;
+}
+
+.cart-btn-remove:hover {
+  color: #c22b2b;
+  text-shadow: #cacaca 0 0 5px;
+  background-color: #808080ab;
+}
