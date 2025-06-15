@@ -93,3 +93,8 @@ export enum Country {
   Russia = 'Russia',
   USA = 'USA',
 }
+
+export type RemoveLineItemAction = {
+  action: 'removeLineItem';
+  lineItemId: string;
+};

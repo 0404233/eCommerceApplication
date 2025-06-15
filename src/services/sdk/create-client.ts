@@ -10,7 +10,7 @@ import {
 } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
-import { UserData } from '../../types/types';
+import { RemoveLineItemAction, UserData } from '../../types/types';
 import { LoginResponse } from '../../types/types';
 
 export default class CreateClient {
@@ -191,7 +191,7 @@ export default class CreateClient {
     return response.body;
   }
 
-  async updateLineItemQuantity(cartId: string, version: number, lineItemId: string, quantity: number) {
+  async updateLineItemQuantity(cartId: string, version: number, lineItemId: string, quantity: number): Promise<Cart> {
     const response = await this.apiRoot
       .carts()
       .withId({ ID: cartId })
@@ -205,6 +205,20 @@ export default class CreateClient {
               quantity,
             },
           ],
+        },
+      })
+      .execute();
+    return response.body;
+  }
+
+  async clearCart(version: number, cartId: string, actions: RemoveLineItemAction[]): Promise<Cart> {
+    const response = await this.apiRoot
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version,
+          actions,
         },
       })
       .execute();

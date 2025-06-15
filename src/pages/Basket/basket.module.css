@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
-.basket-page-container {
+.basket-page {
   display: flex;
   justify-content: space-around;
   max-width: 1440px;
@@ -17,6 +17,8 @@
 }
 
 .cart-order-info {
+  display: flex;
+  flex-direction: column;
   width: 20%;
 }
 
@@ -30,4 +32,14 @@
   font-weight: 600;
   letter-spacing: 0.5px;
   font-family: 'Montserrat', sans-serif;
+}
+
+.empty-basket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  & h3 {
+    font-size: 30px;
+    margin: 0;
+  }
 }
