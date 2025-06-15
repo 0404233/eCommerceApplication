@@ -9,6 +9,7 @@ import { RemoveLineItemAction } from '../../types/types';
 import { Button } from '@mui/material';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import { Link } from 'react-router';
+import LoadingSpinner from '../../components/common/loading-spinner/LoadingSpinner';
 
 export default function Basket(): ReactElement {
   const [cart, setCart] = useState<Cart>();
@@ -44,7 +45,9 @@ export default function Basket(): ReactElement {
 
   return (
     <div className={styles['basket-page']}>
-      {cart && cart.lineItems.length > 0 ? (
+      {!cart ? (
+        <LoadingSpinner />
+      ) : cart.lineItems.length > 0 ? (
         <>
           <ul className={styles['cart-products-list']}>
             {cart.lineItems.map((el: LineItem) => (
