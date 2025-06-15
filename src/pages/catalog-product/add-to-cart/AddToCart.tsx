@@ -6,17 +6,17 @@ import { getToken } from '../../../services/http/get-token-from-cookie';
 import { getUserId } from '../../../utils/set-get-user-id';
 import { Cart, ClientResponse } from '@commercetools/platform-sdk';
 
-type CarId = {
+type AddToCartProps = {
   productId: string;
   disabled: boolean;
 };
 
-export default function AddToCart({ productId, disabled }: CarId): ReactElement {
-  const [isDisabled, setIsisabled] = useState(false);
+export default function AddToCart({ productId, disabled }: AddToCartProps): ReactElement {
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const addCurrentProduct = async (cartResponse: ClientResponse<Cart>) => {
     sdk.addProductToCart(cartResponse, productId);
-    setIsisabled(true);
+    setIsDisabled(true);
   };
 
   const setProductToCart = async () => {
