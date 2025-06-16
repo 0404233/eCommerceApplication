@@ -9,12 +9,11 @@
 .detailed-product-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  height: 100%;
 }
 
 .detailed-product-slider,
 .detailed-product-info {
-  margin: 30px;
+  margin: 15px;
 }
 
 .detailed-product-title {
@@ -72,8 +71,21 @@
   border-radius: 6px;
 }
 
-@media screen and (max-width: 768px) {
+.addToCart {
+  width: 20rem;
+}
+
+@media screen and (max-width: 1100px) {
   .detailed-product-container {
     grid-template-columns: 1fr;
+  }
+
+  .addToCart {
+    margin: 0 auto;
+  }
+
+  .detailed-product-slider,
+  .detailed-product-info {
+    margin: 15px 30px;
   }
 }

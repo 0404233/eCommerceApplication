@@ -218,6 +218,19 @@ export default class CreateClient {
       .execute();
   }
 
+  async deleteProductFromCart(id: string, version: number, lineItemId: string): Promise<void> {
+    await this.apiRoot
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version: version,
+          actions: [{ action: 'removeLineItem', lineItemId: lineItemId }],
+        },
+      })
+      .execute();
+  }
+
   async createNewCart(): Promise<ClientResponse<Cart>> {
     return this.apiRoot
       .carts()

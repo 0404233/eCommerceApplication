@@ -18,7 +18,8 @@ const StyledDialog = styled(Dialog)({
   '& .MuiDialog-paper': {
     maxWidth: '90vw',
     width: '90vw',
-    height: '90vh',
+    height: 'auto',
+    margin: '0',
     overflow: 'hidden',
     backgroundColor: '#242424',
   },
@@ -28,6 +29,13 @@ const StyledDialog = styled(Dialog)({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
+  },
+  '& .MuiBackdrop-root': {
+    backgroundColor: '#000000cc',
+  },
+  '& .MuiDialog-container': {
+    height: 'auto',
+    marginTop: '5rem',
   },
 });
 
