@@ -1,4 +1,4 @@
-import { ChangeEvent, JSX, useState } from 'react';
+import { ChangeEvent, JSX } from 'react';
 import styles from './cart-product.module.css';
 import type { LineItem } from '@commercetools/platform-sdk';
 import AddIcon from '@mui/icons-material/Add';

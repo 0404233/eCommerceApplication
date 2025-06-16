@@ -6,25 +6,41 @@ import { Cart, LineItem } from '@commercetools/platform-sdk';
 import CartProduct from './CartProduct/CartProduct';
 import DeleteProductButton from './DeleteProductButton/DeleteProductButton';
 import { RemoveLineItemAction } from '../../types/types';
-import { Box, Button, TextField } from '@mui/material';
+import { Button } from '@mui/material';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import { Link } from 'react-router';
 import LoadingSpinner from '../../components/common/loading-spinner/LoadingSpinner';
+import { getToken } from '../../services/http/get-token-from-cookie';
+import { getUserId } from '../../utils/set-get-user-id';
 
 export default function Basket(): ReactElement {
   const [promocodeValue, setPromocodeValue] = useState('');
   const [cart, setCart] = useState<Cart>();
+
   useEffect(() => {
     async function getData(): Promise<void> {
-      const cartId = getAnonymousCartId();
-      if (cartId) {
-        const cart = await sdk.getCart(cartId);
-        console.log(cart);
-        setCart(cart);
+      const anonymousCartId = getAnonymousCartId();
+      const { refreshToken } = getToken();
+
+      if (refreshToken) {
+        const userId = getUserId();
+        if (userId) {
+          const cartResponse = await sdk.getCustomerCart();
+          if (cartResponse) {
+            const currentCart = cartResponse.body;
+            setCart(currentCart);
+          }
+        }
+      } else if (anonymousCartId) {
+        const cartResponse = await sdk.getAnonCart(anonymousCartId);
+        if (cartResponse) {
+          const currentCart = cartResponse.body;
+          setCart(currentCart);
+        }
       }
     }
     getData();
-  }, []);
+  }, [cart]);
 
   const updateLineItemQuantity = async (lineItemId: string, quantity: number) => {
     if (cart) {

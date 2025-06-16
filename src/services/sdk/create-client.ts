@@ -249,6 +249,7 @@ export default class CreateClient {
       .execute();
 
     return updatedCart.body;
+  }
 
   async getCustomerCart(): Promise<ClientResponse<Cart> | undefined> {
     const userId = getUserId();
