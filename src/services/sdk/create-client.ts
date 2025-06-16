@@ -12,6 +12,8 @@ import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
 import { RemoveLineItemAction, UserData } from '../../types/types';
 import { LoginResponse } from '../../types/types';
+import { getAnonymousCartId } from '../../utils/set-get-cart-id';
+import { getUserId, setUserId } from '../../utils/set-get-user-id';
 
 export default class CreateClient {
   private projectKey = import.meta.env['VITE_PROJECT_KEY'];
@@ -59,20 +61,24 @@ export default class CreateClient {
     const { email, password } = userData;
 
     try {
+      const anonymousCartId = getAnonymousCartId();
       await getCustomerToken(email, password);
 
-      await this.apiRoot
-        .me()
+      const res = await this.apiRoot
         .login()
         .post({
           body: {
             email,
             password,
-            activeCartSignInMode: 'MergeWithExistingCustomerCart',
+            anonymousCart: {
+              id: anonymousCartId || '',
+              typeId: 'cart',
+            },
           },
         })
         .execute();
 
+      setUserId(res.body.customer.id);
       this.refreshApiRoot({ username: email, password: password });
 
       return {
@@ -149,12 +155,12 @@ export default class CreateClient {
     }
   }
 
-  async getCustomerInfo(): Promise<Customer> {
+  async getCustomerInfo(): Promise<ClientResponse<Customer>> {
     return this.apiRoot
       .me()
       .get()
       .execute()
-      .then((res) => res.body);
+      .then((res) => res);
   }
 
   async updateCustomerProfile(version: number, actions: MyCustomerUpdateAction[]): Promise<Customer> {
@@ -187,7 +193,7 @@ export default class CreateClient {
   }
 
   async getCart(cartId: string): Promise<Cart> {
-    const response = await sdk.apiRoot.carts().withId({ ID: cartId }).get().execute();
+    const response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
     return response.body;
   }
 
@@ -243,6 +249,51 @@ export default class CreateClient {
       .execute();
 
     return updatedCart.body;
+
+  async getCustomerCart(): Promise<ClientResponse<Cart> | undefined> {
+    const userId = getUserId();
+    if (userId) {
+      return await this.apiRoot.carts().withCustomerId({ customerId: userId }).get().execute();
+    }
+    return undefined;
+  }
+
+  async getAnonCart(anonymousCartId: string): Promise<ClientResponse<Cart>> {
+    return await this.apiRoot.carts().withId({ ID: anonymousCartId }).get().execute();
+  }
+
+  async addProductToCart(cartResponse: ClientResponse<Cart>, productId: string): Promise<void> {
+    const { id, version } = cartResponse.body;
+    await this.apiRoot
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version: version,
+          actions: [{ action: 'addLineItem', productId: productId }],
+        },
+      })
+      .execute();
+  }
+
+  async deleteProductFromCart(id: string, version: number, lineItemId: string): Promise<void> {
+    await this.apiRoot
+      .carts()
+      .withId({ ID: id })
+      .post({
+        body: {
+          version: version,
+          actions: [{ action: 'removeLineItem', lineItemId: lineItemId }],
+        },
+      })
+      .execute();
+  }
+
+  async createNewCart(): Promise<ClientResponse<Cart>> {
+    return this.apiRoot
+      .carts()
+      .post({ body: { currency: 'USD', country: 'US' } })
+      .execute();
   }
 }
 

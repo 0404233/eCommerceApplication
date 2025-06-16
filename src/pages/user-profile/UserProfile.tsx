@@ -71,7 +71,9 @@ export default function UserProfile(): ReactElement | null {
     const fetchUserData = async () => {
       setLoading(true);
       try {
-        const data = await sdk.getCustomerInfo();
+        const response = await sdk.getCustomerInfo();
+        const data = response.body;
+
         setUserData(data);
         setFormData({
           firstName: data.firstName || '',
@@ -186,6 +188,7 @@ export default function UserProfile(): ReactElement | null {
           mb: 2,
           '& .MuiTabs-indicator': { backgroundColor: '#737aff' },
           '& .MuiTab-root.Mui-selected': { outline: 'none' },
+          '& .MuiTab-root': { padding: '12px 6px' },
         }}
         textColor="inherit"
       >

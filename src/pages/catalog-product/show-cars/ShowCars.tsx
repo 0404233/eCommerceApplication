@@ -15,6 +15,8 @@ import SearchProduct from '../search-product/SearchProduct';
 import styles from './show-cars.module.css';
 import { getAnonymousCartId } from '../../../utils/set-get-cart-id';
 import LoadingSpinner from '../../../components/common/loading-spinner/LoadingSpinner';
+import { getUserId } from '../../../utils/set-get-user-id';
+import { getToken } from '../../../services/http/get-token-from-cookie';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -52,19 +54,38 @@ export default function ShowCars(): React.ReactElement {
   useEffect(() => {
     const checkProductInTheShoppingCart = async () => {
       const cartId = getAnonymousCartId();
+      const { refreshToken } = getToken();
 
       if (!cartId) return;
 
-      try {
-        const res = await sdk.apiRoot.carts().withId({ ID: cartId }).get().execute();
+      if (refreshToken) {
+        const userId = getUserId();
 
-        const { lineItems } = res.body;
+        if (userId) {
+          try {
+            const userCartResponse = await sdk.apiRoot.carts().withCustomerId({ customerId: userId }).get().execute();
 
-        const ids = lineItems?.map((item) => item.productId) || [];
-        setLineItemsId(ids);
-      } catch (error) {
-        console.error('Error:', error);
-        setLineItemsId([]);
+            const { lineItems } = userCartResponse.body;
+
+            const ids = lineItems?.map((item) => item.productId) || [];
+            setLineItemsId(ids);
+          } catch (error) {
+            console.error('Error:', error);
+            setLineItemsId([]);
+          }
+        }
+      } else {
+        try {
+          const res = await sdk.apiRoot.carts().withId({ ID: cartId }).get().execute();
+
+          const { lineItems } = res.body;
+
+          const ids = lineItems?.map((item) => item.productId) || [];
+          setLineItemsId(ids);
+        } catch (error) {
+          console.error('Error:', error);
+          setLineItemsId([]);
+        }
       }
     };
 
