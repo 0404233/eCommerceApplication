@@ -62,9 +62,9 @@ export default function Basket(): ReactElement {
 
   const submitPromocode = async (e: FormEvent) => {
     e.preventDefault();
-    if (cart) {
-      const discountCart = await sdk.applyDiscountCode(cart.id, cart.version, promocodeValue);
-      console.log(discountCart);
+    const promocode = promocodeValue.trim().toUpperCase();
+    if (cart && promocode.length > 0) {
+      const discountCart = await sdk.applyDiscountCode(cart.id, cart.version, promocode);
       setCart(discountCart);
     }
   };
