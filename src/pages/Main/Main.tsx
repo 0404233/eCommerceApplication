@@ -53,7 +53,7 @@ export default function MainPage(): ReactElement {
     };
 
     const startProgress = () => {
-      video.play().catch(() => {});
+      video.play();
       updateProgress();
     };
 

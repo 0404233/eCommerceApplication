@@ -64,7 +64,6 @@ export default function Basket(): ReactElement {
     e.preventDefault();
     if (cart) {
       const discountCart = await sdk.applyDiscountCode(cart.id, cart.version, promocodeValue);
-      console.log(discountCart);
       setCart(discountCart);
     }
   };
