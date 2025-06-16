@@ -47,6 +47,43 @@
   }
 }
 
+.cart-order-promocode {
+  display: flex;
+  align-items: center;
+  & > * {
+    height: 35px;
+    background-color: transparent;
+  }
+}
+
+.order-promocode-input {
+  width: 100%;
+  border: 1px solid #dfdfdf;
+  padding: 8px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  background-color: transparent;
+  color: #dfdfdf;
+  font-size: 16px;
+  line-height: 2rem;
+  margin: 0;
+}
+
+.order-promocode-btn {
+  padding: 0 10px;
+  border: 1px solid #dfdfdf;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-left: 0;
+  color: #dfdfdf;
+  font-size: 12px;
+  line-height: 2rem;
+  text-transform: uppercase;
+  &:hover {
+    border-color: #dfdfdf;
+  }
+}
+
 @media screen and (max-width: 860px) {
   .basket-page {
     flex-direction: column-reverse;

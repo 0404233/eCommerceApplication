@@ -224,6 +224,26 @@ export default class CreateClient {
       .execute();
     return response.body;
   }
+
+  async applyDiscountCode(cartId: string, version: number, code: string): Promise<Cart> {
+    const updatedCart = await this.apiRoot
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'addDiscountCode',
+              code: code,
+            },
+          ],
+        },
+      })
+      .execute();
+
+    return updatedCart.body;
+  }
 }
 
 export const sdk = new CreateClient();

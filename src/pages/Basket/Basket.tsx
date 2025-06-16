@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { FormEvent, ReactElement, useEffect, useState } from 'react';
 import { getAnonymousCartId } from '../../utils/set-get-cart-id';
 import { sdk } from '../../services/sdk/create-client';
 import styles from './basket.module.css';
@@ -6,12 +6,13 @@ import { Cart, LineItem } from '@commercetools/platform-sdk';
 import CartProduct from './CartProduct/CartProduct';
 import DeleteProductButton from './DeleteProductButton/DeleteProductButton';
 import { RemoveLineItemAction } from '../../types/types';
-import { Button } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import { Link } from 'react-router';
 import LoadingSpinner from '../../components/common/loading-spinner/LoadingSpinner';
 
 export default function Basket(): ReactElement {
+  const [promocodeValue, setPromocodeValue] = useState('');
   const [cart, setCart] = useState<Cart>();
   useEffect(() => {
     async function getData(): Promise<void> {
@@ -43,6 +44,15 @@ export default function Basket(): ReactElement {
     }
   };
 
+  const submitPromocode = async (e: FormEvent) => {
+    e.preventDefault();
+    if (cart) {
+      const discountCart = await sdk.applyDiscountCode(cart.id, cart.version, promocodeValue);
+      console.log(discountCart);
+      setCart(discountCart);
+    }
+  };
+
   return (
     <div className={styles['basket-page']}>
       {!cart ? (
@@ -65,6 +75,16 @@ export default function Basket(): ReactElement {
                 </span>
               </div>
             </div>
+            <form className={styles['cart-order-promocode']} onSubmit={submitPromocode}>
+              <input
+                placeholder="Enter promocode here"
+                type="text"
+                className={styles['order-promocode-input']}
+                value={promocodeValue}
+                onChange={(e) => setPromocodeValue(e.target.value)}
+              />
+              <button className={styles['order-promocode-btn']}>apply</button>
+            </form>
             <DeleteProductButton callback={() => deleteLineItems()} textContent="Clear Shopping Cart" fullWidth />
           </div>
         </>
