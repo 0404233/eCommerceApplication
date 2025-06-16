@@ -188,6 +188,7 @@ export default function UserProfile(): ReactElement | null {
           mb: 2,
           '& .MuiTabs-indicator': { backgroundColor: '#737aff' },
           '& .MuiTab-root.Mui-selected': { outline: 'none' },
+          '& .MuiTab-root': { padding: '12px 6px' },
         }}
         textColor="inherit"
       >
