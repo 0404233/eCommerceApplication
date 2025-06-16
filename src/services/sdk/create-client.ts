@@ -10,7 +10,7 @@ import {
 } from '@commercetools/platform-sdk';
 import { ctpClient } from './client-builder';
 import getCustomerToken from '../http/get-customer-token';
-import { UserData } from '../../types/types';
+import { RemoveLineItemAction, UserData } from '../../types/types';
 import { LoginResponse } from '../../types/types';
 import { getAnonymousCartId } from '../../utils/set-get-cart-id';
 import { getUserId, setUserId } from '../../utils/set-get-user-id';
@@ -191,6 +191,64 @@ export default class CreateClient {
       .execute()
       .then((res) => res.body);
   }
+
+  async getCart(cartId: string): Promise<Cart> {
+    const response = await this.apiRoot.carts().withId({ ID: cartId }).get().execute();
+    return response.body;
+  }
+
+  async updateLineItemQuantity(cartId: string, version: number, lineItemId: string, quantity: number): Promise<Cart> {
+    const response = await this.apiRoot
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'changeLineItemQuantity',
+              lineItemId,
+              quantity,
+            },
+          ],
+        },
+      })
+      .execute();
+    return response.body;
+  }
+
+  async clearCart(version: number, cartId: string, actions: RemoveLineItemAction[]): Promise<Cart> {
+    const response = await this.apiRoot
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version,
+          actions,
+        },
+      })
+      .execute();
+    return response.body;
+  }
+
+  async applyDiscountCode(cartId: string, version: number, code: string): Promise<Cart> {
+    const updatedCart = await this.apiRoot
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
+          version,
+          actions: [
+            {
+              action: 'addDiscountCode',
+              code: code,
+            },
+          ],
+        },
+      })
+      .execute();
+
+    return updatedCart.body;
 
   async getCustomerCart(): Promise<ClientResponse<Cart> | undefined> {
     const userId = getUserId();
