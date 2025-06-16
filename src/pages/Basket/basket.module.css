@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.basket-page {
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.cart-products-list {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  margin: 0;
+  padding: 0;
+}
+
+.cart-order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 20%;
+}
+
+.order-info-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.total-cost {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.empty-basket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  & h3 {
+    font-size: 30px;
+    margin: 0;
+  }
+}
+
+.cart-order-promocode {
+  display: flex;
+  align-items: center;
+  & > * {
+    height: 35px;
+    background-color: transparent;
+  }
+}
+
+.order-promocode-input {
+  width: 100%;
+  border: 1px solid #dfdfdf;
+  padding: 8px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  background-color: transparent;
+  color: #dfdfdf;
+  font-size: 16px;
+  line-height: 2rem;
+  margin: 0;
+}
+
+.order-promocode-btn {
+  padding: 0 10px;
+  border: 1px solid #dfdfdf;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-left: 0;
+  color: #dfdfdf;
+  font-size: 12px;
+  line-height: 2rem;
+  text-transform: uppercase;
+  &:hover {
+    border-color: #dfdfdf;
+  }
+}
+
+@media screen and (max-width: 860px) {
+  .basket-page {
+    flex-direction: column-reverse;
+    padding: 0 20px;
+  }
+  .cart-products-list {
+    width: 100%;
+  }
+  .cart-order-info {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .cart-products-list {
+    padding: 10px;
+    justify-content: center;
+    gap: 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .cart-order-info {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: #3c3c3c;
+  }
+}
