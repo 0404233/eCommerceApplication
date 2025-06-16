@@ -1,6 +1,7 @@
+import { JSX } from 'react';
 import styles from './mainPage.module.css';
 
-export default function engineSvg(color: string) {
+export default function engineSvg(color: string): JSX.Element {
   return (
     <svg
       className={styles['engine-svg']}
