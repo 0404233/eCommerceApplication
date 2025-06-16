@@ -19,21 +19,54 @@ export default function MainPage(): ReactElement {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [progress, setProgress] = useState(0);
 
+  const [loaderParams, setLoaderParams] = useState({ radius: 10, stroke: 3 });
+
   useEffect(() => {
+    const updateParams = () => {
+      if (window.innerWidth <= 554) {
+        setLoaderParams({ radius: 7, stroke: 2 });
+      } else {
+        setLoaderParams({ radius: 10, stroke: 3 });
+      }
+    };
+
+    updateParams();
+    window.addEventListener('resize', updateParams);
+
+    return () => {
+      window.removeEventListener('resize', updateParams);
+    };
+  }, []);
+
+  useEffect(() => {
+    const video = videoRefs.current[currentSlide];
+    if (!video) return;
+
     let frameId: number;
 
     const updateProgress = () => {
-      const video = videoRefs.current[currentSlide];
-      if (video && video.duration) {
+      if (video && video.duration && !isNaN(video.duration)) {
         const percent = (video.currentTime / video.duration) * 100;
         setProgress(percent);
       }
       frameId = requestAnimationFrame(updateProgress);
     };
 
-    frameId = requestAnimationFrame(updateProgress);
+    const startProgress = () => {
+      video.play().catch(() => {});
+      updateProgress();
+    };
 
-    return () => cancelAnimationFrame(frameId);
+    if (video.readyState >= 1) {
+      startProgress();
+    } else {
+      video.addEventListener('loadedmetadata', startProgress);
+    }
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      video.removeEventListener('loadedmetadata', startProgress);
+    };
   }, [currentSlide]);
 
   const settings = {
@@ -53,6 +86,13 @@ export default function MainPage(): ReactElement {
       }
     },
   };
+
+  const sliderInfo: Record<number, string> = {
+    0: 'With the promo code summer15 you can get a 15 percent discount!',
+    1: 'Discover amazing deals on new arrivals and save big this season now.',
+    2: 'Join our newsletter to receive exclusive offers and special updates.',
+    3: 'Experience the best in class service with our dedicated support team.',
+  } as const;
 
   const handleVideoEnd = () => {
     if (sliderRef.current) {
@@ -79,16 +119,16 @@ export default function MainPage(): ReactElement {
               <source src={src} type="video/mp4" />
             </video>
             <div className={`${styles['slider-info']} ${currentSlide === index ? styles['typing'] : ''}`}>
-              <p>Lorem ipsum dolor sit amet consectetur sdfsdfsfsfssfsf sfsfsfsfehguliesfsjfdhskgfuhsfshbfsfhshsds</p>
+              <p>{sliderInfo[index]}</p>
             </div>
           </div>
         ))}
       </Slider>
-      {engineSvg('white')}
+      {currentSlide === 1 ? engineSvg('black') : engineSvg('white')}
       <div className={styles['dots-wrapper']}>
         {videoSources.map((_, index) => {
-          const radius = 10;
-          const stroke = 3;
+          const radius = loaderParams.radius;
+          const stroke = loaderParams.stroke;
           const size = radius * 2 + stroke * 2;
           const circumference = 2 * Math.PI * radius;
 
