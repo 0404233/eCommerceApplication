@@ -5,17 +5,23 @@ import styles from './basket.module.css';
 import { Cart, LineItem } from '@commercetools/platform-sdk';
 import CartProduct from './CartProduct/CartProduct';
 import DeleteProductButton from './DeleteProductButton/DeleteProductButton';
-import { RemoveLineItemAction } from '../../types/types';
+import { PromocodeAlert, RemoveLineItemAction } from '../../types/types';
 import { Button } from '@mui/material';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 import { Link } from 'react-router';
 import LoadingSpinner from '../../components/common/loading-spinner/LoadingSpinner';
 import { getToken } from '../../services/http/get-token-from-cookie';
 import { getUserId } from '../../utils/set-get-user-id';
+import PromoAlert from './PromoAlert';
 
 export default function Basket(): ReactElement {
   const [promocodeValue, setPromocodeValue] = useState('');
   const [cart, setCart] = useState<Cart>();
+  const [alertMessage, setAlertMessage] = useState<PromocodeAlert>({
+    severity: 'success',
+    message: '',
+  });
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   useEffect(() => {
     async function getData(): Promise<void> {
@@ -28,6 +34,7 @@ export default function Basket(): ReactElement {
           const cartResponse = await sdk.getCustomerCart();
           if (cartResponse) {
             const currentCart = cartResponse.body;
+            console.log(currentCart);
             setCart(currentCart);
           }
         }
@@ -35,12 +42,13 @@ export default function Basket(): ReactElement {
         const cartResponse = await sdk.getAnonCart(anonymousCartId);
         if (cartResponse) {
           const currentCart = cartResponse.body;
+          console.log(currentCart);
           setCart(currentCart);
         }
       }
     }
     getData();
-  }, [cart]);
+  }, []);
 
   const updateLineItemQuantity = async (lineItemId: string, quantity: number) => {
     if (cart) {
@@ -64,9 +72,30 @@ export default function Basket(): ReactElement {
     e.preventDefault();
     const promocode = promocodeValue.trim().toUpperCase();
     if (cart && promocode.length > 0) {
-      const discountCart = await sdk.applyDiscountCode(cart.id, cart.version, promocode);
-      setCart(discountCart);
+      const appliedPromocode = cart.discountCodes.find(({ state }) => state === 'MatchesCart');
+      if (appliedPromocode) {
+        setAlertMessage({
+          severity: 'error',
+          message: 'The promo code has already been applied',
+        });
+        setIsAlertOpen(true);
+      } else {
+        const discountCart = await sdk.applyDiscountCode(cart.id, cart.version, promocode);
+        if (discountCart.discountCodes.find(({ state }) => state === 'MatchesCart')) {
+          setAlertMessage({
+            severity: 'success',
+            message: 'Promo code successfully applied!',
+          });
+          setIsAlertOpen(true);
+        }
+        setCart(discountCart);
+      }
+      setPromocodeValue('');
     }
+  };
+
+  const closeAlert = () => {
+    setIsAlertOpen(false);
   };
 
   return (
@@ -85,10 +114,25 @@ export default function Basket(): ReactElement {
               <div>
                 <span className={styles['total-cost']}>Total cost</span>
               </div>
-              <div>
-                <span className={styles['total-cost']}>
-                  {cart.totalPrice.centAmount / 10 ** cart.totalPrice.fractionDigits}
-                </span>
+              <div className={styles['total-cost-container']}>
+                {cart.discountCodes.filter(({ state }) => state === 'MatchesCart').length > 0 ? (
+                  <>
+                    <span className={styles['total-cost-value']}>
+                      {cart.lineItems.reduce(
+                        (acc, cur) =>
+                          acc + (cur.price.value.centAmount * cur.quantity) / 10 ** cur.price.value.fractionDigits,
+                        0,
+                      )}
+                    </span>
+                    <span className={styles['total-cost-discounted']}>
+                      {cart.totalPrice.centAmount / 10 ** cart.totalPrice.fractionDigits}
+                    </span>
+                  </>
+                ) : (
+                  <span className={styles['total-cost-value']}>
+                    {cart.totalPrice.centAmount / 10 ** cart.totalPrice.fractionDigits}
+                  </span>
+                )}
               </div>
             </div>
             <form className={styles['cart-order-promocode']} onSubmit={submitPromocode}>
@@ -115,6 +159,7 @@ export default function Basket(): ReactElement {
           </Link>
         </div>
       )}
+      {isAlertOpen && <PromoAlert display={alertMessage} closeAlert={closeAlert} />}
     </div>
   );
 }

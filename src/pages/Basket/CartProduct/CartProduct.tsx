@@ -53,11 +53,11 @@ export default function CartProduct({ lineItem, updateLineItemQuantity }: Props)
         <span className={styles['active-price']}>
           ${lineItem.totalPrice.centAmount / 10 ** lineItem.totalPrice.fractionDigits}
         </span>
-        {lineItem.price.discounted && (
+        {lineItem.discountedPricePerQuantity.length > 0 || lineItem.price.discounted ? (
           <span className={styles['full-price']}>
             ${(lineItem.price.value.centAmount / 10 ** lineItem.price.value.fractionDigits) * lineItem.quantity}
           </span>
-        )}
+        ) : null}
       </p>
       <div className={styles['product-quantity']}>
         <button className={styles['quantity-btn']} onClick={onReduceQuantity}>

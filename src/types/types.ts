@@ -98,3 +98,8 @@ export type RemoveLineItemAction = {
   action: 'removeLineItem';
   lineItemId: string;
 };
+
+export type PromocodeAlert = {
+  severity: 'success' | 'error';
+  message: string;
+};
