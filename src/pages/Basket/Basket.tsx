@@ -34,7 +34,6 @@ export default function Basket(): ReactElement {
           const cartResponse = await sdk.getCustomerCart();
           if (cartResponse) {
             const currentCart = cartResponse.body;
-            console.log(currentCart);
             setCart(currentCart);
           }
         }
@@ -42,13 +41,12 @@ export default function Basket(): ReactElement {
         const cartResponse = await sdk.getAnonCart(anonymousCartId);
         if (cartResponse) {
           const currentCart = cartResponse.body;
-          console.log(currentCart);
           setCart(currentCart);
         }
       }
     }
     getData();
-  }, []);
+  }, [cart]);
 
   const updateLineItemQuantity = async (lineItemId: string, quantity: number) => {
     if (cart) {
