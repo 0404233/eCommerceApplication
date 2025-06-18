@@ -11,17 +11,7 @@ type FormData = {
 };
 
 export default function validateForm(formData: FormData): Map<string, string> {
-  const {
-    email,
-    password,
-    firstName,
-    lastName,
-    dateOfBirth,
-    streetName,
-    city,
-    postalCode,
-    country,
-  } = { ...formData };
+  const { email, password, firstName, lastName, dateOfBirth, streetName, city, postalCode, country } = { ...formData };
 
   const newMap = new Map();
 
@@ -30,24 +20,15 @@ export default function validateForm(formData: FormData): Map<string, string> {
   }
 
   if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}/.test(password)) {
-    newMap.set(
-      'password',
-      'Use at least 8 characters, incl. upper/lowercase & digits.',
-    );
+    newMap.set('password', 'Use at least 8 characters, incl. upper/lowercase & digits.');
   }
 
   if (!/^[a-zA-Z]+$/.test(firstName) || firstName.length === 0) {
-    newMap.set(
-      'firstName',
-      'First name must have at least one letter, no digits or symbols.',
-    );
+    newMap.set('firstName', 'First name must have at least one letter, no digits or symbols.');
   }
 
   if (!/^[a-zA-Z]+$/.test(lastName) || lastName.length === 0) {
-    newMap.set(
-      'lastName',
-      'Last name must have at least one letter, no digits or symbols.',
-    );
+    newMap.set('lastName', 'Last name must have at least one letter, no digits or symbols.');
   }
 
   const today = new Date();
@@ -60,9 +41,7 @@ export default function validateForm(formData: FormData): Map<string, string> {
   if (
     age < 13 ||
     (age === 13 && today.getMonth() < dobCheck.getMonth()) ||
-    (age === 13 &&
-      today.getMonth() === dobCheck.getMonth() &&
-      today.getDate() < dobCheck.getDate())
+    (age === 13 && today.getMonth() === dobCheck.getMonth() && today.getDate() < dobCheck.getDate())
   ) {
     newMap.set('dob', 'You must be at least 13 years old.');
   }
@@ -72,10 +51,7 @@ export default function validateForm(formData: FormData): Map<string, string> {
   }
 
   if (!/^[a-zA-Z]+$/.test(city) || city.length === 0) {
-    newMap.set(
-      'city',
-      'City must have at least one letter, no digits or symbols.',
-    );
+    newMap.set('city', 'City must have at least one letter, no digits or symbols.');
   }
 
   if (!/^\d{6}$|^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(postalCode)) {

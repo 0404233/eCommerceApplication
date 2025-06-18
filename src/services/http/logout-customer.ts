@@ -1,7 +1,4 @@
-export async function logoutCustomer(
-  token: string,
-  tokenTypeHint: 'access_token' | 'refresh_token',
-): Promise<void> {
+export async function logoutCustomer(token: string, tokenTypeHint: 'access_token' | 'refresh_token'): Promise<void> {
   const clientId = import.meta.env['VITE_CLIENT_ID'];
   const clientSecret = import.meta.env['VITE_CLIENT_SECRET'];
   const authUrl = import.meta.env['VITE_AUTH_URL'];
@@ -24,8 +21,6 @@ export async function logoutCustomer(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(
-      `Failed to revoke token: ${response.status} - ${errorText}`,
-    );
+    throw new Error(`Failed to revoke token: ${response.status} - ${errorText}`);
   }
 }

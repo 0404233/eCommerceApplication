@@ -5,6 +5,7 @@ import { sdk } from './services/sdk/create-client';
 import { userData } from './utils/user-data';
 import LoadingSpinner from './components/common/loading-spinner/LoadingSpinner';
 import { getToken } from './services/http/get-token-from-cookie';
+import { getAnonymousCartId, setAnonymousCartId } from './utils/set-get-cart-id';
 
 function App(): ReactElement {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,28 +15,32 @@ function App(): ReactElement {
     setLoginStatus(status);
   };
   useEffect(() => {
-    const { accessToken } = getToken();
-    if (accessToken) {
-      sdk.apiRoot
-        .me()
-        .get()
-        .execute()
+    const { refreshToken } = getToken();
+    const anonymousCartId = getAnonymousCartId();
+
+    if (refreshToken) {
+      sdk.refreshApiRoot();
+      sdk
+        .getCustomerInfo()
         .then((res) => {
           if (res.statusCode === 200) {
             changeLoginStatus(true);
           } else {
             changeLoginStatus(false);
           }
-          setIsLoading(false);
-        });
+        })
+        .finally(() => setIsLoading(false));
+    } else if (anonymousCartId) {
+      setIsLoading(false);
     } else {
-      const cart = sdk.apiRoot
-        .me()
-        .carts()
-        .post({ body: { currency: 'USD' } })
-        .execute();
-
-      cart.then(() => setIsLoading(false));
+      sdk
+        .createNewCart()
+        .then((cart) => {
+          if (cart.body.id) {
+            setAnonymousCartId(cart.body.id);
+          }
+        })
+        .finally(() => setIsLoading(false));
     }
   }, []);
   return (

@@ -53,10 +53,7 @@ export default function FormInput({
           autoComplete={autocomplete}
         />
         {isLoginPage && (
-          <span
-            className={classes['toggle-password']}
-            onClick={togglePasswordVisibility}
-          >
+          <span className={classes['toggle-password']} onClick={togglePasswordVisibility}>
             {showPassword ? '🔓' : '🔒'}
           </span>
         )}

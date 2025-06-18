@@ -13,10 +13,7 @@ type EditableAddress = {
   country: string;
 };
 
-export default function validateUserProfileForm(
-  formData: FormData,
-  addresses: EditableAddress[]
-): Map<string, string> {
+export default function validateUserProfileForm(formData: FormData, addresses: EditableAddress[]): Map<string, string> {
   const errors = new Map<string, string>();
 
   const { email, firstName, lastName, dateOfBirth } = formData;
@@ -42,9 +39,7 @@ export default function validateUserProfileForm(
     const ageTooYoung =
       age < 13 ||
       (age === 13 && today.getMonth() < dobDate.getMonth()) ||
-      (age === 13 &&
-        today.getMonth() === dobDate.getMonth() &&
-        today.getDate() < dobDate.getDate());
+      (age === 13 && today.getMonth() === dobDate.getMonth() && today.getDate() < dobDate.getDate());
 
     if (ageTooYoung) {
       errors.set('dateOfBirth', 'You must be at least 13 years old.');
@@ -60,14 +55,8 @@ export default function validateUserProfileForm(
       errors.set(`address[${index}].city`, 'City must contain only letters.');
     }
 
-    if (
-      !addr.postalCode ||
-      !/^\d{6}$|^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(addr.postalCode)
-    ) {
-      errors.set(
-        `address[${index}].postalCode`,
-        'Postal code must match the country format.'
-      );
+    if (!addr.postalCode || !/^\d{6}$|^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(addr.postalCode)) {
+      errors.set(`address[${index}].postalCode`, 'Postal code must match the country format.');
     }
 
     if (!addr.country || addr.country.trim() === '') {

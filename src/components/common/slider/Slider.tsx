@@ -52,7 +52,7 @@ export default function Slider({ images, modalContext = false, imageIndex }: Pro
             transform: `translateX(-${currentIndex * 100}%)`,
           }}
         >
-          {images.map((el, i) => (
+          {images.map((el) => (
             <div key={el.url} className={styles['slide-block']} onClick={() => setIsModalOpen(true)}>
               <img className={styles['slide-image']} src={el.url} alt="Car Image" />
             </div>

@@ -51,7 +51,7 @@ export default function createUserData(
     password: datasForm.password,
     addresses: addresses,
     defaultShippingAddress: 0,
-    dateOfBirth: datasForm.dateOfBirth  
+    dateOfBirth: datasForm.dateOfBirth,
   };
 
   if (isDefaultAddress) userData.defaultBillingAddress = 0;

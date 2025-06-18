@@ -43,8 +43,6 @@ export default function Login({ changeLoginStatus }: LoginStatus): ReactElement 
     if (valid) {
       const result = await sdk.loginCustomer({ email, password });
 
-      sdk.refreshApiRoot();
-
       if (result && result.success !== true) {
         setErrors({
           email: '',

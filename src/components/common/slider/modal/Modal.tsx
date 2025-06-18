@@ -5,6 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import { DialogContent } from '@mui/material';
 import { ImageCar } from '../../../../types/types';
 import Slider from '../Slider';
+import { JSX } from 'react';
 
 type Props = {
   images: ImageCar[];
@@ -17,7 +18,8 @@ const StyledDialog = styled(Dialog)({
   '& .MuiDialog-paper': {
     maxWidth: '90vw',
     width: '90vw',
-    height: '90vh',
+    height: 'auto',
+    margin: '0',
     overflow: 'hidden',
     backgroundColor: '#242424',
   },
@@ -28,9 +30,16 @@ const StyledDialog = styled(Dialog)({
     justifyContent: 'center',
     height: '100%',
   },
+  '& .MuiBackdrop-root': {
+    backgroundColor: '#000000cc',
+  },
+  '& .MuiDialog-container': {
+    height: 'auto',
+    marginTop: '5rem',
+  },
 });
 
-export default function Modal({ images, isOpen, closeModal, imageIndex }: Props) {
+export default function Modal({ images, isOpen, closeModal, imageIndex }: Props): JSX.Element {
   return (
     <StyledDialog open={isOpen} onClose={closeModal}>
       <DialogContent>

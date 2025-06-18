@@ -63,7 +63,7 @@ export type EditableAddress = {
 };
 
 export type HandleChangePasswordParams = {
-  email: string | undefined,
+  email: string | undefined;
   userId: string;
   version: number;
   currentPassword: string;
@@ -93,3 +93,13 @@ export enum Country {
   Russia = 'Russia',
   USA = 'USA',
 }
+
+export type RemoveLineItemAction = {
+  action: 'removeLineItem';
+  lineItemId: string;
+};
+
+export type PromocodeAlert = {
+  severity: 'success' | 'error';
+  message: string;
+};

@@ -15,6 +15,8 @@ export function createTokenCookie(accessToken: string, refreshToken: string): vo
 export function deleteTokenCookie(): void {
   document.cookie = 'customer_token=; Max-Age=0; path=/';
   document.cookie = 'customer_refresh_token=; Max-Age=0; path=/';
+  document.cookie = 'anonymousId=; Max-Age=0; path=/';
+  document.cookie = 'anonymousCartId=; Max-Age=0; path=/';
   document.location.reload();
 }
 
