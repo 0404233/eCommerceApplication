@@ -1,0 +1,12 @@
+.show-cars-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .show-cars-wrapper {
+    padding: 10px;
+  }
+}
